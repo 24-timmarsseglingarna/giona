@@ -8,3 +8,19 @@ sv:
     cancel: Ångra
     submit: Skicka
     required: Obligatorisk
+    labels:
+      person:
+        first_name: "Förnamn"
+        last_name: "Efternamn"
+        birthday: "Födelsedatum"
+        email: "Mejladress"
+        phone: "Telefonnummer"
+        co: "c/o"
+        street: "Gatuadress"
+        zip: "Postnummer"
+        city: "Ort"
+        country: "Land"
+
+    hints:
+      person:
+        phone: "Det nummer som är lättast att nå dig på, gärna mobilen."
