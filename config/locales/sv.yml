@@ -1,0 +1,10 @@
+sv:
+  formtastic:
+    :yes: Ja
+    :no: Nej
+    create: Skapa
+    save: Spara
+    update: Uppdatera
+    cancel: Ångra
+    submit: Skicka
+    required: Obligatorisk
