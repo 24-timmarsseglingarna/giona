@@ -49,9 +49,8 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'rails-i18n'
 gem 'haml'
-gem 'bootstrap', '~> 4.0.0.alpha5'
 gem 'haml-rails'
-#gem 'bootstrap-sass', '~> 3.3.6'
-gem 'formtastic', '~> 3.0'
+gem 'formtastic-bootstrap'
 gem 'country_select'
-#gem 'i18n-country-translations'
+gem 'bootstrap_sb_admin_base_v2'
+gem 'jquery-datatables-rails', '~> 3.4.0'

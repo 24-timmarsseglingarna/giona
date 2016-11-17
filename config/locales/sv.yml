@@ -20,6 +20,8 @@ sv:
         zip: "Postnummer"
         city: "Ort"
         country: "Land"
+        external_id: "Id i annat system"
+        external_system: "Annat system"
 
     hints:
       person:

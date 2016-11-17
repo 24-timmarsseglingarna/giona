@@ -39,11 +39,9 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (7.1.4)
-    autoprefixer-rails (6.5.3)
-      execjs
-    bootstrap (4.0.0.alpha5)
-      autoprefixer-rails (>= 6.0.3)
-      sass (>= 3.4.19)
+    bootstrap_sb_admin_base_v2 (0.3.3)
+      font-awesome-rails
+      jquery-rails
     builder (3.2.2)
     byebug (9.0.6)
     coffee-rails (4.2.1)
@@ -65,8 +63,12 @@ GEM
     erubis (2.7.0)
     execjs (2.7.0)
     ffi (1.9.14)
+    font-awesome-rails (4.7.0.0)
+      railties (>= 3.2, < 5.1)
     formtastic (3.1.4)
       actionpack (>= 3.2.13)
+    formtastic-bootstrap (3.1.1)
+      formtastic (>= 3.0)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     haml (4.0.7)
@@ -87,6 +89,11 @@ GEM
     jbuilder (2.6.0)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
+    jquery-datatables-rails (3.4.0)
+      actionpack (>= 3.1)
+      jquery-rails
+      railties (>= 3.1)
+      sass-rails
     jquery-rails (4.2.1)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
@@ -191,15 +198,16 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bootstrap (~> 4.0.0.alpha5)
+  bootstrap_sb_admin_base_v2
   byebug
   coffee-rails (~> 4.2)
   country_select
   execjs
-  formtastic (~> 3.0)
+  formtastic-bootstrap
   haml
   haml-rails
   jbuilder (~> 2.5)
+  jquery-datatables-rails (~> 3.4.0)
   jquery-rails
   listen (~> 3.0.5)
   pg (~> 0.18)
