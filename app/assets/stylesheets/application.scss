@@ -12,7 +12,12 @@
  *
  *= require_tree .
  *= require_self
+ *= require font-awesome
+ *= require bootstrap_sb_admin_base_v2
+ *= require formtastic-bootstrap
+ *
  */
 
-@import "bootstrap-sprockets";
-@import "bootstrap";
+.alert {
+	margin-top: 20px;
+}

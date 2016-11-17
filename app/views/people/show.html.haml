@@ -1,0 +1,44 @@
+%p#notice= notice
+
+%p
+  %b Email:
+  = @person.email
+%p
+  %b First name:
+  = @person.first_name
+%p
+  %b Last name:
+  = @person.last_name
+%p
+  %b Co:
+  = @person.co
+%p
+  %b Street:
+  = @person.street
+%p
+  %b Zip:
+  = @person.zip
+%p
+  %b City:
+  = @person.city
+%p
+  %b Country:
+  = @person.country  
+%p
+  %b Birthday:
+  = @person.birthday
+%p
+  %b Phone:
+  = @person.phone
+%p
+  %b External system:
+  = @person.external_system
+%p
+  %b External:
+  = @person.external_id
+
+= link_to 'Edit', edit_person_path(@person)
+
+= link_to 'Back', people_path
+
+= link_to 'Destroy', @person, :method => :delete, :data => { :confirm => 'Are you sure?' }

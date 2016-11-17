@@ -1,0 +1,30 @@
+.row
+.col-lg-12
+%h1 Personer
+%p
+  = link_to 'New Person', new_person_path
+
+.panel.panel-default
+  .panel-heading
+    Personer
+  / /.panel-heading
+  .panel-body
+    %table#giona-people.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th Last name
+          %th First name
+          %th City
+          %th Birthday
+      %tbody
+        - @people.each do |person|
+          %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{person_path(person)}';", :style => "cursor: pointer;"}
+            %td= person.last_name
+            %td= person.first_name
+            %td= person.zip + ' ' + person.city
+            %td= person.birthday
+
+:javascript
+  $(document).ready(function() {
+      $('#giona-people').DataTable();
+  } );  

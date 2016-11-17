@@ -7,4 +7,23 @@
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body
-    = yield
+    #wrapper
+      / Navigation
+      %nav.navbar.navbar-default.navbar-static-top{:role => "navigation", :style => "margin-bottom: 0"}
+        = render 'layouts/navbar'
+
+        .navbar-default.sidebar{:role => "navigation"}
+          = render 'layouts/sidebar'
+
+      / Page Content
+      #page-wrapper
+        .container-fluid
+          .row
+            .col-lg-12
+              - flash_messages
+              = yield
+            / /.col-lg-12
+          / /.row
+        / /.container-fluid
+      / /#page-wrapper
+    / /#wrapper

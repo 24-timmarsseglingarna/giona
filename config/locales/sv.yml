@@ -1,0 +1,28 @@
+sv:
+  formtastic:
+    :yes: Ja
+    :no: Nej
+    create: Skapa
+    save: Spara
+    update: Uppdatera
+    cancel: Ångra
+    submit: Skicka
+    required: Obligatorisk
+    labels:
+      person:
+        first_name: "Förnamn"
+        last_name: "Efternamn"
+        birthday: "Födelsedatum"
+        email: "Mejladress"
+        phone: "Telefonnummer"
+        co: "c/o"
+        street: "Gatuadress"
+        zip: "Postnummer"
+        city: "Ort"
+        country: "Land"
+        external_id: "Id i annat system"
+        external_system: "Annat system"
+
+    hints:
+      person:
+        phone: "Det nummer som är lättast att nå dig på, gärna mobilen."
