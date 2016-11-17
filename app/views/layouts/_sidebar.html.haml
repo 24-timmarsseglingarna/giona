@@ -13,12 +13,23 @@
         Dashboard
     %li
       %a{:href => people_path}
-        %i.fa.fa-user-o.fa-fw
+        %i.fa.fa-users.fa-fw
         Personer
         %span.fa.arrow
       %ul.nav.nav-second-level
         %li
-          %a{:href => new_person_path} Ny person
+          %a{:href => people_path}
+            %i.fa.fa-users.fa-fw
+            Personer
+        %li
+          %a{:href => new_person_path}
+            %i.fa.fa-user-plus.fa-fw 
+            Ny
+      %ul.nav.nav-second-level
+        %li
+          %a{:href => inactive_people_path}
+            %i.fa.fa-user-times.fa-fw 
+            Raderade
       / /.nav-second-level
     %li
       %a{:href => "tables.html"}

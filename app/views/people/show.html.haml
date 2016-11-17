@@ -1,5 +1,3 @@
-%p#notice= notice
-
 %p
   %b Email:
   = @person.email
@@ -41,4 +39,8 @@
 
 = link_to 'Back', people_path
 
-= link_to 'Destroy', @person, :method => :delete, :data => { :confirm => 'Are you sure?' }
+- if @person.deleted_at.present?
+  = link_to 'Radera för alltid', @person, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
+  = link_to 'Återvinn', recover_person_path(@person)  
+- else 
+  = link_to 'Destroy', @person, :method => :delete, :data => { :confirm => 'Vill du plocka bort personen?' }

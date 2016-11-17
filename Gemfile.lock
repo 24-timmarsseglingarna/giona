@@ -38,6 +38,9 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    acts_as_paranoid (0.5.0)
+      activerecord (>= 4.0, < 5.1)
+      activesupport (>= 4.0, < 5.1)
     arel (7.1.4)
     bootstrap_sb_admin_base_v2 (0.3.3)
       font-awesome-rails
@@ -198,6 +201,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  acts_as_paranoid
   bootstrap_sb_admin_base_v2
   byebug
   coffee-rails (~> 4.2)

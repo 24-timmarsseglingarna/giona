@@ -5,6 +5,18 @@ class PeopleController < ApplicationController
   # GET /people.json
   def index
     @people = Person.all
+    #@people = Person.only_deleted
+  end
+
+  def inactive
+    @people = Person.only_deleted
+    render action: :index
+  end
+
+  def recover
+    @person = Person.with_deleted.find(params[:id])
+    @person.recover
+    redirect_to @person, notice: 'Uppgifterna om personen återskapades.'
   end
 
   # GET /people/1
@@ -28,7 +40,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if @person.save
-        format.html { redirect_to @person, notice: 'Person was successfully created.' }
+        format.html { redirect_to @person, notice: 'Uppgifterna om personen lades till.' }
         format.json { render :show, status: :created, location: @person }
       else
         format.html { render :new }
@@ -42,7 +54,7 @@ class PeopleController < ApplicationController
   def update
     respond_to do |format|
       if @person.update(person_params)
-        format.html { redirect_to @person, notice: 'Person was successfully updated.' }
+        format.html { redirect_to @person, notice: 'Uppgifterna om personen uppdaterades.' }
         format.json { render :show, status: :ok, location: @person }
       else
         format.html { render :edit }
@@ -56,7 +68,7 @@ class PeopleController < ApplicationController
   def destroy
     @person.destroy
     respond_to do |format|
-      format.html { redirect_to people_url, notice: 'Person was successfully destroyed.' }
+      format.html { redirect_to people_url, notice: 'Uppgifterna om personen raderades.' }
       format.json { head :no_content }
     end
   end
@@ -64,7 +76,8 @@ class PeopleController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_person
-      @person = Person.find(params[:id])
+      #@person = Person.find(params[:id])
+      @person = Person.with_deleted.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

@@ -1,4 +1,7 @@
 class Person < ApplicationRecord
+
+  acts_as_paranoid( :column => 'deleted_at', :column_type => 'time')
+
   validates_length_of :first_name, in: 1..50
   validates_length_of :last_name, in: 2..50
   #validates_length_of :street, in: 2..100, allow_nil: true
@@ -15,5 +18,6 @@ class Person < ApplicationRecord
 
   def set_defaults
     self.country  ||= 'Sverige'
-  end	
+  end
+
 end
