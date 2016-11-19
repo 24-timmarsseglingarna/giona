@@ -1,46 +1,52 @@
+%h1=@person.first_name + ' ' + @person.last_name  
+
 %p
-  %b Email:
-  = @person.email
-%p
-  %b First name:
+  %b Förnamn:
   = @person.first_name
 %p
-  %b Last name:
+  %b Efternamn:
   = @person.last_name
+
+- if user_signed_in?   
+  %p
+    %b c/o:
+    = @person.co
+  %p
+    %b Gata:
+    = @person.street
+  %p
+    %b Postnummer:
+    = @person.zip
+
 %p
-  %b Co:
-  = @person.co
-%p
-  %b Street:
-  = @person.street
-%p
-  %b Zip:
-  = @person.zip
-%p
-  %b City:
+  %b Postort:
   = @person.city
 %p
-  %b Country:
+  %b Land:
   = @person.country  
-%p
-  %b Birthday:
-  = @person.birthday
-%p
-  %b Phone:
-  = @person.phone
-%p
-  %b External system:
-  = @person.external_system
-%p
-  %b External:
-  = @person.external_id
+- if user_signed_in?
+  %p
+    %b Mejladress:
+    = @person.email
+  %p
+    %b Födelsedatum:
+    = @person.birthday
+  %p
+    %b Telefonnummer:
+    = @person.phone
+  %p
+    %b Finns i extert system:
+    = @person.external_system
+  %p
+    %b Id i externt system:
+    = @person.external_id
 
-= link_to 'Edit', edit_person_path(@person)
+  = link_to 'Redigera', edit_person_path(@person)
 
-= link_to 'Back', people_path
+  - if @person.deleted_at.present?
+    = link_to 'Radera för alltid', @person, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
+    = link_to 'Återvinn', recover_person_path(@person)  
+  - else 
+    = link_to 'Radera', @person, :method => :delete, :data => { :confirm => 'Vill du plocka bort personen?' }
 
-- if @person.deleted_at.present?
-  = link_to 'Radera för alltid', @person, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
-  = link_to 'Återvinn', recover_person_path(@person)  
-- else 
-  = link_to 'Destroy', @person, :method => :delete, :data => { :confirm => 'Vill du plocka bort personen?' }
+= link_to 'Tillbaka', people_path
