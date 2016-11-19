@@ -7,27 +7,16 @@
   %a.navbar-brand{:href => "index.html"} Giona version 0
 / /.navbar-header
 %ul.nav.navbar-top-links.navbar-right
-  - if user_signed_in?
+  -if user_signed_in?
     %li
       = current_user.email
     %li
-      %a{:href => "#"}
-        %i.fa.fa-user.fa-fw
-        Min profil
+      =link_to "Min profil", edit_user_password_path 
     %li
-      %a{:href => destroy_user_session_path }
-        %i.fa.fa-sign-out.fa-fw
-        Logga ut
-  - else
+      =link_to "Logga ut", destroy_user_session_path, method: :delete
+  -else
     %li
-      %a{:href => new_user_session_path }
-        %i.fa.fa-sign-in.fa-fw
-        Logga in
+      =link_to "Logga in", new_user_session_path
     %li
-      %a{:href => new_user_registration_path }
-        %i.fa.fa-pencil-square-o.fa-fw
-        Registrera
-
-  / /.dropdown-user
-  / /.dropdown
+      =link_to "Registrera konto", new_user_registration_path
 / /.navbar-top-links

@@ -1,24 +1,21 @@
 .sidebar-nav.navbar-collapse
   %ul#side-menu.nav
     %li
-      %a{:href => "#{}"}
-        %i.fa.fa-dashboard.fa-fw
-        Dashboard
-    %li
       %a{:href => people_path}
         %i.fa.fa-users.fa-fw
         Personer
-        %span.fa.arrow
-      %ul.nav.nav-second-level
-        %li
-          %a{:href => new_person_path}
-            %i.fa.fa-user-plus.fa-fw 
-            Ny
-      %ul.nav.nav-second-level
-        %li
-          %a{:href => inactive_people_path}
-            %i.fa.fa-user-times.fa-fw 
-            Raderade
-      / /.nav-second-level
+        -if user_signed_in?
+          %span.fa.arrow
+          %ul.nav.nav-second-level
+            %li
+              %a{:href => new_person_path}
+                %i.fa.fa-user-plus.fa-fw 
+                Ny
+          %ul.nav.nav-second-level
+            %li
+              %a{:href => inactive_people_path}
+                %i.fa.fa-user-times.fa-fw 
+                Raderade
+          / /.nav-second-level
 / /.sidebar-collapse
 / /.navbar-static-side
