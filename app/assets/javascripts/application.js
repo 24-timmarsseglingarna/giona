@@ -12,5 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require dataTables/jquery.dataTables
 //= require turbolinks
 //= require_tree .
+//= require bootstrap_sb_admin_base_v2
+
