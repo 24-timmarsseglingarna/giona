@@ -10,6 +10,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
          # :confirmable
 
+  acts_as_paranoid( :column => 'deleted_at', :column_type => 'time')
 
   def set_default_role
     self.role = :user

@@ -1,0 +1,22 @@
+
+%p
+  %b Mejl:
+  = @user.email
+%p
+  %b Roll:
+  = @user.role
+
+
+%p
+  = link_to 'Admin: Redigera', edit_user_path(@user)
+
+  - if @user.deleted_at.present?
+    %p= link_to 'Admin: Radera för alltid', @user, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
+    %p= link_to 'Admin: Återvinn', recover_user_path(@user)  
+  - else 
+    %p= link_to 'Admin: Radera', @user, :method => :delete, :data => { :confirm => 'Vill du plocka bort användaren?' }
+
+    %p=link_to "Användare: Byt lösenord/byt mejladress", edit_user_registration_path
+
+
+= link_to 'Tillbaka', users_path
