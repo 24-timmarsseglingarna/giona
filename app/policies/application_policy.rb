@@ -2,12 +2,15 @@ class ApplicationPolicy
   attr_reader :user, :record
 
   def initialize(user, record)
+    logger.info "---------------  ApplicationPolicy.initialize  ---------------"
+
     @user = user
     @record = record
   end
 
   def index?
-    false
+    true
+    #false
   end
 
   def show?
@@ -15,15 +18,18 @@ class ApplicationPolicy
   end
 
   def create?
-    false
+    true
+    #false
   end
 
   def new?
-    create?
+    true
+    #create?
   end
 
   def update?
-    false
+    true
+    #false
   end
 
   def edit?
@@ -31,7 +37,8 @@ class ApplicationPolicy
   end
 
   def destroy?
-    false
+    true
+    #false
   end
 
   def scope
@@ -50,4 +57,5 @@ class ApplicationPolicy
       scope
     end
   end
+
 end

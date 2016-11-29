@@ -5,7 +5,7 @@ class PeopleController < ApplicationController
   # GET /people.json
   def index
     @people = Person.all
-    #@people = Person.only_deleted
+    authorize Person
   end
 
   def inactive
@@ -22,6 +22,7 @@ class PeopleController < ApplicationController
   # GET /people/1
   # GET /people/1.json
   def show
+    authorize Person
   end
 
   # GET /people/new
