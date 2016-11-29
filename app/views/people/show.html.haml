@@ -41,6 +41,15 @@
     %b Id i externt system:
     = @person.external_id
 
+  %p
+    %b Användarkonto:
+    = user_role @person
+
+  %p
+    %b Granska:
+    = @person.review
+
+
   = link_to 'Redigera', edit_person_path(@person)
 
   - if @person.deleted_at.present?

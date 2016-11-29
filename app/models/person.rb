@@ -1,9 +1,11 @@
 class Person < ApplicationRecord
 
+  has_one :user
+
   acts_as_paranoid( :column => 'deleted_at', :column_type => 'time')
 
-  validates_length_of :first_name, in: 1..50
-  validates_length_of :last_name, in: 2..50
+  validates_presence_of :first_name
+  validates_presence_of :last_name
   #validates_length_of :street, in: 2..100, allow_nil: true
   #validates_length_of :zip, in: 7..32, allow_nil: true
   #validates_length_of :city, in: 2..100, allow_nil: true
@@ -18,6 +20,10 @@ class Person < ApplicationRecord
 
   def set_defaults
     self.country  ||= 'Sverige'
+  end
+
+  def review!
+  	self.update_attribute(:review, true)
   end
 
 end

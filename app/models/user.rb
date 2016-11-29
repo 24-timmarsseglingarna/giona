@@ -1,5 +1,7 @@
 class User < ApplicationRecord
 
+  belongs_to :person
+
   enum role: [:user, :assistant, :organizer, :admin]
 
   after_initialize :set_default_role, :if => :new_record?
@@ -15,5 +17,10 @@ class User < ApplicationRecord
   def set_default_role
     self.role = :user
   end
+
+  def review!
+  	self.update_attribute(:review, true)
+  end
+
 
 end
