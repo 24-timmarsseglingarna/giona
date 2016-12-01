@@ -1,0 +1,24 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @regatta.name
+%p
+  %b Organizer:
+  = @regatta.organizer
+%p
+  %b Email from:
+  = @regatta.email_from
+%p
+  %b Name from:
+  = @regatta.name_from
+%p
+  %b Email to:
+  = @regatta.email_to
+%p
+  %b Confirmation:
+  = @regatta.confirmation
+
+= link_to 'Edit', edit_regatta_path(@regatta)
+\|
+= link_to 'Back', regattas_path

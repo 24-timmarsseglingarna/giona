@@ -1,0 +1,31 @@
+%h1 Listing regattas
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Organizer
+      %th Email from
+      %th Name from
+      %th Email to
+      %th Confirmation
+      %th
+      %th
+      %th
+
+  %tbody
+    - @regattas.each do |regatta|
+      %tr
+        %td= regatta.name
+        %td= regatta.organizer
+        %td= regatta.email_from
+        %td= regatta.name_from
+        %td= regatta.email_to
+        %td= regatta.confirmation
+        %td= link_to 'Show', regatta
+        %td= link_to 'Edit', edit_regatta_path(regatta)
+        %td= link_to 'Destroy', regatta, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Regatta', new_regatta_path

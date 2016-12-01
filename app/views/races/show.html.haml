@@ -1,0 +1,30 @@
+%p#notice= notice
+
+%p
+  %b Start from:
+  = @race.start_from
+%p
+  %b Start to:
+  = @race.start_to
+%p
+  %b Period:
+  = @race.period
+%p
+  %b Common finish:
+  = @race.common_finish
+%p
+  %b Mandatory common finish:
+  = @race.mandatory_common_finish
+%p
+  %b External system:
+  = @race.external_system
+%p
+  %b External:
+  = @race.external_id
+%p
+  %b Regatta:
+  = @race.regatta.name unless @race.regatta.nil?
+
+= link_to 'Edit', edit_race_path(@race)
+\|
+= link_to 'Back', races_path
