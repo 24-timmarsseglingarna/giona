@@ -1,4 +1,10 @@
 sv:
+  devise:
+    sessions:
+      user:
+        signed_in: "Välkommen, du är inloggad."
+        signed_out: "Nu är du utloggad. Tack och hej!"
+        already_authenticated: "Du är redan inloggad. Inget problem."
   formtastic:
     :yes: Ja
     :no: Nej
@@ -26,3 +32,4 @@ sv:
     hints:
       person:
         phone: "Det nummer som är lättast att nå dig på, gärna mobilen."
+        email: "Du ändrar din mejladress under \"Min profil\"."

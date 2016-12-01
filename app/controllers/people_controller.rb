@@ -5,7 +5,7 @@ class PeopleController < ApplicationController
   # GET /people.json
   def index
     @people = Person.all
-    #@people = Person.only_deleted
+    #authorize Person
   end
 
   def inactive
@@ -22,11 +22,15 @@ class PeopleController < ApplicationController
   # GET /people/1
   # GET /people/1.json
   def show
+    #authorize Person
   end
 
   # GET /people/new
   def new
     @person = Person.new
+    if params[:add_me] == 'true' && current_user
+      @person.email = current_user.email
+    end
   end
 
   # GET /people/1/edit
@@ -40,7 +44,13 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if @person.save
-        format.html { redirect_to @person, notice: 'Uppgifterna om personen lades till.' }
+        if current_user
+          if current_user.user?
+            current_user.person_id = @person.id
+            current_user.save
+          end
+        end
+        format.html { redirect_to @person, notice: 'Uppgifterna lades till. Tack.' }
         format.json { render :show, status: :created, location: @person }
       else
         format.html { render :new }
@@ -52,9 +62,17 @@ class PeopleController < ApplicationController
   # PATCH/PUT /people/1
   # PATCH/PUT /people/1.json
   def update
+    logger.info "-------------------- person.update ----------------------"
+    logger.info params[:add_me]
     respond_to do |format|
       if @person.update(person_params)
-        format.html { redirect_to @person, notice: 'Uppgifterna om personen uppdaterades.' }
+        if current_user
+          if current_user.user?
+            current_user.person_id = @person.id
+            current_user.save
+          end
+        end
+        format.html { redirect_to @person, notice: 'Uppgifterna uppdaterades. Tack' }
         format.json { render :show, status: :ok, location: @person }
       else
         format.html { render :edit }
