@@ -24,8 +24,6 @@
             %td= l race.start_to
             %td= race.common_finish
 
-
-
 %p
   %b Mejlavsändare: 
   = @regatta.name_from + ' <' + @regatta.email_from + '>'
@@ -49,9 +47,7 @@
     %li=link_to "Period: 120", new_race_path(:regatta => @regatta, :period => '120')  
 
 
-= link_to 'Edit', edit_regatta_path(@regatta)
-\|
-= link_to 'Back', regattas_path
+%p= link_to 'Redigera', edit_regatta_path(@regatta)
 
 :javascript
   $(document).ready(function() {

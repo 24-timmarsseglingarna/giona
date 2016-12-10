@@ -1,3 +1,10 @@
+%p
+  %b Regatta:
+  =@race.regatta.name
+%p
+  %b Arrangör:
+  =@race.regatta.organizer
+
 = semantic_form_for @race do |f|
   = f.inputs do
     = f.input :start_from, :as => :string
@@ -5,10 +12,11 @@
     = f.input :period, :as => :radio, :collection => [12, 24, 48, 72, 96, 120]
     = f.input :common_finish
     = f.input :mandatory_common_finish
-    = f.input :regatta, :input_html => { :readonly => true }
-
+    = f.input :regatta, :as => :hidden 
+ 
   = f.actions do
-    = f.action :submit, :as => :input
+    = f.action :submit, :as => :button
+    = f.action :cancel, :as => :link   
 
 :javascript
   $(function () {
