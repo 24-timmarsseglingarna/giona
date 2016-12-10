@@ -1,0 +1,31 @@
+.row
+.col-lg-12
+%h1 Regattor
+%p
+  = link_to('New Regatta', new_regatta_path) if user_signed_in?
+.panel.panel-default
+  .panel-heading
+    Regattor
+  / /.panel-heading
+  .panel-body
+    %table#giona-regattas.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th Arrangör
+          %th Regatta
+          %th Perioder
+          %th En starttid
+      %tbody
+        - @regattas.each do |regatta|
+          %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
+            %td= regatta.organizer
+            %td= regatta.name 
+            %td
+              - for race in regatta.races
+                = race.period
+            %td= l(regatta.races.first.start_from)
+
+  :javascript
+    $(document).ready(function() {
+    $('#giona-regattas').DataTable();
+    } );  

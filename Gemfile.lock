@@ -43,6 +43,8 @@ GEM
       activesupport (>= 4.0, < 5.1)
     arel (7.1.4)
     bcrypt (3.1.11)
+    bootstrap3-datetimepicker-rails (4.17.43)
+      momentjs-rails (>= 2.8.1)
     bootstrap_sb_admin_base_v2 (0.3.3)
       font-awesome-rails
       jquery-rails
@@ -121,6 +123,8 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
     minitest (5.9.1)
+    momentjs-rails (2.15.1)
+      railties (>= 3.1)
     multi_json (1.12.1)
     nio4r (1.2.1)
     nokogiri (1.6.8.1)
@@ -216,6 +220,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_paranoid
+  bootstrap3-datetimepicker-rails (~> 4.17.43)
   bootstrap_sb_admin_base_v2
   byebug
   coffee-rails (~> 4.2)
@@ -229,6 +234,7 @@ DEPENDENCIES
   jquery-datatables-rails (~> 3.4.0)
   jquery-rails
   listen (~> 3.0.5)
+  momentjs-rails (>= 2.9.0)
   pg (~> 0.18)
   puma (~> 3.0)
   pundit

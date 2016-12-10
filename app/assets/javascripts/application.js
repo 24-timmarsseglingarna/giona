@@ -16,4 +16,6 @@
 //= require turbolinks
 //= require_tree .
 //= require bootstrap_sb_admin_base_v2
-
+//= require moment
+//= require bootstrap-datetimepicker
+//= require moment/sv
