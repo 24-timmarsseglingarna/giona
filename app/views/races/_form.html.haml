@@ -2,10 +2,10 @@
   = f.inputs do
     = f.input :start_from, :as => :string
     = f.input :start_to, :as => :string
-    = f.input :period
+    = f.input :period, :as => :radio, :collection => [12, 24, 48, 72, 96, 120]
     = f.input :common_finish
     = f.input :mandatory_common_finish
-    = f.input :regatta
+    = f.input :regatta, :input_html => { :readonly => true }
 
   = f.actions do
     = f.action :submit, :as => :input

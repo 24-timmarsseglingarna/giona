@@ -1,29 +1,26 @@
-%p#notice= notice
+%h1="#{@race.period} - #{@race.regatta.name}"
 
 %p
-  %b Start from:
-  = @race.start_from
+  %b Regatta:
+  = link_to( @race.regatta.name, @race.regatta ) unless @race.regatta.nil?
+
 %p
-  %b Start to:
-  = @race.start_to
+  %b Starta från:
+  = l @race.start_from
+%p
+  %b Starta till:
+  = l @race.start_to
 %p
   %b Period:
   = @race.period
 %p
-  %b Common finish:
+  %b Gemensam målgång:
   = @race.common_finish
-%p
-  %b Mandatory common finish:
-  = @race.mandatory_common_finish
-%p
-  %b External system:
-  = @race.external_system
-%p
-  %b External:
-  = @race.external_id
-%p
-  %b Regatta:
-  = @race.regatta.name unless @race.regatta.nil?
+- if @race.common_finish
+  %p
+    %b Gemansamma målgången är obligatorisk:
+    = @race.mandatory_common_finish
+
 
 = link_to 'Edit', edit_race_path(@race)
 \|

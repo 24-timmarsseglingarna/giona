@@ -15,6 +15,8 @@ class RacesController < ApplicationController
   # GET /races/new
   def new
     @race = Race.new
+    @race.period = params[:period]
+    @race.regatta_id = params[:regatta]
   end
 
   # GET /races/1/edit
