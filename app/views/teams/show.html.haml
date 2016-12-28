@@ -1,0 +1,52 @@
+%h1 Anmälan/loggbok
+
+%p
+  %b Regatta:
+  =link_to @team.race.regatta.name, @team.race.regatta
+%p
+  %b Segling:
+  =link_to race_brief(@team.race), @team.race
+%p
+  %b Arrangör:
+  = @team.race.regatta.organizer   
+%p
+  %b Startnummer:
+  = @team.start_number
+%p
+  %b Team:
+  = @team.name
+%p
+  %b Båt:
+  = @team.boat_name
+%p
+  %b Båttyp:
+  = @team.boat_class_name
+%p
+  %b Segelnummer:
+  = @team.boat_sail_number
+%p
+  %b Handikapp:
+  = @team.handicap
+%p
+  %b Startplats:
+  = @team.start_point
+%p
+  %b Plakettdistans:
+  = @team.plaque_distance
+%p
+  %b Befälhavare:
+%p
+  %b Gastar:
+%p
+  %b Startade inte:
+  = @team.did_not_start
+%p
+  %b Fullföljde inte:
+  = @team.did_not_finish
+%p
+  %b Betalat startavgift:
+  = @team.paid_fee
+
+= link_to 'Edit', edit_team_path(@team)
+\|
+= link_to 'Back', teams_path

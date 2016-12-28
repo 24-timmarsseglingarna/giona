@@ -39,7 +39,7 @@ sv:
     - lördag
     formats:
       default: "%Y-%m-%d"
-      long: "%e %B %Y"
+      long: "%d %e %B %Y"
       short: "%e %b"
     month_names:
     -
@@ -202,9 +202,10 @@ sv:
   time:
     am: ''
     formats:
-      default: "%a, %e %b %Y %H:%M:%S %z"
-      long: "%e %B %Y %H:%M"
-      short: "%e %b %H:%M"
+      default: "%a, %e %b %Y %H.%M:%S %z"
+      long: "%A %e %B %Y kl. %H.%M"
+      short: "%A %e %B kl. %H.%M"
+      clock: "%H.%M"
     pm: ''
 
   devise:
