@@ -54,8 +54,60 @@ namespace :import do
                                        )
       end
     end
+
+
+    task :teams => :environment do
+      # File format: SeglingNr, SeglingRegistrerandeKrets, SeglingFNStart, SeglingStartDag, 
+      # SeglingStartTid, SeglingPeriod, SeglingFNBoatIndivid, SeglingBåtIndivid, SeglingBåtTyp,
+      # SeglingFNStartpunkt, SeglingStartnr, SeglingÖvertid, SeglingTotalDist, SeglingAvdrag, 
+      # SeglingGodkDist, SeglingSxkTal, SeglingPlakatDist, SeglingEfteranmäld, SeglingEjStart,
+      # SeglingBrutit, SeglingFiktiv, SeglingÅr, SeglingVH, SeglingLåst, SeglingDeltarFest, 
+      # SeglingDeltarFestNotering, SeglingBetalt, SeglingBetaltBelopp, SeglingKorrDistans
+
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Seglingar.csv"), "r"), :headers => true) do |row|
+        team = Team.find_or_create_by(external_id: row['SeglingNr'].to_s.strip.to_i, external_system: 'Starema-St')
+        race = Race.find_by( external_id: row['SeglingFNStart'].to_s.strip.to_i, external_system: 'Starema-St')
+        if race.nil?
+          puts row
+        else 
+          team.race_id = race.id
+          team.start_number = row['SeglingStartnr'].to_s.strip
+          team.boat_name = row['SeglingBåtIndivid'].to_s.strip
+          team.boat_class_name = row['SeglingBåtTyp'].to_s.strip 
+          #team.boat_sail_number = 
+          team.start_point = row['SeglingFNStartpunkt'].to_s.strip.to_i
+          team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
+          team.plaque_distance = row['SeglingPlakatDist'].to_s.strip.to_f
+          team.name = "#{team.boat_name} / #{team.boat_class_name}"
+
+          if row['SeglingEjStart'].to_i == 1
+            team.did_not_start = true 
+          else
+            team.did_not_start = false
+          end
+           
+          if ( row['SeglingBrutit'].to_i == 1 )
+            team.did_not_finish = true
+          else
+            team.did_not_finish = false
+          end
+
+          if ( row['SeglingBetalt'].to_i == 1 )
+            team.paid_fee = true 
+          else
+            team.paid_fee = false
+          end
+
+          team.save!
+        end
+      end
+    end
   end
 end 
+
+
+
+
 
 namespace :destroy do
 
@@ -73,6 +125,10 @@ namespace :destroy do
 
     task :users => :environment do
       User.delete_all
+    end  
+
+    task :teams => :environment do
+      Team.delete_all
     end  
 
 end

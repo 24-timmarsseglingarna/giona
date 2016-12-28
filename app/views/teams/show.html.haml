@@ -1,16 +1,8 @@
-%p#notice= notice
-
 %p
   %b Race:
-  = @team.race_id
+  = @team.race.name
 %p
-  %b External:
-  = @team.external_id
-%p
-  %b External system:
-  = @team.external_system
-%p
-  %b Name:
+  %b Team Name:
   = @team.name
 %p
   %b Boat name:
@@ -33,6 +25,12 @@
 %p
   %b Plaque distance:
   = @team.plaque_distance
+%p
+  %b Skipper:
+
+%p
+  %b Crew:
+
 %p
   %b Did not start:
   = @team.did_not_start
