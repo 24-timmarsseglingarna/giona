@@ -27,7 +27,6 @@ namespace :import do
       # StartDag,StartAr,StartVH,StartFNTid,UrvalStartTid,TmpRegatta,TmpOrganizer,TmpRace,TmpRegattaName  
       # If imported start period covers midnight --> #fail  
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "starema-sthlm-regatta-race.csv"), "r"), :headers => true) do |row|
-        puts row['StartDagCtr']
         regatta = Regatta.find_or_create_by(name: row['TmpRegattaName'].to_s.strip)
         regatta.organizer = row['TmpOrganizer'].to_s.strip
         regatta.email_from = 'arne@24-timmars.nu'
@@ -52,6 +51,7 @@ namespace :import do
                                        common_finish: false,
                                        mandatory_common_finish: false
                                        )
+        race.save!
       end
     end
 
@@ -102,33 +102,72 @@ namespace :import do
         end
       end
     end
+
+
+    task :crew_members => :environment do
+      # File format: 
+      # DeltariSeglingCtr, DeltariRegistrerandeKrets, DeltariFNDeltagare, 
+      # DeltariFNSegling, DeltariSkipperGastqq, DeltariFNSkipperGast
+
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-DeltariSeling.csv"), "r"), :headers => true) do |row|
+        team = Team.find_by(external_id: row['DeltariFNSegling'].to_s.strip.to_i, external_system: 'Starema-St')
+        person = Person.find_by(external_id: row['DeltariFNDeltagare'].to_s.strip.to_i, external_system: 'Starema-St')
+        crew_member = CrewMember.find_or_create_by(team: team, person: person)
+        if(row['DeltariFNSkipperGast'].to_i == 2)
+          crew_member.skipper = true 
+        else
+          crew_member.skipper = false
+        end
+        crew_member.save!
+      end
+    end
+
   end
 end 
 
+namespace :batch do
 
-
-
+  task :team_names => :environment do
+    for team in Team.all
+      skipper = team.skipper
+      if team.skipper.nil?
+        puts "Team with id: " + team.id.to_s + " is missing a skipper."
+      else
+        if team.skipper.last_name.nil?
+          puts "Skipper with id: " + team.skipper.id.to_s + "is missing a last name."
+        else
+          team.name = "#{team.boat_name}/#{skipper.last_name}"
+          team.save!
+        end
+      end
+    end
+  end  
+end
 
 namespace :destroy do
 
-    task :regattas => :environment do
-      Regatta.delete_all
-    end  
+  task :regattas => :environment do
+    Regatta.delete_all
+  end  
 
-    task :races => :environment do
-      Race.delete_all
-    end  
+  task :races => :environment do
+    Race.delete_all
+  end  
 
-    task :people => :environment do
-      Person.delete_all
-    end  
+  task :people => :environment do
+    Person.delete_all
+  end  
 
-    task :users => :environment do
-      User.delete_all
-    end  
+  task :users => :environment do
+    User.delete_all
+  end  
 
-    task :teams => :environment do
-      Team.delete_all
-    end  
+  task :teams => :environment do
+    Team.delete_all
+  end  
+
+  task :crew_members => :environment do
+    CrewMember.delete_all
+  end  
 
 end

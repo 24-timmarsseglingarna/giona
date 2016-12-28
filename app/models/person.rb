@@ -1,6 +1,8 @@
 class Person < ApplicationRecord
 
   has_one :user
+  has_many :crew_members
+  has_many :teams, through: :crew_members
 
   acts_as_paranoid( :column => 'deleted_at', :column_type => 'time')
 
@@ -24,6 +26,10 @@ class Person < ApplicationRecord
 
   def review!
   	self.update_attribute(:review, true)
+  end
+
+  def name
+    "#{self.first_name} #{self.last_name}"
   end
 
 end

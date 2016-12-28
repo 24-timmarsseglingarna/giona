@@ -64,7 +64,7 @@
             %td= team.boat_class_name
             %td= team.boat_sail_number
             %td= team.handicap
-            %td
+            %td= team.skipper.name unless team.skipper.nil?
 
 
 
