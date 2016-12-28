@@ -16,6 +16,7 @@
           %th Förnamn
           %th Postort
           %th Födelsedatum
+          %th Regattor
       %tbody
         -if user_signed_in?
           - @people.each do |person|
@@ -24,6 +25,7 @@
               %td= person.first_name
               %td= person.zip + ' ' + person.city
               %td= person.birthday
+              %td= person.crew_members.count
         - else
           - @people.each do |person|
             %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{person_path(person)}';", :style => "cursor: pointer;"}
@@ -31,6 +33,7 @@
               %td= person.first_name
               %td= person.city
               %td YYYY-MM-DD
+              %td= person.crew_members.count
   :javascript
     $(document).ready(function() {
     $('#giona-people').DataTable();
