@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161228084954) do
+ActiveRecord::Schema.define(version: 20161228153508) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "crew_members", force: :cascade do |t|
+    t.integer  "person_id"
+    t.integer  "team_id"
+    t.boolean  "skipper",    default: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.index ["person_id", "team_id"], name: "index_crew_members_on_person_id_and_team_id", unique: true, using: :btree
+    t.index ["person_id"], name: "index_crew_members_on_person_id", using: :btree
+    t.index ["team_id"], name: "index_crew_members_on_team_id", using: :btree
+  end
 
   create_table "people", force: :cascade do |t|
     t.string   "email"

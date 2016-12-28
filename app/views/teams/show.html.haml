@@ -31,21 +31,24 @@
   %b Startplats:
   = @team.start_point
 %p
-  %b Plakettdistans:
-  = @team.plaque_distance
-%p
   %b Befälhavare:
+  = link_to(@team.skipper.name, @team.skipper) unless @team.skipper.nil?
+- unless @team.seamen.empty?  
+  %p
+    %b Gastar:
+    %ul
+      - for person in @team.seamen do 
+        %li= link_to person.name, person
+
 %p
-  %b Gastar:
-%p
-  %b Startade inte:
-  = @team.did_not_start
-%p
-  %b Fullföljde inte:
-  = @team.did_not_finish
-%p
-  %b Betalat startavgift:
-  = @team.paid_fee
+  %b Resultat:
+  Plakettdistans
+  = @team.plaque_distance unless @team.plaque_distance.nil?
+  M.
+  - if @team.did_not_start
+    Startade inte. 
+  - if @team.did_not_finish
+    Fullföljde inte.
 
 = link_to 'Edit', edit_team_path(@team)
 \|
