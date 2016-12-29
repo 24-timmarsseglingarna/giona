@@ -3,7 +3,10 @@
   = f.inputs do
     = f.input :first_name
     = f.input :last_name
-    = f.input :email
+    - if @person.email.empty?
+      = f.input :email
+    - else
+      = f.input :email, :input_html => { :readonly => true }
     = f.input :phone
     = f.input :birthday, :start_year => Date.today.year-100, :end_year => Date.today.year
     = f.input :co
@@ -11,8 +14,9 @@
     = f.input :zip
     = f.input :city
     = f.input :country, :priority_countries => ["Sweden", "Denmark", "Finland", "Luxembourg", "Norway", "Poland", "Germany" ]
-    = f.input :external_system
-    = f.input :external_id
+
   = f.actions do
     = f.action :submit, :as => :button
     = f.action :cancel, :as => :link
+
+= hidden_field_tag :add_me

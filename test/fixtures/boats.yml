@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  sail_number: 1
+  vhf_call_sign: MyString
+  ais_mmsi: MyString
+  boat_class_id: 1
+  external_id: 1
+  external_system: MyString
+
+two:
+  name: MyString
+  sail_number: 1
+  vhf_call_sign: MyString
+  ais_mmsi: MyString
+  boat_class_id: 1
+  external_id: 1
+  external_system: MyString

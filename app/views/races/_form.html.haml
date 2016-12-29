@@ -1,0 +1,53 @@
+%p
+  %b Regatta:
+  =@race.regatta.name
+%p
+  %b Arrangör:
+  =@race.regatta.organizer
+
+= semantic_form_for @race do |f|
+  = f.inputs do
+    = f.input :start_from, :as => :string
+    = f.input :start_to, :as => :string
+    = f.input :period, :as => :radio, :collection => [12, 24, 48, 72, 96, 120]
+    = f.input :common_finish
+    = f.input :mandatory_common_finish
+    = f.input :regatta, :as => :hidden 
+ 
+  = f.actions do
+    = f.action :submit, :as => :button
+    = f.action :cancel, :as => :link   
+
+:javascript
+  $(function () {
+  $('#race_start_from').datetimepicker({
+  icons: {
+    time: 'fa fa-clock-o',
+    date: 'fa fa-calendar',
+    up: 'fa fa-arrow-up',
+    down: 'fa fa-arrow-down',
+    previous: 'fa fa-arrow-left',
+    next: 'fa fa-arrow-right',
+    today: 'fa fa-calendar-check-o',
+    clear: 'fa fa-eraser',
+    close: 'fa fa-close'
+    },
+  locale: 'sv',
+  sideBySide: true
+  });
+  $('#race_start_to').datetimepicker({
+  icons: {
+    time: 'fa fa-clock-o',
+    date: 'fa fa-calendar',
+    up: 'fa fa-arrow-up',
+    down: 'fa fa-arrow-down',
+    previous: 'fa fa-arrow-left',
+    next: 'fa fa-arrow-right',
+    today: 'fa fa-calendar-check-o',
+    clear: 'fa fa-eraser',
+    close: 'fa fa-close'
+    },
+  locale: 'sv',
+  sideBySide: true
+  });
+  });

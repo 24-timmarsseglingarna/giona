@@ -1,21 +1,37 @@
 .sidebar-nav.navbar-collapse
   %ul#side-menu.nav
     %li
+      %a{:href => regattas_path}
+        %i.fa.fa-font-awesome.fa-fw
+        Regattor    
+    %li
       %a{:href => people_path}
         %i.fa.fa-users.fa-fw
         Personer
-        -if user_signed_in?
-          %span.fa.arrow
-          %ul.nav.nav-second-level
-            %li
-              %a{:href => new_person_path}
-                %i.fa.fa-user-plus.fa-fw 
-                Ny
-          %ul.nav.nav-second-level
-            %li
-              %a{:href => inactive_people_path}
-                %i.fa.fa-user-times.fa-fw 
-                Raderade
-          / /.nav-second-level
+    %li
+      %a{:href => boats_path}
+        %i.fa.fa-ship.fa-fw
+        Båtar
+    %li
+      %a{:href => boat_classes_path}
+        %i.fa.fa-ship.fa-fw
+        Båttyper
+    -if user_signed_in?
+      %li
+        %a{:href => new_person_path}
+          %i.fa.fa-user-plus.fa-fw 
+          Ny person
+      %li
+        %a{:href => inactive_people_path}
+          %i.fa.fa-user-times.fa-fw 
+          Raderade personer
+      %li
+        %a{:href => users_path}
+          %i.fa.fa-users.fa-fw
+          Användare
+      %li
+        %a{:href => inactive_users_path}
+          %i.fa.fa-user-times.fa-fw 
+          Raderade användare               
 / /.sidebar-collapse
 / /.navbar-static-side

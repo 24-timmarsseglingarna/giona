@@ -1,4 +1,4 @@
-%h1=@person.first_name + ' ' + @person.last_name  
+%h1=@person.name
 
 %p
   %b Förnamn:
@@ -41,6 +41,22 @@
     %b Id i externt system:
     = @person.external_id
 
+  %p
+    %b Användarkonto:
+    = user_role @person
+
+  %p
+    %b Granska:
+    = @person.review
+
+- unless @person.teams.nil?
+  %p
+    %b Regattor:
+    %ul
+      - for team in @person.teams
+        %li= link_to team_in_regatta(team), team 
+
+%p
   = link_to 'Redigera', edit_person_path(@person)
 
   - if @person.deleted_at.present?

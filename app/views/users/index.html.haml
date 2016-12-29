@@ -1,0 +1,23 @@
+.row
+.col-lg-12
+%h1 Användare
+.panel.panel-default
+  .panel-heading
+    Användare
+  / /.panel-heading
+  .panel-body
+    %table#giona-users.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th Email
+          %th Role
+      %tbody  
+        - @users.each do |user|
+          %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{user_path(user)}';", :style => "cursor: pointer;"}
+            %td= user.email
+            %td= user.role
+      
+  :javascript
+    $(document).ready(function() {
+    $('#giona-users').DataTable();
+    } );  

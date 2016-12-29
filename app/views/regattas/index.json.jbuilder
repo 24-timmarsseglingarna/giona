@@ -1,0 +1,1 @@
+json.array! @regattas, partial: 'regattas/regatta', as: :regatta

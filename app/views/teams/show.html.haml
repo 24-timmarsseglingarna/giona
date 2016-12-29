@@ -1,0 +1,65 @@
+%h1 Deltagaranmälan/loggbok
+
+- unless @team.race.nil?
+  - unless @team.race.regatta.nil?
+    %p
+      %b Regatta:
+      = @team.race.regatta.name
+    %p
+      %b Arrangör:
+      = @team.race.regatta.organizer
+    =link_to @team.race.regatta.name, @team.race.regatta
+  %p
+    %b Segling:
+    =link_to race_brief(@team.race), @team.race
+     
+%p
+  %b Startnummer:
+  = @team.start_number
+%p
+  %b Team:
+  = @team.name
+%p
+  %b Båt:
+  - unless @team.boat.nil?
+    = link_to @team.boat_name, @team.boat
+  - else
+    = @team.boat_name
+%p
+  %b Båttyp:
+  - unless @team.boat.nil?
+    = link_to @team.boat_class_name, @team.boat.boat_class
+  - else
+    = @team.boat_class_name
+%p
+  %b Segelnummer:
+  = @team.boat_sail_number
+%p
+  %b Handikapp:
+  = @team.handicap
+%p
+  %b Startplats:
+  = @team.start_point
+- unless @team.skipper.nil?  
+  %p
+    %b Befälhavare:
+    = link_to(@team.skipper.name, @team.skipper) 
+- unless @team.seamen.empty?  
+  %p
+    %b Gastar:
+    %ul
+      - for person in @team.seamen do 
+        %li= link_to person.name, person
+%p
+  %b Resultat:
+  Plakettdistans
+  = @team.plaque_distance unless @team.plaque_distance.nil?
+  M.
+  - if @team.did_not_start
+    Startade inte. 
+  - if @team.did_not_finish
+    Fullföljde inte.
+
+= link_to 'Edit', edit_team_path(@team)
+\|
+= link_to 'Back', teams_path
