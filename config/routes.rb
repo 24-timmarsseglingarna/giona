@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :boats
+  resources :boat_classes
   resources :teams
   resources :races
   resources :regattas
