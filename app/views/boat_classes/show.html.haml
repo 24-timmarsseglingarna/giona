@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @boat_class.name
+%p
+  %b Handicap:
+  = @boat_class.handicap
+%p
+  %b External:
+  = @boat_class.external_id
+%p
+  %b External system:
+  = @boat_class.external_system
+
+= link_to 'Edit', edit_boat_class_path(@boat_class)
+\|
+= link_to 'Back', boat_classes_path

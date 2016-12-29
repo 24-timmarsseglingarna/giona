@@ -1,0 +1,33 @@
+%h1 Listing boats
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Sail number
+      %th Vhf call sign
+      %th Ais mmsi
+      %th Boat class
+      %th External
+      %th External system
+      %th
+      %th
+      %th
+
+  %tbody
+    - @boats.each do |boat|
+      %tr
+        %td= boat.name
+        %td= boat.sail_number
+        %td= boat.vhf_call_sign
+        %td= boat.ais_mmsi
+        %td= boat.boat_class_id
+        %td= boat.external_id
+        %td= boat.external_system
+        %td= link_to 'Show', boat
+        %td= link_to 'Edit', edit_boat_path(boat)
+        %td= link_to 'Destroy', boat, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Boat', new_boat_path

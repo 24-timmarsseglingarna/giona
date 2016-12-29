@@ -1,0 +1,9 @@
+= semantic_form_for @boat_class do |f|
+  = f.inputs do
+    = f.input :name
+    = f.input :handicap
+    = f.input :external_id
+    = f.input :external_system
+
+  = f.actions do
+    = f.action :submit, :as => :input

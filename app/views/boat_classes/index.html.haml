@@ -1,0 +1,27 @@
+%h1 Listing boat_classes
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Handicap
+      %th External
+      %th External system
+      %th
+      %th
+      %th
+
+  %tbody
+    - @boat_classes.each do |boat_class|
+      %tr
+        %td= boat_class.name
+        %td= boat_class.handicap
+        %td= boat_class.external_id
+        %td= boat_class.external_system
+        %td= link_to 'Show', boat_class
+        %td= link_to 'Edit', edit_boat_class_path(boat_class)
+        %td= link_to 'Destroy', boat_class, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Boat class', new_boat_class_path

@@ -1,0 +1,27 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @boat.name
+%p
+  %b Sail number:
+  = @boat.sail_number
+%p
+  %b Vhf call sign:
+  = @boat.vhf_call_sign
+%p
+  %b Ais mmsi:
+  = @boat.ais_mmsi
+%p
+  %b Boat class:
+  = @boat.boat_class_id
+%p
+  %b External:
+  = @boat.external_id
+%p
+  %b External system:
+  = @boat.external_system
+
+= link_to 'Edit', edit_boat_path(@boat)
+\|
+= link_to 'Back', boats_path
