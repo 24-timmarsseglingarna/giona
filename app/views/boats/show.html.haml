@@ -15,7 +15,12 @@
   %p
     %b AIS mmsi:
     = @boat.ais_mmsi
-
+-unless @boat.teams.nil?
+  %p
+    %b Varit anmäld till    
+  %ul
+    - for team in @boat.teams
+      %li= link_to team_in_regatta(team), team  
 
 = link_to 'Edit', edit_boat_path(@boat)
 \|

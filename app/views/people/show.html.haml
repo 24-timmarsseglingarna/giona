@@ -49,11 +49,12 @@
     %b Granska:
     = @person.review
 
-%p
-  %b Regattor:
-  %ul
-    - for team in @person.teams
-      %li= link_to team_in_regatta(team), team 
+- unless @person.teams.nil?
+  %p
+    %b Regattor:
+    %ul
+      - for team in @person.teams
+        %li= link_to team_in_regatta(team), team 
 
 %p
   = link_to 'Redigera', edit_person_path(@person)

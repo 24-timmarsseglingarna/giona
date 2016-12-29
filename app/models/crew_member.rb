@@ -1,4 +1,4 @@
 class CrewMember < ApplicationRecord
-  belongs_to :team, dependent: :destroy
-  belongs_to :person, dependent: :destroy
+  belongs_to :team
+  belongs_to :person
 end

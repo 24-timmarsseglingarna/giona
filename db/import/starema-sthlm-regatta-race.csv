@@ -83,7 +83,7 @@ SeglingFNStart,SeglingStartDag,SeglingStartTid,SeglingPeriod,StartDagCtr,StartVe
 93,09/06/08 00:00:00,07:00-07:30,12,93,Lör,09/06/08 00:00:00,2008,H,3,07:00-07:30,Sthlm-2008H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2008 i Stockholm
 93,09/06/08 00:00:00,07:00-07:30,24,93,Lör,09/06/08 00:00:00,2008,H,3,07:00-07:30,Sthlm-2008H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2008 i Stockholm
 93,09/06/08 00:00:00,07:00-07:30,12,93,Lör,09/06/08 00:00:00,2008,H,3,07:00-07:30,Sthlm-2008H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2008 i Stockholm
-96,08/16/08 00:00:00,07:00-07:30,12,96,Lör,08/16/08 00:00:00,2008,H,3,07:00-07:30,Sthlm-2008S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen2008 i Stockholm
+96,08/16/08 00:00:00,07:00-07:30,12,96,Lör,08/16/08 00:00:00,2008,H,3,07:00-07:30,Sthlm-2008S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen 2008 i Stockholm
 98,06/06/09 00:00:00,07:00-07:30,12,98,Lör,06/06/09 00:00:00,2009,V,3,07:00-07:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
 98,06/06/09 00:00:00,07:00-07:30,24,98,Lör,06/06/09 00:00:00,2009,V,3,07:00-07:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
 98,06/06/09 00:00:00,07:00-07:30,12,98,Lör,06/06/09 00:00:00,2009,V,3,07:00-07:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
@@ -92,15 +92,15 @@ SeglingFNStart,SeglingStartDag,SeglingStartTid,SeglingPeriod,StartDagCtr,StartVe
 99,06/06/09 00:00:00,12:00-12:30,24,99,Lör,06/06/09 00:00:00,2009,V,2,12:00-12:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
 100,06/05/09 00:00:00,12:00-20:00,48,100,Fre,06/05/09 00:00:00,2009,V,1,12:00-20:00,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
 101,06/04/09 00:00:00,12:00-20:00,72,101,Tors,06/04/09 00:00:00,2009,V,1,12:00-20:00,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
-104,08/15/09 00:00:00,07:00-07:30,12,104,Lör,08/15/09 00:00:00,2009,H,3,07:00-07:30,Sthlm-2009S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen2009 i Stockholm
+104,08/15/09 00:00:00,07:00-07:30,12,104,Lör,08/15/09 00:00:00,2009,H,3,07:00-07:30,Sthlm-2009S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen 2009 i Stockholm
 105,09/05/09 00:00:00,07:00-07:30,12,105,Lör,09/05/09 00:00:00,2009,H,3,07:00-07:30,Sthlm-2009H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2009 i Stockholm
 106,09/05/09 00:00:00,12:00-12:30,24,106,Lör,09/05/09 00:00:00,2009,H,2,12:00-12:30,Sthlm-2009H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2009 i Stockholm
 107,09/04/09 00:00:00,12:00-20:00,48,107,Fre,09/04/09 00:00:00,2009,H,1,12:00-20:00,Sthlm-2009H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2009 i Stockholm
 112,06/05/10 00:00:00,12:00-12:30,24,112,Lör,06/05/10 00:00:00,2010,V,2,12:00-12:30,Sthlm-2010V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2010 i Stockholm
 113,06/05/10 00:00:00,07:00-07:30,12,113,Lör,06/05/10 00:00:00,2010,V,3,07:00-07:30,Sthlm-2010V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2010 i Stockholm
 114,06/04/10 00:00:00,12:00-20:00,48,114,Fre,06/04/10 00:00:00,2010,V,1,12:00-20:00,Sthlm-2010V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2010 i Stockholm
-119,08/15/10 00:00:00,07:00-07:30,12,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A
-126,08/14/10 00:00:00,07:00-07:30,12,126,Lör,08/14/10 00:00:00,2010,H,3,07:00-07:30,Sthlm-2010S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen2010 i Stockholm
+119,08/15/10 00:00:00,07:00-07:30,12,119,Lör,08/15/10 00:00:00,2010,H,3,07:00-07:30,Sthlm-2010S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen 2010 i Stockholm
+126,08/14/10 00:00:00,07:00-07:30,12,126,Lör,08/14/10 00:00:00,2010,H,3,07:00-07:30,Sthlm-2010S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen 2010 i Stockholm
 127,09/04/10 00:00:00,12:00-12:30,24,127,Lör,09/04/10 00:00:00,2010,H,2,12:00-12:30,Sthlm-2010H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2010 i Stockholm
 128,09/04/10 00:00:00,07:00-07:30,12,128,Lör,09/04/10 00:00:00,2010,H,3,07:00-07:30,Sthlm-2010H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2010 i Stockholm
 129,09/03/10 00:00:00,12:00-20:00,48,129,Fre,09/03/10 00:00:00,2010,H,1,12:00-20:00,Sthlm-2010H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2010 i Stockholm
@@ -222,7 +222,7 @@ SeglingFNStart,SeglingStartDag,SeglingStartTid,SeglingPeriod,StartDagCtr,StartVe
 99,06/06/09 00:00:00,12:00-12:30,24,99,Lör,06/06/09 00:00:00,2009,V,2,12:00-12:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
 98,06/06/09 00:00:00,07:00-07:30,12,98,Lör,06/06/09 00:00:00,2009,V,3,07:00-07:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
 99,06/06/09 00:00:00,12:00-12:30,24,99,Lör,06/06/09 00:00:00,2009,V,2,12:00-12:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
-104,08/15/09 00:00:00,07:00-07:30,12,104,Lör,08/15/09 00:00:00,2009,H,3,07:00-07:30,Sthlm-2009S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen2009 i Stockholm
+104,08/15/09 00:00:00,07:00-07:30,12,104,Lör,08/15/09 00:00:00,2009,H,3,07:00-07:30,Sthlm-2009S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen 2009 i Stockholm
 105,09/05/09 00:00:00,07:00-07:30,12,105,Lör,09/05/09 00:00:00,2009,H,3,07:00-07:30,Sthlm-2009H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2009 i Stockholm
 106,09/05/09 00:00:00,12:00-12:30,24,106,Lör,09/05/09 00:00:00,2009,H,2,12:00-12:30,Sthlm-2009H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2009 i Stockholm
 34,08/27/05 00:00:00,12:00-12:30,24,34,Lör,08/27/05 00:00:00,2005,H,2,12:00-12:30,Sthlm-2005H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2005 i Stockholm
@@ -415,10 +415,7 @@ SeglingFNStart,SeglingStartDag,SeglingStartTid,SeglingPeriod,StartDagCtr,StartVe
 99,06/06/09 00:00:00,12:00-12:30,24,99,Lör,06/06/09 00:00:00,2009,V,2,12:00-12:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
 112,06/05/10 00:00:00,12:00-12:30,24,112,Lör,06/05/10 00:00:00,2010,V,2,12:00-12:30,Sthlm-2010V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2010 i Stockholm
 113,06/05/10 00:00:00,07:00-07:30,12,113,Lör,06/05/10 00:00:00,2010,V,3,07:00-07:30,Sthlm-2010V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2010 i Stockholm
-119,08/15/10 00:00:00,07:00-07:30,12,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A
-126,08/14/10 00:00:00,07:00-07:30,12,126,Lör,08/14/10 00:00:00,2010,H,3,07:00-07:30,Sthlm-2010S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen2010 i Stockholm
 99,06/06/09 00:00:00,12:00-12:30,24,99,Lör,06/06/09 00:00:00,2009,V,2,12:00-12:30,Sthlm-2009V,Svenska Kryssarklubbens Stockholmskrets,Vårseglingen ,Vårseglingen 2009 i Stockholm
-126,08/14/10 00:00:00,07:00-07:30,12,126,Lör,08/14/10 00:00:00,2010,H,3,07:00-07:30,Sthlm-2010S,Svenska Kryssarklubbens Stockholmskrets,Specialseglingen,Specialseglingen2010 i Stockholm
 129,09/03/10 00:00:00,12:00-20:00,48,129,Fre,09/03/10 00:00:00,2010,H,1,12:00-20:00,Sthlm-2010H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2010 i Stockholm
 127,09/04/10 00:00:00,12:00-12:30,24,127,Lör,09/04/10 00:00:00,2010,H,2,12:00-12:30,Sthlm-2010H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2010 i Stockholm
 132,08/31/10 00:00:00,12:00-20:00,120,132,Tis,08/31/10 00:00:00,2010,H,1,12:00-20:00,Sthlm-2010H,Svenska Kryssarklubbens Stockholmskrets,Höstseglingen ,Höstseglingen 2010 i Stockholm
