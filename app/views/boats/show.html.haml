@@ -1,26 +1,21 @@
-%p#notice= notice
-
-%p
-  %b Name:
+%h1 
+  %i.fa.fa-ship.fa-fw
   = @boat.name
 %p
-  %b Sail number:
+  %b Båttyp:
+  = link_to(@boat.boat_class.name, @boat.boat_class) unless @boat.boat_class.nil?
+%p
+  %b Segelnummer:
   = @boat.sail_number
-%p
-  %b Vhf call sign:
-  = @boat.vhf_call_sign
-%p
-  %b Ais mmsi:
-  = @boat.ais_mmsi
-%p
-  %b Boat class:
-  = @boat.boat_class_id
-%p
-  %b External:
-  = @boat.external_id
-%p
-  %b External system:
-  = @boat.external_system
+- unless @boat.vhf_call_sign.blank?  
+  %p
+    %b VHF-anrop:
+    = @boat.vhf_call_sign
+- unless @boat.ais_mmsi.blank?    
+  %p
+    %b AIS mmsi:
+    = @boat.ais_mmsi
+
 
 = link_to 'Edit', edit_boat_path(@boat)
 \|

@@ -1,27 +1,27 @@
-%h1 Listing boat_classes
+%h1 Alla båttyper
 
-%table
-  %thead
-    %tr
-      %th Name
-      %th Handicap
-      %th External
-      %th External system
-      %th
-      %th
-      %th
+= link_to 'Lägg in en ny båttyp', new_boat_class_path
 
-  %tbody
-    - @boat_classes.each do |boat_class|
-      %tr
-        %td= boat_class.name
-        %td= boat_class.handicap
-        %td= boat_class.external_id
-        %td= boat_class.external_system
-        %td= link_to 'Show', boat_class
-        %td= link_to 'Edit', edit_boat_class_path(boat_class)
-        %td= link_to 'Destroy', boat_class, :method => :delete, :data => { :confirm => 'Are you sure?' }
+.panel.panel-default
+  .panel-heading
+    Båtar
+  / /.panel-heading
+  .panel-body
+    %table#giona-boat_classes.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th Name
+          %th Handicap
+          %th Antal
+      %tbody
+        - @boat_classes.each do |boat_class|
+          %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{boat_class_path(boat_class)}';", :style => "cursor: pointer;"}
+            %td= boat_class.name
+            %td= boat_class.handicap
+            %td= boat_class.boats.count
 
-%br
 
-= link_to 'New Boat class', new_boat_class_path
+:javascript
+  $(document).ready(function() {
+  $('#giona-boat_classes').DataTable();
+  } );  

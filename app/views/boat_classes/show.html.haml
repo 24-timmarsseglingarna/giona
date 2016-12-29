@@ -1,17 +1,13 @@
-%p#notice= notice
-
-%p
-  %b Name:
+%h1
   = @boat_class.name
 %p
-  %b Handicap:
-  = @boat_class.handicap
+  %b Handikapp:
+  = number_with_precision(@boat_class.handicap, precision: 3)
 %p
-  %b External:
-  = @boat_class.external_id
-%p
-  %b External system:
-  = @boat_class.external_system
+  %b Båtar:
+  %ul
+    - for boat in @boat_class.boats
+      %li= link_to boat_brief(boat), boat
 
 = link_to 'Edit', edit_boat_class_path(@boat_class)
 \|

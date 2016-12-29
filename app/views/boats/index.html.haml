@@ -1,33 +1,31 @@
-%h1 Listing boats
+%h1 Alla båtar
 
-%table
-  %thead
-    %tr
-      %th Name
-      %th Sail number
-      %th Vhf call sign
-      %th Ais mmsi
-      %th Boat class
-      %th External
-      %th External system
-      %th
-      %th
-      %th
+= link_to 'Lägg in en ny båt', new_boat_path
 
-  %tbody
-    - @boats.each do |boat|
-      %tr
-        %td= boat.name
-        %td= boat.sail_number
-        %td= boat.vhf_call_sign
-        %td= boat.ais_mmsi
-        %td= boat.boat_class_id
-        %td= boat.external_id
-        %td= boat.external_system
-        %td= link_to 'Show', boat
-        %td= link_to 'Edit', edit_boat_path(boat)
-        %td= link_to 'Destroy', boat, :method => :delete, :data => { :confirm => 'Are you sure?' }
+.panel.panel-default
+  .panel-heading
+    Båtar
+  / /.panel-heading
+  .panel-body
+    %table#giona-boats.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th Namn
+          %th Typ
+          %th Segelnr
+          %th VHF
+          %th AIS
+      %tbody
+        - @boats.each do |boat|
+          %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{boat_path(boat)}';", :style => "cursor: pointer;"}
+            %td= boat.name
+            %td= boat.boat_class.name
+            %td= boat.sail_number
+            %td= boat.vhf_call_sign
+            %td= boat.ais_mmsi
 
-%br
 
-= link_to 'New Boat', new_boat_path
+:javascript
+  $(document).ready(function() {
+  $('#giona-boats').DataTable();
+  } );  

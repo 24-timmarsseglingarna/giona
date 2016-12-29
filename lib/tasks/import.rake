@@ -122,6 +122,41 @@ namespace :import do
       end
     end
 
+    task :boat_class => :environment do
+      # File format: 
+      # BoatNr, BoatTyp, BoatSxkTal
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatType.csv"), "r"), :headers => true) do |row|
+        boat_class = BoatClass.find_or_create_by(external_id: row['BoatNr'].to_s.strip.to_i, external_system: 'Starema-St')
+        boat_class.name = row['BoatTyp'].to_s
+        puts row if boat_class.name.blank?
+        puts row if boat_class.handicap <= 0
+        boat_class.handicap = row['BoatSxkTal']
+        boat_class.save!
+      end
+    end
+
+    task :boat => :environment do
+      # File format: 
+      # BoatIndNr, BoatIndFNBoattyp, BoatIndNamn, BoatIndParmNr, BoatIndVHF, BoatIndMobil
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatIndivid.csv"), "r"), :headers => true) do |row|
+        boat = Boat.find_or_create_by(external_id: row['BoatIndNr'].to_s.strip.to_i, external_system: 'Starema-St')
+        boat.name = row['BoatIndNamn'].to_s
+        puts row if boat.name.blank?
+        boat.sail_number = row['BoatIndParmNr'].to_i
+        boat.vhf_call_sign = row['BoatIndVHF'].to_s
+        boat_class = BoatClass.find_by(external_id: row['BoatIndFNBoattyp'].to_s.strip.to_i, external_system: 'Starema-St')
+        unless boat_class.nil?
+          boat.boat_class_id = boat_class.id
+          boat.save!
+        else
+          puts row
+        end
+      end
+    end
+
+
+
+
   end
 end 
 
