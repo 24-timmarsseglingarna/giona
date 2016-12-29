@@ -1,7 +1,7 @@
 class Person < ApplicationRecord
 
   has_one :user
-  has_many :crew_members
+  has_many :crew_members, dependent: :destroy
   has_many :teams, through: :crew_members
 
   acts_as_paranoid( :column => 'deleted_at', :column_type => 'time')

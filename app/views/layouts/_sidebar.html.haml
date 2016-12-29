@@ -8,6 +8,14 @@
       %a{:href => people_path}
         %i.fa.fa-users.fa-fw
         Personer
+    %li
+      %a{:href => boats_path}
+        %i.fa.fa-ship.fa-fw
+        Båtar
+    %li
+      %a{:href => boat_classes_path}
+        %i.fa.fa-ship.fa-fw
+        Båttyper
     -if user_signed_in?
       %li
         %a{:href => new_person_path}

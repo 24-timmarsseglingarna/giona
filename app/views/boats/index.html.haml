@@ -1,0 +1,38 @@
+%h1 Alla båtar
+
+= link_to 'Lägg in en ny båt', new_boat_path
+
+.panel.panel-default
+  .panel-heading
+    Båtar
+  / /.panel-heading
+  .panel-body
+    %table#giona-boats.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th Namn
+          %th Typ
+          %th Segelnr
+          %th VHF
+          %th AIS
+          %th Anmäld gånger
+      %tbody
+        - @boats.each do |boat|
+          %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{boat_path(boat)}';", :style => "cursor: pointer;"}
+            %td= boat.name
+            %td
+              - if boat.boat_class.nil?
+                ***
+              - else
+                = boat.boat_class.name
+
+            %td= boat.sail_number
+            %td= boat.vhf_call_sign
+            %td= boat.ais_mmsi
+            %td= boat.teams.count
+
+
+:javascript
+  $(document).ready(function() {
+  $('#giona-boats').DataTable();
+  } );  

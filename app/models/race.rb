@@ -1,6 +1,6 @@
 class Race < ApplicationRecord
-  belongs_to :regatta, dependent: :destroy
-  has_many :teams
+  belongs_to :regatta
+  has_many :teams, dependent: :destroy
   
   validates :start_from, presence: true
 

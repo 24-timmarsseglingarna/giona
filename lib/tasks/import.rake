@@ -41,7 +41,6 @@ namespace :import do
         start_from = DateTime.strptime(start_day + ' ' + start_time_from, "%m/%d/%y %H:%M") - 2.hours #.in_time_zone("Europe/Stockholm")
         start_to = DateTime.strptime(start_day + ' ' + start_time_to, "%m/%d/%y %H:%M") - 2.hours #.in_time_zone("Europe/Stockholm")
         external_id = row['StartDagCtr'].to_s.strip.to_i
-        puts "startday #{start_from}"
         race = Race.find_or_create_by( external_system: 'Starema-St', 
                                        external_id: external_id, 
                                        regatta_id: regatta.id, 
@@ -69,6 +68,7 @@ namespace :import do
         race = Race.find_by( external_id: row['SeglingFNStart'].to_s.strip.to_i, external_system: 'Starema-St')
         if race.nil?
           puts row
+          team.destroy!
         else 
           team.race_id = race.id
           team.start_number = row['SeglingStartnr'].to_s.strip
@@ -78,8 +78,18 @@ namespace :import do
           team.start_point = row['SeglingFNStartpunkt'].to_s.strip.to_i
           team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
           team.plaque_distance = row['SeglingPlakatDist'].to_s.strip.to_f
-          team.name = "#{team.boat_name} / #{team.boat_class_name}"
-
+          team.name = "#{team.boat_name} / #{team.boat_class_name}" if team.name.blank?
+          boat = Boat.find_by( external_id: row['SeglingFNBoatIndivid'].to_s.strip.to_i, external_system: 'Starema-St')
+          if boat.nil?
+            puts row
+          else
+            team.boat_id = boat.id
+            if team.boat_sail_number == 0 || team.boat_sail_number.nil? 
+              team.boat_sail_number = nil
+            else
+              team.boat_sail_number = boat.sail_number
+            end
+          end
           if row['SeglingEjStart'].to_i == 1
             team.did_not_start = true 
           else
@@ -122,6 +132,55 @@ namespace :import do
       end
     end
 
+    task :boat_classes => :environment do
+      # File format: 
+      # BoatNr, BoatTyp, BoatSxkTal
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatType.csv"), "r"), :headers => true) do |row|
+        boat_class = BoatClass.find_or_create_by(external_id: row['BoatNr'].to_s.strip.to_i, external_system: 'Starema-St')
+        boat_class.name = row['BoatTyp'].to_s
+        boat_class.handicap = row['BoatSxkTal']
+        puts row if boat_class.handicap <= 0
+        if boat_class.name.blank?
+          puts row 
+        else
+          boat_class.save!
+        end
+      end
+    end
+
+    task :boats => :environment do
+      # File format: 
+      # BoatIndNr, BoatIndFNBoattyp, BoatIndNamn, BoatIndParmNr, BoatIndVHF, BoatIndMobil
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatIndivid.csv"), "r"), :headers => true) do |row|
+        boat = Boat.find_or_create_by(external_id: row['BoatIndNr'].to_s.strip.to_i, external_system: 'Starema-St')
+        name = row['BoatIndNamn'].to_s
+        if name.blank?
+          puts row
+          name = '*** no name ***'
+        end
+        boat.name = name
+        sail_number = row['BoatIndParmNr'].to_i
+        if sail_number == 0
+          boat.sail_number = nil
+        else
+          boat.sail_number = sail_number
+        end
+        boat.vhf_call_sign = row['BoatIndVHF'].to_s
+        boat.ais_mmsi = nil
+        boat_class = BoatClass.find_by(external_id: row['BoatIndFNBoattyp'].to_i, external_system: 'Starema-St')
+        if boat_class.present?
+          boat.boat_class_id = boat_class.id
+          boat.save!
+        else
+          puts row
+          boat.destroy!
+        end
+      end
+    end
+
+
+
+
   end
 end 
 
@@ -131,7 +190,7 @@ namespace :batch do
     for team in Team.all
       skipper = team.skipper
       if team.skipper.nil?
-        puts "Team with id: " + team.id.to_s + " is missing a skipper."
+        puts "Team with id: " + team.id.to_s + " is missing a skipper. External_id: " + team.external_id.to_s
       else
         if team.skipper.last_name.nil?
           puts "Skipper with id: " + team.skipper.id.to_s + "is missing a last name."
@@ -147,27 +206,36 @@ end
 namespace :destroy do
 
   task :regattas => :environment do
-    Regatta.delete_all
+    Regatta.destroy_all
   end  
 
   task :races => :environment do
-    Race.delete_all
+    Race.destroy_all
   end  
 
   task :people => :environment do
-    Person.delete_all
+    Person.destroy_all
   end  
 
   task :users => :environment do
-    User.delete_all
+    User.destroy_all
   end  
 
   task :teams => :environment do
-    Team.delete_all
+    Team.destroy_all
   end  
 
   task :crew_members => :environment do
-    CrewMember.delete_all
+    CrewMember.destroy_all
   end  
+
+  task :boat_classes => :environment do
+    BoatClass.destroy_all
+  end  
+
+  task :boats => :environment do
+    Boat.destroy_all
+  end  
+
 
 end
