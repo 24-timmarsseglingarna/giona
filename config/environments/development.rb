@@ -56,4 +56,7 @@ Rails.application.configure do
 
   # Link in mails to application. 
   config.action_mailer.default_url_options = { host: 'localhost', port: 8080 }
+
+  config.web_console.whitelisted_ips = '10.0.2.2'
+
 end
