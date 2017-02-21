@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  
+  acts_as_token_authenticatable
 
   belongs_to :person
 
