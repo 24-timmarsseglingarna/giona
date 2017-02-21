@@ -3,6 +3,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   #protect_from_forgery with: :exception
 
+  #acts_as_token_authentication_handler_for User
+
+
   before_filter :authenticate
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
