@@ -214,6 +214,9 @@ sv:
         signed_in: Välkommen, du är inloggad.
         signed_out: Nu är du utloggad. Tack och hej!
         already_authenticated: Du är redan inloggad. Inget problem.
+    failure:
+      user:
+        unauthenticated: Nu behöver du logga in.
   formtastic:
     :yes: Ja
     :no: Nej

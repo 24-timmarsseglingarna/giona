@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161229103014) do
+ActiveRecord::Schema.define(version: 20170221183435) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "Geos_Points", id: false, force: :cascade do |t|
+    t.integer "point_id", null: false
+    t.integer "geo_id",   null: false
+    t.index ["geo_id", "point_id"], name: "index_Geos_Points_on_geo_id_and_point_id", using: :btree
+    t.index ["point_id", "geo_id"], name: "index_Geos_Points_on_point_id_and_geo_id", using: :btree
+  end
 
   create_table "boat_classes", force: :cascade do |t|
     t.string   "name"
@@ -47,6 +54,26 @@ ActiveRecord::Schema.define(version: 20161229103014) do
     t.index ["team_id"], name: "index_crew_members_on_team_id", using: :btree
   end
 
+  create_table "geos", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "version"
+    t.boolean  "approved",   default: false
+    t.datetime "checked_at"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  create_table "legs", force: :cascade do |t|
+    t.integer  "point_id"
+    t.integer  "to_point_id"
+    t.float    "distance"
+    t.boolean  "offshore"
+    t.string   "note"
+    t.integer  "version"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "people", force: :cascade do |t|
     t.string   "email"
     t.string   "first_name"
@@ -64,6 +91,18 @@ ActiveRecord::Schema.define(version: 20161229103014) do
     t.string   "country"
     t.time     "deleted_at"
     t.boolean  "review",          default: false
+  end
+
+  create_table "points", force: :cascade do |t|
+    t.integer  "number"
+    t.string   "name"
+    t.string   "definition"
+    t.float    "lat"
+    t.float    "lng"
+    t.string   "note"
+    t.integer  "version"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "races", force: :cascade do |t|
@@ -111,12 +150,12 @@ ActiveRecord::Schema.define(version: 20161229103014) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  default: "",    null: false
-    t.string   "encrypted_password",     default: "",    null: false
+    t.string   "email",                             default: "",    null: false
+    t.string   "encrypted_password",                default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,     null: false
+    t.integer  "sign_in_count",                     default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
@@ -124,12 +163,14 @@ ActiveRecord::Schema.define(version: 20161229103014) do
     t.string   "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.integer  "role",                   default: 0,     null: false
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+    t.integer  "role",                              default: 0,     null: false
     t.time     "deleted_at"
     t.integer  "person_id"
-    t.boolean  "review",                 default: false
+    t.boolean  "review",                            default: false
+    t.string   "authentication_token",   limit: 30
+    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["person_id"], name: "index_users_on_person_id", using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
