@@ -3,10 +3,7 @@
   = f.inputs do
     = f.input :first_name
     = f.input :last_name
-    - if @person.email.empty?
-      = f.input :email
-    - else
-      = f.input :email, :input_html => { :readonly => true }
+    = f.input :email
     = f.input :phone
     = f.input :birthday, :start_year => Date.today.year-100, :end_year => Date.today.year
     = f.input :co
