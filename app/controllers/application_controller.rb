@@ -1,12 +1,15 @@
 class ApplicationController < ActionController::Base
   include Pundit
-  protect_from_forgery
+  #protect_from_forgery
+
+  before_action :authenticate_user!
+  before_action :insert_token_headers
   #protect_from_forgery with: :exception
 
-  #acts_as_token_authentication_handler_for User
-
-
-  before_filter :authenticate
+  
+  acts_as_token_authentication_handler_for User
+  respond_to :html, :json
+  protect_from_forgery with: :null_session
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -33,9 +36,16 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def authenticate
-    authenticate_or_request_with_http_basic do |username, password|
-      username == "demo" && password == "demo"
+  def after_successful_token_authentication
+    # Make the authentication token to be disposable - for example
+    #renew_authentication_token!
+  end
+
+
+  def insert_token_headers
+    if current_user
+      response.headers["X-User-Email"] = "#{current_user.email}"
+      response.headers["X-User-Token"] = "#{current_user.authentication_token}"
     end
   end
 
@@ -44,6 +54,13 @@ class ApplicationController < ActionController::Base
   def user_not_authorized
     flash[:alert] = "You are not authorized to perform this action."
     redirect_to(request.referrer || root_path)
+  end
+
+
+  def after_successful_token_authentication
+    # Make the authentication token to be disposable - for example
+    logger.info "**************TOKEN AUTH***************************"
+    renew_authentication_token!
   end
 
 end
