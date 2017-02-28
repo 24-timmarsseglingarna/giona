@@ -1,11 +1,21 @@
 Rails.application.routes.draw do
 
+  namespace :api, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :people,        only: [:index, :show]
+      resources :boats,         only: [:index, :show]
+      resources :boat_classes,  only: [:index, :show]
+      resources :teams,         only: [:index, :show]
+      resources :races,         only: [:index, :show]
+      resources :regattas,      only: [:index, :show]
+    end
+  end
+
   resources :boats
   resources :boat_classes
   resources :teams
   resources :races
   resources :regattas
-  root to: "regattas#index"
 
   devise_for :users
 
@@ -27,6 +37,7 @@ Rails.application.routes.draw do
     end
   end
 
+  root to: "regattas#index"
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
