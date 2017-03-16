@@ -1,7 +1,6 @@
 class ApiController < ActionController::Base
   include Pundit
 
-  #before_action :authenticate_user!
   before_action :insert_token_headers
   
   respond_to :json
