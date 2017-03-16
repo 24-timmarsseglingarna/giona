@@ -203,6 +203,24 @@ namespace :batch do
   end  
 end
 
+
+namespace :mess do
+  task :details => :environment do
+    for person in Person.all
+      person.birthday = person.birthday + (rand (3600) - 1800).day unless person.birthday.nil?
+      person.co = nil
+      person.zip = Faker::Address.zip
+      person.phone = nil
+      person.email = Faker::Internet.email unless (person.email == 'stefan.pettersson@lumano.se' || person.email == 'mbj4668@gmail.com' )
+      #person.first_name = ''
+      #person.last_name = ''
+      person.street = Faker::Address.street_name + ' ' + (rand(150)+1).to_s
+      person.external_system = 'obfuscated' 
+      person.save!
+    end
+  end  
+end
+
 namespace :destroy do
 
   task :regattas => :environment do
