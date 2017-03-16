@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.1.9
+Version 0.1.9.1
 
 =======
 # Populate
