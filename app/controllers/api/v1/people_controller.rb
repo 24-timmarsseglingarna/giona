@@ -2,6 +2,7 @@ module Api
   module V1
     class PeopleController < ApiController
       acts_as_token_authentication_handler_for User
+      before_action :insert_token_headers
 
       def index
         respond_with Person.all
