@@ -1,10 +1,13 @@
 class BoatClassesController < ApplicationController
+
   before_action :set_boat_class, only: [:show, :edit, :update, :destroy]
+
+  has_scope :has_boat
 
   # GET /boat_classes
   # GET /boat_classes.json
   def index
-    @boat_classes = BoatClass.all
+    @boat_classes = apply_scopes(BoatClass).all
   end
 
   # GET /boat_classes/1

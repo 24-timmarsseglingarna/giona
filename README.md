@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.1.9.1
+Version 0.2.0
 
 =======
 # Populate
@@ -15,3 +15,6 @@ rake import:starema:teams
 rake import:starema:crew_members
 rake batch:team_names
 rake mess:details # In development only
+
+
+======

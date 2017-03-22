@@ -9,6 +9,10 @@
   %b Granska:
   = @user.review
 
+- if @user.person
+  %p
+    %b Person
+    = link_to @user.person.name, @user.person
 
 %p
   = link_to 'Admin: Redigera', edit_user_path(@user)

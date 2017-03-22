@@ -1,10 +1,13 @@
 class RegattasController < ApplicationController
-  before_action :set_regatta, only: [:show, :edit, :update, :destroy]
+  has_scope :is_active, :type => :boolean, allow_blank: true
+  has_scope :has_race
 
+  before_action :set_regatta, only: [:show, :edit, :update, :destroy]
+ 
   # GET /regattas
   # GET /regattas.json
   def index
-    @regattas = Regatta.all
+    @regattas = apply_scopes(Regatta).all
   end
 
   # GET /regattas/1
@@ -70,6 +73,6 @@ class RegattasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def regatta_params
-      params.require(:regatta).permit(:name, :organizer, :email_from, :name_from, :email_to, :confirmation)
+      params.require(:regatta).permit(:name, :organizer, :email_from, :name_from, :email_to, :confirmation, :active)
     end
 end
