@@ -39,6 +39,7 @@ class ApplicationController < ActionController::Base
   def insert_token_headers
     if current_user
       response.headers["X-User-Email"] = "#{current_user.email}"
+      response.headers["X-User-Id"] = "#{current_user.id.to_s}"
       response.headers["X-User-Token"] = "#{current_user.authentication_token}"
     end
   end

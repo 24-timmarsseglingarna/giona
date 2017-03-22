@@ -41,9 +41,12 @@
     %b Id i externt system:
     = @person.external_id
 
-  %p
-    %b Användarkonto:
-    = user_role @person
+  - if @person.user
+    %p
+      %b Användarkonto:
+      = user_role @person
+      = link_to @person.user.email, @person.user
+
 
   %p
     %b Granska:

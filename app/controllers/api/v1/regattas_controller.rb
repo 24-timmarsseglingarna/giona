@@ -2,8 +2,11 @@ module Api
   module V1
     class RegattasController < ApiController
 
+      has_scope :is_active, :type => :boolean, allow_blank: true
+      has_scope :has_race
+
       def index
-        respond_with Regatta.all
+        respond_with apply_scopes(Regatta).all
       end
 
       def show

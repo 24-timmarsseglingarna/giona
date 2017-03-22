@@ -1,10 +1,11 @@
 class RacesController < ApplicationController
   before_action :set_race, only: [:show, :edit, :update, :destroy]
+  has_scope :from_regatta, :has_team
 
   # GET /races
   # GET /races.json
   def index
-    @races = Race.all
+    @races = apply_scopes(Race).all
   end
 
   # GET /races/1

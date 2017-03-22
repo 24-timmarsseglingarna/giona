@@ -2,12 +2,17 @@ class PeopleController < ApplicationController
 
   acts_as_token_authentication_handler_for User
 
+  has_scope :has_team, :has_user
+
+
   before_action :set_person, only: [:show, :edit, :update, :destroy]
+  before_action :insert_token_headers
+
 
   # GET /people
   # GET /people.json
   def index
-    @people = Person.all
+    @people = apply_scopes(Person).all
     #authorize Person
   end
 
