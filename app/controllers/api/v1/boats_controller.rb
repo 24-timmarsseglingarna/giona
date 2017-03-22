@@ -2,8 +2,10 @@ module Api
   module V1
     class BoatsController < ApiController
       
+      has_scope :from_boat_class, :has_team
+
       def index
-        respond_with Boat.all
+        respond_with apply_scopes(Boat).all
       end
 
       def show

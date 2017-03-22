@@ -1,11 +1,13 @@
 class TeamsController < ApplicationController
 
+  has_scope :from_race, :from_boat, :has_person
+
   before_action :set_team, only: [:show, :edit, :update, :destroy]
 
   # GET /teams
   # GET /teams.json
   def index
-    @teams = Team.all
+    @teams = apply_scopes(Team).all
   end
 
   # GET /teams/1

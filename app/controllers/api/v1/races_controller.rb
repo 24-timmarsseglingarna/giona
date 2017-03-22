@@ -1,9 +1,11 @@
 module Api
   module V1
     class RacesController < ApiController
-      
+
+      has_scope :from_regatta, :has_team
+
       def index
-        respond_with Race.all
+        respond_with apply_scopes(Race).all
       end
 
       def show

@@ -253,6 +253,7 @@ sv:
         name_from: Avsändarnamn
         email_to: Informera om anmälan
         confirmation: Mejlbekräftelse
+        active: Aktiv
     hints:
       person:
         phone: Det nummer som är lättast att nå dig på, gärna mobilen.
@@ -260,3 +261,4 @@ sv:
       race:
       regatta:
         email_to: En rad mejladresser, separerade med kommatecken.
+        active: Det går att anmäla sig och segla.
