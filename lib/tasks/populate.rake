@@ -205,7 +205,7 @@ namespace :batch do
 
   task :race_names => :environment do
     for race in Race.all
-      if true race.name.nil?
+      if race.name.nil?
         race.name = race.regatta.name + ', period: ' + race.period.to_s + ', start från: ' + I18n.l(race.start_from, format: :short)
         race.save!
       end
