@@ -11,6 +11,10 @@ class Team < ApplicationRecord
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
   scope :has_person, ->(p_id) {joins(:people).where("people.id = ?", p_id) }
+  scope :is_active, ->(value = true) { where(active: value) }
+  scope :did_not_start, ->(value = true) { where(did_not_start: value) }
+  scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
+  scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
   
   after_initialize :set_defaults, unless: :persisted?
   # The set_defaults will only work if the object is new
