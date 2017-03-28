@@ -18,13 +18,12 @@ QUERIES
 CLASSES
 regattas?is_active=boolean&has_race=N
 races?from_regatta=N&has_team=O
-teams?from_race=N&from_boat=O&has_person=P
+teams?from_race=N&from_boat=O&has_person=P?is_active=boolean&did_not_start=boolean&did_not_finish=boolean&has_paid_fee=boolean
 people?from_team=N&has_user=O
 user.from_person=N
 boats?has_class=N&from_team=O
-boat_classes?from_boat
+boat_classes?from_boat=N
 
 
 TODO
 regattas?from_organizer=N # New class Organizer needed.
-teams?is_active=boolean   # Attribute or state machine needed.

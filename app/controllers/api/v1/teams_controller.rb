@@ -3,6 +3,7 @@ module Api
     class TeamsController < ApiController
 
       has_scope :from_race, :from_boat, :has_person
+      has_scope :is_active, :type => :boolean, allow_blank: true
       
       def index
         respond_with apply_scopes(Team).all
