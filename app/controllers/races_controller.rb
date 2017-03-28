@@ -72,6 +72,6 @@ class RacesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def race_params
-      params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :mandatory_common_finish, :external_system, :external_id, :regatta_id)
+      params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :mandatory_common_finish, :external_system, :external_id, :regatta_id, :name)
     end
 end

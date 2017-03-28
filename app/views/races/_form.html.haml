@@ -7,6 +7,7 @@
 
 = semantic_form_for @race do |f|
   = f.inputs do
+    = f.input :name
     = f.input :start_from, :as => :string
     = f.input :start_to, :as => :string
     = f.input :period, :as => :radio, :collection => [12, 24, 48, 72, 96, 120]

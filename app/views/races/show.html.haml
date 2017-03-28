@@ -1,9 +1,12 @@
-%h1="#{@race.period} - #{@race.regatta.name}"
+%h1=@race.name
 
 %p
   %b Regatta:
   = link_to( @race.regatta.name, @race.regatta ) unless @race.regatta.nil?
 
+%p
+  %b Startperiod:
+  = @race.name
 %p
   %b Startperiod:
   från
