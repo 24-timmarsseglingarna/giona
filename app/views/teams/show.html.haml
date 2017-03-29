@@ -44,6 +44,10 @@
 %p
   %b Startplats:
   = @team.start_point
+%p
+  %b Målplats:
+  = @team.finish_point
+
 - unless @team.skipper.nil?  
   %p
     %b Befälhavare:
