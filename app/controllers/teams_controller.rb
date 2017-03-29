@@ -76,6 +76,6 @@ class TeamsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
-      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_class_name, :boat_sail_number, :start_point, :start_number, :handicap, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active)
+      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_class_name, :boat_sail_number, :start_point, :finish_point, :start_number, :handicap, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active)
     end
 end
