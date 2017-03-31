@@ -29,6 +29,9 @@ namespace :testdata do
 
     boat = Boat.find_by(name: 'Gumman 100')
     skipper = Person.find_by(email: 'mbj4668@gmail.com')
+    user = User.find_by(email: 'mbj4668@gmail.com')
+    user.person=skipper
+    user.save!
 
     team = Team.new
     team.name = 'Gumman 100/Martin'
@@ -92,7 +95,7 @@ namespace :testdata do
 
     race = Race.new
     race.regatta = regatta
-    race.name = '24-timmars 2017E Stockholm'
+    race.name = '12-timmars ensam 2017E Stockholm'
     race.start_from = DateTime.parse('2017-06-17 07:00+2')
     race.start_to = DateTime.parse('2017-06-17 07:00+2')
     race.period = 12
