@@ -21,3 +21,15 @@
 .alert {
 	margin-top: 20px;
 }
+
+.panel{ 
+  p, ul {
+  	font-size: 2em;
+	line-height: 1.25em;
+  }
+  ul {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+  }
+}
