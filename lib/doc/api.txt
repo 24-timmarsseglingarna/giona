@@ -1,7 +1,7 @@
 API specification - version 1
 
 SIGN IN
-curl -H "Content-Type: application/json" -X POST -d '{ "user": { "email": "someone@somewhere.com", "password": "secret" } }' http://localhost:8080/users/sign_in
+curl -H "Content-Type: application/json" -X POST -d '{ "user": { "email": "someone@somewhere.com", "password": "secret" } }' http://localhost:8080/users/sign_in.json
 
 REQUEST HEADERS
 X-User-Email
