@@ -2,7 +2,6 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :recover]
   has_scope :from_person
 
-
   # GET /users
   # GET /users.json
   def index

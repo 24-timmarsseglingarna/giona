@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_action :insert_token_headers
   before_action :store_current_location, :unless => :devise_controller?
-  respond_to :html
+  respond_to :html, :json
 
   def after_sign_in_path_for(resource)
     insert_token_headers
