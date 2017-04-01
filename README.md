@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.2.3.1
+Version 0.2.4
 
 =======
 # Populate during developmentish conditions
