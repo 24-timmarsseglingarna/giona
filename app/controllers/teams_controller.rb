@@ -1,6 +1,6 @@
 class TeamsController < ApplicationController
 
-  has_scope :from_race, :from_boat, :has_person
+  has_scope :from_regatta, :from_race, :from_boat, :has_person
   has_scope :is_active, :type => :boolean, allow_blank: true
   has_scope :did_not_start, :type => :boolean, allow_blank: true
   has_scope :did_not_finish, :type => :boolean, allow_blank: true
