@@ -2,7 +2,7 @@ module Api
   module V1
     class TeamsController < ApiController
 
-      has_scope :from_race, :from_boat, :has_person
+      has_scope :from_regatta, :from_race, :from_boat, :has_person
       has_scope :is_active, :type => :boolean, allow_blank: true
       
       def index
