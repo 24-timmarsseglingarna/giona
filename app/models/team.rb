@@ -19,20 +19,19 @@ class Team < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?
   # The set_defaults will only work if the object is new
 
+  def from_same_regatta  
+     race.regatta.teams
+  end
+
+  def self.from_regatta r_id
+    Regatta.find(r_id).teams
+  end
+
   def set_defaults
     self.did_not_start  ||= false
     self.did_not_finish  ||= false
     self.paid_fee  ||= false
     self.name ||= "#{self.boat_name} / #{boat_class_name}"
-  end
-
-  def xskipper
-    cm = self.crew_members.where(skipper: true)
-    if cm.nil?
-      nil
-    else
-      cm.first.person
-    end
   end
 
 end
