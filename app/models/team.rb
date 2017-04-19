@@ -26,13 +26,5 @@ class Team < ApplicationRecord
     self.name ||= "#{self.boat_name} / #{boat_class_name}"
   end
 
-  def xskipper
-    cm = self.crew_members.where(skipper: true)
-    if cm.nil?
-      nil
-    else
-      cm.first.person
-    end
-  end
 
 end

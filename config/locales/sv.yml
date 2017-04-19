@@ -241,6 +241,7 @@ sv:
         external_id: Id i annat system
         external_system: Annat system
       race:
+        name: Segling
         start_from: Startperiodens början
         start_to: Startperiodens slut
         period: Seglingsperiod
@@ -254,6 +255,13 @@ sv:
         email_to: Informera om anmälan
         confirmation: Mejlbekräftelse
         active: Aktiv
+      team:
+        race: Segling
+        start_point: Startplats
+        finish_point: Målgång
+        offshore: Havssträckor
+        :yes: apa
+        :no: banan
     hints:
       person:
         phone: Det nummer som är lättast att nå dig på, gärna mobilen.
@@ -262,3 +270,4 @@ sv:
       regatta:
         email_to: En rad mejladresser, separerade med kommatecken.
         active: Det går att anmäla sig och segla.
+      team:

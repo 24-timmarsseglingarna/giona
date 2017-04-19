@@ -1,11 +1,12 @@
 class RacesController < ApplicationController
   before_action :set_race, only: [:show, :edit, :update, :destroy]
-  has_scope :from_regatta, :has_team
+  has_scope :from_regatta, :has_team, :has_period
+  has_scope :is_active, :type => :boolean, allow_blank: true
 
   # GET /races
   # GET /races.json
   def index
-    @races = apply_scopes(Race).all
+    @races = apply_scopes(Race).all.order(regatta_id: :asc, period: :asc)
   end
 
   # GET /races/1
@@ -17,7 +18,7 @@ class RacesController < ApplicationController
   def new
     @race = Race.new
     @race.period = params[:period]
-    @race.regatta_id = params[:regatta]
+    @race.regatta_id = params[:regatta_id]
   end
 
   # GET /races/1/edit
@@ -28,7 +29,6 @@ class RacesController < ApplicationController
   # POST /races.json
   def create
     @race = Race.new(race_params)
-
     respond_to do |format|
       if @race.save
         format.html { redirect_to @race, notice: 'Race was successfully created.' }

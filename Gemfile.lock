@@ -84,6 +84,7 @@ GEM
       actionpack (>= 3.2.13)
     formtastic-bootstrap (3.1.1)
       formtastic (>= 3.0)
+    forty_facets (0.1.4)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     haml (4.0.7)
@@ -244,6 +245,7 @@ DEPENDENCIES
   execjs
   faker
   formtastic-bootstrap
+  forty_facets
   haml
   haml-rails
   has_scope

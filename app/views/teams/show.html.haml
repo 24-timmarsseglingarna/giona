@@ -4,36 +4,56 @@
   .panel-heading
     Seglingen
   .panel-body    
-    Regatta:
+    .legend Regatta:
     %p
       %i.fa.fa-trophy(aria-hidden='true')    
       =link_to @team.race.regatta.name, @team.race.regatta  
-    Arrangör:
+    .legend Arrangör:
     %p  
-      %i.fa.fa-university(aria-hidden='true')
+      %i.fa.fa-institution(aria-hidden='true')
       = @team.race.regatta.organizer  
-    Segling:
+    .legend Segling:
     %p  
       %i.fa.fa-bell(aria-hidden='true')
-      = @team.race.name  
-    Start:
+      = @team.race.name      
+    .legend Starttid:
     %p  
       %i.fa.fa-clock-o(aria-hidden='true')    
       = race_start(@team.race)
-    %p
-      %i.fa.fa-flag(aria-hidden='true')
-      = @team.start_point
-      Rönnskär
-    Seglingsperiod:
+    .legend Seglingsperiod:
     %p
       %i.fa.fa-hourglass-1(aria-hidden='true')    
       = @team.race.period
       timmar
-    Mål:
+    =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-primary"
+    
+
+
+.panel.panel-default
+  .panel-heading
+    Seglingsdetaljer
+  .panel-body        
+    .legend Startplats:
+    %p
+      %i.fa.fa-flag(aria-hidden='true')
+      = @team.start_point
+      Rönnskär
+    .legend Mål:
     %p
       %i.fa.fa-flag-checkered(aria-hidden='true') 
       = @team.finish_point
       Grönö
+    .legend Havs-/kustsegling:
+    %p
+      %i.fa.fa-exchange(aria-hidden='true')
+      - if @team.offshore
+        Hav
+      - else
+        Kust
+
+    =link_to 'Ändra', edit_team_path(@team, :section=>:race_details), class: "btn btn-primary"
+
+
 
 .panel.panel-default
   .panel-heading
@@ -51,55 +71,83 @@
         = link_to @team.boat_name, @team.boat
       - else
         = @team.boat_name
-    Startnummer:
+    .legend Startnummer:
     %p
       %i.fa.fa-file-text-o(aria-hidden='true') 
       = @team.start_number        
-    Handikapp:
+    .legend Handikapp:
     %p
       %i.fa.fa-calculator(aria-hidden='true')    
       = @team.handicap
       enligt SRS-tabell
+
+    =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-primary"
 
 
 .panel.panel-default
   .panel-heading
     Besättningen
   .panel-body
-    Skeppare:
+    .legend Skeppare:
     %p
       %i.fa.fa-user-circle(aria-hidden='true') 
       - unless @team.skipper.nil?  
         = link_to(@team.skipper.name, @team.skipper) 
-
+    -unless @team.skipper.nil?
+      =@team.skipper.phone 
+      %br
+      =@team.skipper.email
+      %br
+      =@team.skipper.street
+      %br
+      #{@team.skipper.zip} #{@team.skipper.city}
+      %br
+      =@team.skipper.country
+    %br
+    .legend Gastar:
     - unless @team.seamen.empty?  
-      Gastar:
       %ul
         - for person in @team.seamen do 
           %li
             %i.fa.fa-user-o(aria-hidden='true') 
             = link_to person.name, person
-    Söker gastar:
+    - else
+      %p         
+        %i.fa.fa-user-o(aria-hidden='true')
+    .legend Söker gastar:
     %p
       %i.fa.fa-user-secret(aria-hidden='true') 
-      Tre
+      3
+
+    =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-primary"
 
 
-
-%p
-  %b Status, är aktiv:
-  = @team.active
-     
-
-%p
-  %b Resultat:
-  Plakettdistans
-  = @team.plaque_distance unless @team.plaque_distance.nil?
-  M.
-  - if @team.did_not_start
-    Startade inte. 
-  - if @team.did_not_finish
-    Fullföljde inte.
+.panel.panel-default
+  .panel-heading
+    Resultat
+  .panel-body
+    .legend Status:
+    %p
+      %i.fa.fa-file(aria-hidden='true') 
+      -if @team.active
+        Aktiv
+      -else
+        Arkiverad
+    .legend Plakettdistans:
+    %p
+      %i.fa.fa-trophy(aria-hidden='true') 
+      = @team.plaque_distance unless @team.plaque_distance.nil?
+      M.
+    - if @team.did_not_start
+      Startade inte. 
+    - if @team.did_not_finish
+      Fullföljde inte.
+    Start: ...
+    Mål: ... 
+    Försening: ... minuter.
+    Seglad distans: .... M
+    Avdrag: .... M
+    Resulterande distans: ... M
 
 = link_to 'Edit', edit_team_path(@team)
 \|

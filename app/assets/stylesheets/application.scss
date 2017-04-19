@@ -22,14 +22,34 @@
 	margin-top: 20px;
 }
 
-.panel{ 
+.panel {
+  
+  margin-top: 2em;
+
   p, ul {
-  	font-size: 2em;
-	line-height: 1.25em;
+  	font-size: 1em;
+	  line-height: 1.25em;
   }
+  
   ul {
     list-style-type: none;
     margin-left: 0;
     padding-left: 0;
   }
+  
+  .legend {
+    font-style: italic;
+  }
+
+  .get_back {
+    margin-top: 2em;
+  }
+}
+
+a.btn:visited {
+	color: #ffffff;
+}
+
+.list-group.race-select {
+  max-width: 400px;
 }

@@ -8,6 +8,8 @@ class TeamsController < ApplicationController
 
   before_action :set_team, only: [:show, :edit, :update, :destroy]
 
+  before_action :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
+
   # GET /teams
   # GET /teams.json
   def index
@@ -22,20 +24,21 @@ class TeamsController < ApplicationController
   # GET /teams/new
   def new
     @team = Team.new
+    @team.race_id = params[:race_id]
   end
 
   # GET /teams/1/edit
   def edit
+    @races = @team.race.regatta.races
   end
 
   # POST /teams
   # POST /teams.json
   def create
     @team = Team.new(team_params)
-
     respond_to do |format|
       if @team.save
-        format.html { redirect_to @team, notice: 'Team was successfully created.' }
+        format.html { redirect_to @team, notice: 'Deltagaranmälan skapad.' }
         format.json { render :show, status: :created, location: @team }
       else
         format.html { render :new }
@@ -49,7 +52,7 @@ class TeamsController < ApplicationController
   def update
     respond_to do |format|
       if @team.update(team_params)
-        format.html { redirect_to @team, notice: 'Team was successfully updated.' }
+        format.html { redirect_to @team, notice: 'Deltagaranmälan uppdaterad.' }
         format.json { render :show, status: :ok, location: @team }
       else
         format.html { render :edit }
@@ -63,7 +66,7 @@ class TeamsController < ApplicationController
   def destroy
     @team.destroy
     respond_to do |format|
-      format.html { redirect_to teams_url, notice: 'Team was successfully destroyed.' }
+      format.html { redirect_to teams_url, notice: 'Deltagaranmälan raderad.' }
       format.json { head :no_content }
     end
   end
@@ -76,6 +79,6 @@ class TeamsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
-      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_class_name, :boat_sail_number, :start_point, :finish_point, :start_number, :handicap, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active)
+      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_class_name, :boat_sail_number, :start_point, :finish_point, :start_number, :handicap, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore)
     end
 end
