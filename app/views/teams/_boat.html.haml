@@ -1,0 +1,21 @@
+.panel.panel-default
+  .panel-heading
+    Båten
+  .panel-body    
+    .legend Regatta:
+    %p
+      %i.fa.fa-trophy(aria-hidden='true')    
+      =@team.race.regatta.name  
+    .legend Segling:
+    %p  
+      %i.fa.fa-bell(aria-hidden='true')
+      = @team.race.name  
+
+
+    = semantic_form_for @team do |f|
+      = f.inputs do
+        = f.input :boat
+      = f.actions do
+        = f.action :submit, :as => :input
+    %br
+    = link_to 'Tillbaka', @team, :class => :get_back

@@ -3,6 +3,9 @@ class Person < ApplicationRecord
   has_one :user
   has_many :crew_members, dependent: :destroy
   has_many :teams, through: :crew_members
+  has_many :friends, -> { distinct }, :through => :teams, :source => :people
+
+  default_scope { order 'last_name, first_name' }
 
   scope :has_team, ->(t_id) { joins(:teams).where("teams.id = ?", t_id) }
   scope :has_user, ->(u_id) { joins(:user).where("users.id = ?", u_id) }
@@ -32,7 +35,8 @@ class Person < ApplicationRecord
   end
 
   def name
-    "#{self.first_name} #{self.last_name}"
+    "#{self.first_name} #{self.last_name}, #{self.city unless self.city.blank?} "
   end
+
 
 end

@@ -25,17 +25,26 @@ class TeamsController < ApplicationController
   def new
     @team = Team.new
     @team.race_id = params[:race_id]
+    @team.skipper = current_user.person if current_user
+    @races = Race.is_active true
   end
 
   # GET /teams/1/edit
   def edit
     @races = @team.race.regatta.races
+    if current_user
+      @known_people = current_user.person.friends
+    else
+      @known_people = Person.all
+    end
+
   end
 
   # POST /teams
   # POST /teams.json
   def create
     @team = Team.new(team_params)
+    @team.skipper = current_user.person if current_user
     respond_to do |format|
       if @team.save
         format.html { redirect_to @team, notice: 'Deltagaranmälan skapad.' }
@@ -61,6 +70,30 @@ class TeamsController < ApplicationController
     end
   end
 
+
+  def remove_seaman
+    person_id = params[:person_id]
+    @team = Team.find params[:id]
+    crew_member = CrewMember.find_by person_id: person_id, team_id: @team.id
+    unless crew_member.skipper
+      name = crew_member.person.name
+      crew_member.destroy!
+      redirect_to @team, notice: "Gasten #{name} struken från besättningslistan."
+    else
+      redirect_to @team, alert: 'Det går inte att stryka skepparen, välj först en ny skeppare.'
+    end
+  end
+
+
+  def set_skipper
+    person = Person.find params[:person_id]
+    @team = Team.find params[:id]
+    crew_member = CrewMember.find_by person_id: person.id, team_id: @team.id
+    @team.set_skipper person
+    redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
+  end
+
+
   # DELETE /teams/1
   # DELETE /teams/1.json
   def destroy
@@ -79,6 +112,6 @@ class TeamsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
-      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_class_name, :boat_sail_number, :start_point, :finish_point, :start_number, :handicap, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore)
+      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_class_name, :boat_sail_number, :start_point, :finish_point, :start_number, :handicap, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :boat_id, person_ids: [])
     end
 end

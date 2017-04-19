@@ -1,9 +1,9 @@
-%h1 New team
+%h1 Ny deltagaranmälan
 
 
 = semantic_form_for @team do |f|
   = f.inputs do
-    = f.input :race, :collection => @races
+    = f.input :race, :as => :radio, :collection => @races
   = f.actions do
     = f.action :submit, :as => :input
 
