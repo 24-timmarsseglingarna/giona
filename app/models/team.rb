@@ -34,8 +34,6 @@ class Team < ApplicationRecord
     self.name ||= "#{self.boat_name} / #{boat_class_name}"
   end
 
-<<<<<<< HEAD
-=======
   def set_skipper person
     crew_skipper = self.skipper_crew_member
     unless crew_skipper.nil?
@@ -47,5 +45,4 @@ class Team < ApplicationRecord
     new_skipper.save!
   end
 
->>>>>>> feature/better_team_application
 end
