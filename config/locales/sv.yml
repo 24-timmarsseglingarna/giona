@@ -464,6 +464,7 @@ sv:
     failure:
       user:
         unauthenticated: Nu behöver du logga in.
+        not_found_in_database: Vi hittar inte någon användare med den mejladressen. Kolla att du stavade rätt. Annars får du registrera ett nytt konto.
   formtastic:
     :yes: Ja
     :no: Nej

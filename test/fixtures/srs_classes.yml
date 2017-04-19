@@ -1,0 +1,33 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  pdf_link: MyString
+  klassning: MyString
+  skl: MyString
+  b: 1.5
+  d: 1.5
+  depl: 1.5
+  srs: 1.5
+  srs_wo_fly: 1.5
+  boat_class_id: 1
+  version: 1
+  version_name: MyString
+  import_description: MyString
+  handicap: 1.5
+
+two:
+  name: MyString
+  pdf_link: MyString
+  klassning: MyString
+  skl: MyString
+  b: 1.5
+  d: 1.5
+  depl: 1.5
+  srs: 1.5
+  srs_wo_fly: 1.5
+  boat_class_id: 1
+  version: 1
+  version_name: MyString
+  import_description: MyString
+  handicap: 1.5

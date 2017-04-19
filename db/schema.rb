@@ -10,17 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170419135754) do
+ActiveRecord::Schema.define(version: 20170419183559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "Geos_Points", id: false, force: :cascade do |t|
-    t.integer "point_id", null: false
-    t.integer "geo_id",   null: false
-    t.index ["geo_id", "point_id"], name: "index_Geos_Points_on_geo_id_and_point_id", using: :btree
-    t.index ["point_id", "geo_id"], name: "index_Geos_Points_on_point_id_and_geo_id", using: :btree
-  end
 
   create_table "boat_classes", force: :cascade do |t|
     t.string   "name"
@@ -54,26 +47,6 @@ ActiveRecord::Schema.define(version: 20170419135754) do
     t.index ["team_id"], name: "index_crew_members_on_team_id", using: :btree
   end
 
-  create_table "geos", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "version"
-    t.boolean  "approved",   default: false
-    t.datetime "checked_at"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-  end
-
-  create_table "legs", force: :cascade do |t|
-    t.integer  "point_id"
-    t.integer  "to_point_id"
-    t.float    "distance"
-    t.boolean  "offshore"
-    t.string   "note"
-    t.integer  "version"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
   create_table "people", force: :cascade do |t|
     t.string   "email"
     t.string   "first_name"
@@ -91,18 +64,6 @@ ActiveRecord::Schema.define(version: 20170419135754) do
     t.string   "country"
     t.time     "deleted_at"
     t.boolean  "review",          default: false
-  end
-
-  create_table "points", force: :cascade do |t|
-    t.integer  "number"
-    t.string   "name"
-    t.string   "definition"
-    t.float    "lat"
-    t.float    "lng"
-    t.string   "note"
-    t.integer  "version"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "races", force: :cascade do |t|
@@ -129,6 +90,25 @@ ActiveRecord::Schema.define(version: 20170419135754) do
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
     t.boolean  "active",       default: false
+  end
+
+  create_table "srs_classes", force: :cascade do |t|
+    t.string   "name"
+    t.string   "pdf_link"
+    t.string   "klassning"
+    t.string   "skl"
+    t.float    "b"
+    t.float    "d"
+    t.float    "depl"
+    t.float    "srs"
+    t.float    "srs_wo_fly"
+    t.integer  "boat_class_id"
+    t.integer  "version"
+    t.string   "version_name"
+    t.string   "import_description"
+    t.float    "handicap"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
   end
 
   create_table "teams", force: :cascade do |t|
