@@ -3,10 +3,10 @@ class Team < ApplicationRecord
   belongs_to :boat
   has_many :crew_members, dependent: :destroy
   has_many :people, :through => :crew_members
-  has_many :non_skipper_crew_members, -> { where(skipper: false) }, class_name: 'CrewMember'
-  has_many :seamen, :through => :non_skipper_crew_members, :source => :person
-  has_one :skipper_crew_members, -> { where(skipper: true) }, class_name: 'CrewMember'
-  has_one :skipper, :through => :skipper_crew_members, :source => :person
+  has_many :non_skipper_crew_member, -> { where(skipper: false) }, class_name: 'CrewMember'
+  has_many :seamen, :through => :non_skipper_crew_member, :source => :person
+  has_one :skipper_crew_member, -> { where(skipper: true) }, class_name: 'CrewMember'
+  has_one :skipper, :through => :skipper_crew_member, :source => :person
 
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
@@ -34,4 +34,18 @@ class Team < ApplicationRecord
     self.name ||= "#{self.boat_name} / #{boat_class_name}"
   end
 
+<<<<<<< HEAD
+=======
+  def set_skipper person
+    crew_skipper = self.skipper_crew_member
+    unless crew_skipper.nil?
+      crew_skipper.skipper = false
+      crew_skipper.save!
+    end
+    new_skipper = CrewMember.find_by team_id: self.id, person_id: person.id
+    new_skipper.skipper = true
+    new_skipper.save!
+  end
+
+>>>>>>> feature/better_team_application
 end

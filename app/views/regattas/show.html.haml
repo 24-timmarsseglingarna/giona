@@ -13,7 +13,7 @@
 %ul
   - @regatta.races.each do |race|
     %li  
-      =link_to race_brief(race), race
+      =link_to race.name, race
 
 %p
   %b Kontaktperson: 
@@ -31,12 +31,12 @@
   %p
     %b **Admin** Lägg till en segling:
     %ul 
-      %li=link_to "Period: 12", new_race_path(:regatta => @regatta, :period => '12')  
-      %li=link_to "Period: 24", new_race_path(:regatta => @regatta, :period => '24')  
-      %li=link_to "Period: 48", new_race_path(:regatta => @regatta, :period => '48')  
-      %li=link_to "Period: 72", new_race_path(:regatta => @regatta, :period => '72')  
-      %li=link_to "Period: 96", new_race_path(:regatta => @regatta, :period => '96')  
-      %li=link_to "Period: 120", new_race_path(:regatta => @regatta, :period => '120')  
+      %li=link_to "Period: 12", new_race_path(:regatta_id => @regatta.id, :period => '12')  
+      %li=link_to "Period: 24", new_race_path(:regatta_id => @regatta.id, :period => '24')  
+      %li=link_to "Period: 48", new_race_path(:regatta_id => @regatta.id, :period => '48')  
+      %li=link_to "Period: 72", new_race_path(:regatta_id => @regatta.id, :period => '72')  
+      %li=link_to "Period: 96", new_race_path(:regatta_id => @regatta.id, :period => '96')  
+      %li=link_to "Period: 120", new_race_path(:regatta_id => @regatta.id, :period => '120')  
 
 
 .panel.panel-default
