@@ -1,2 +1,0 @@
-class SrsClass < ApplicationRecord
-end

@@ -10,19 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170419183559) do
+ActiveRecord::Schema.define(version: 20170419135754) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "boat_classes", force: :cascade do |t|
-    t.string   "name"
-    t.float    "handicap"
-    t.integer  "external_id"
-    t.string   "external_system"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
 
   create_table "boats", force: :cascade do |t|
     t.string   "name"
@@ -90,25 +81,6 @@ ActiveRecord::Schema.define(version: 20170419183559) do
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
     t.boolean  "active",       default: false
-  end
-
-  create_table "srs_classes", force: :cascade do |t|
-    t.string   "name"
-    t.string   "pdf_link"
-    t.string   "klassning"
-    t.string   "skl"
-    t.float    "b"
-    t.float    "d"
-    t.float    "depl"
-    t.float    "srs"
-    t.float    "srs_wo_fly"
-    t.integer  "boat_class_id"
-    t.integer  "version"
-    t.string   "version_name"
-    t.string   "import_description"
-    t.float    "handicap"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
   end
 
   create_table "teams", force: :cascade do |t|
