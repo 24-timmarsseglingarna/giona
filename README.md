@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.2.4.1
+Version 0.2.5
 
 =======
 # Populate during developmentish conditions
@@ -17,6 +17,7 @@ rake batch:team_names
 rale batch:race_names
 rake mess:details # In development only
 rake testdata:team # In development/test only
+rake scrape:srs:keelboats
 
 
 ======
