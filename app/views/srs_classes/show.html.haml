@@ -1,0 +1,48 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @srs_class.name
+%p
+  %b Pdf link:
+  = @srs_class.pdf_link
+%p
+  %b Klassning:
+  = @srs_class.klassning
+%p
+  %b Skl:
+  = @srs_class.skl
+%p
+  %b B:
+  = @srs_class.b
+%p
+  %b D:
+  = @srs_class.d
+%p
+  %b Depl:
+  = @srs_class.depl
+%p
+  %b Srs:
+  = @srs_class.srs
+%p
+  %b Srs wo fly:
+  = @srs_class.srs_wo_fly
+%p
+  %b Boat class:
+  = @srs_class.boat_class_id
+%p
+  %b Version:
+  = @srs_class.version
+%p
+  %b Version name:
+  = @srs_class.version_name
+%p
+  %b Import description:
+  = @srs_class.import_description
+%p
+  %b Handicap:
+  = @srs_class.handicap
+
+= link_to 'Edit', edit_srs_class_path(@srs_class)
+\|
+= link_to 'Back', srs_classes_path
