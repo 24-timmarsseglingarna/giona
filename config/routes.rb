@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :srs_classes
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       resources :people,        only: [:index, :show]
@@ -14,6 +15,10 @@ Rails.application.routes.draw do
   resources :boats
   resources :boat_classes
   resources :teams
+  post 'teams/set_skipper'
+  get 'teams/add_seaman'
+  post 'teams/remove_seaman'
+
   resources :races
   resources :regattas
 

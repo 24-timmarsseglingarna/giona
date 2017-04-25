@@ -1,4 +1,44 @@
 require 'csv'
+require 'open-uri'
+require 'nokogiri'
+
+
+namespace :scrape do
+  namespace :srs do
+    task :keelboats => :environment do
+      SrsClass.destroy_all #TODO
+      srs_pdf_base_url = "http://matbrev.svensksegling.se"
+      srs_table_url = "http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
+      doc = Nokogiri::HTML(open(srs_table_url))
+      entries = doc.xpath('//tr')
+      first_row = true
+      for entry in entries
+        unless first_row
+          srs_class = SrsClass.new
+          srs_class.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          srs_class.pdf_link = srs_pdf_base_url + entry.css('td')[0].css('a').attr('href').to_s.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          srs_class.klassning = entry.css('td')[1].text.to_s
+          srs_class.skl = entry.css('td')[2].text.gsub(',', '.').to_f
+          srs_class.b = entry.css('td')[3].text.gsub(',', '.').to_f
+          srs_class.d = entry.css('td')[4].text.gsub(',', '.').to_f
+          srs_class.depl = entry.css('td')[5].text.gsub(',', '.').to_f
+          srs_class.srs = entry.css('td')[6].text.gsub(',', '.').to_f
+          srs_class.srs_wo_fly = entry.css('td')[7].text.gsub(',', '.').to_f
+          srs_class.version = 1
+          srs_class.version_name = 'SRS 2017 kölbåt'
+          srs_class.import_description = 'dev import'
+          srs_class.handicap = (srs_class.srs * 1.215).round(2)
+
+          srs_class.save!
+        else
+          first_row = false
+        end
+      end
+    end
+  end
+end
+
+
 
 namespace :import do
   namespace :starema do 

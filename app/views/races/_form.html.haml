@@ -1,9 +1,9 @@
 %p
   %b Regatta:
-  =@race.regatta.name
+  = @race.regatta.name unless @race.regatta.nil?
 %p
   %b Arrangör:
-  =@race.regatta.organizer
+  =@race.regatta.organizer unless @race.regatta.nil?
 
 = semantic_form_for @race do |f|
   = f.inputs do
@@ -13,7 +13,7 @@
     = f.input :period, :as => :radio, :collection => [12, 24, 48, 72, 96, 120]
     = f.input :common_finish
     = f.input :mandatory_common_finish
-    = f.input :regatta, :as => :hidden 
+    = f.input :regatta_id, :as => :hidden 
  
   = f.actions do
     = f.action :submit, :as => :button

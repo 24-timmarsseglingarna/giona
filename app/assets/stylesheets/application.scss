@@ -21,3 +21,48 @@
 .alert {
 	margin-top: 20px;
 }
+
+.panel {
+  
+  margin-top: 2em;
+
+  p, ul {
+  	font-size: 1em;
+	  line-height: 1.25em;
+  }
+  
+  ul {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+  }
+  
+  .legend {
+    font-style: italic;
+  }
+
+  .get_back {
+    margin-top: 2em;
+  }
+
+  .crew_action {
+    padding-left: 2em;
+  }
+
+  a:visited {
+    color: #337ab7;
+  }
+
+  a:hover {
+    background-color: #cccccc;
+  }
+
+}
+
+a.btn:visited {
+	color: #ffffff;
+}
+
+.list-group.race-select {
+  max-width: 400px;
+}
