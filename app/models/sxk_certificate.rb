@@ -1,0 +1,2 @@
+class SxkCertificate < BoatType
+end

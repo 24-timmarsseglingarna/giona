@@ -1,0 +1,2 @@
+class SrsCertificate < BoatType
+end

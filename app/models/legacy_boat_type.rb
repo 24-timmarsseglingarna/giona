@@ -1,0 +1,2 @@
+class LegacyBoatType < BoatType
+end

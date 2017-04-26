@@ -18,6 +18,10 @@ rale batch:race_names
 rake mess:details # In development only
 rake testdata:team # In development/test only
 rake scrape:srs:keelboats
+rake scrape:srs:certificate
+rake import:sxk:certificate
+scrape:srs:multihulls
+scrape:srs:dingies
 
 
 ======

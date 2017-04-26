@@ -1,0 +1,2 @@
+class SrsDingy < BoatType
+end

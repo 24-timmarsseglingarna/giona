@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+  #Sti::Application.routes.draw do
+  #  resources :boat_types
+  #end
+
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       resources :people,        only: [:index, :show]
@@ -11,6 +15,7 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :boat_types
   resources :boats
   resources :teams
   post 'teams/set_skipper'

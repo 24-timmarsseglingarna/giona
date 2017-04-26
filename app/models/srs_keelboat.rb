@@ -1,0 +1,2 @@
+class SrsKeelboat < BoatType
+end

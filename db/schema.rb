@@ -10,10 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170419135754) do
+ActiveRecord::Schema.define(version: 20170425173159) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "boat_types", force: :cascade do |t|
+    t.string   "name"
+    t.float    "handicap"
+    t.datetime "best_before"
+    t.string   "source"
+    t.float    "srs"
+    t.string   "registry_id"
+    t.integer  "sail_number"
+    t.string   "boat_name"
+    t.string   "owner_name"
+    t.string   "external_system"
+    t.string   "external_id"
+    t.string   "type"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
 
   create_table "boats", force: :cascade do |t|
     t.string   "name"

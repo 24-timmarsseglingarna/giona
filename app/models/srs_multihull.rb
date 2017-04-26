@@ -1,0 +1,2 @@
+class SrsMultihull < BoatType
+end

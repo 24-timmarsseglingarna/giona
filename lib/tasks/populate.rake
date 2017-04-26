@@ -4,32 +4,76 @@ require 'nokogiri'
 
 
 namespace :scrape do
+
+  
+  namespace :srs do
+    task :certificate => :environment do
+      SrsCertificate.destroy_all #TODO
+      srs_table_url = "http://matbrev.svensksegling.se/Home/ApprovedList"
+      doc = Nokogiri::HTML(open(srs_table_url))
+      entries = doc.xpath('//tr')
+      first_row = true
+      for entry in entries
+        unless first_row
+          boat_type = SrsCertificate.new
+          boat_type.registry_id = entry.css('td')[0].text.strip
+          boat_type.owner_name = entry.css('td')[1].text.strip
+          boat_type.name = entry.css('td')[2].text.strip
+          boat_type.boat_name = entry.css('td')[3].text.strip 
+          boat_type.sail_number = entry.css('td')[5].text.to_i
+          boat_type.srs = entry.css('td')[8].text.gsub(',', '.').to_f
+          boat_type.handicap = (boat_type.srs * 1.215).round(2)
+          boat_type.source = 'SRS-mätbrev 2017'
+          boat_type.best_before = DateTime.now.in_time_zone.end_of_year
+          boat_type.external_system = 'http://matbrev.svensksegling.se/Home/ApprovedList'
+          boat_type.save!
+        else
+          first_row = false
+        end
+      end
+    end
+  end
+
+
   namespace :srs do
     task :keelboats => :environment do
-      SrsClass.destroy_all #TODO
-      srs_pdf_base_url = "http://matbrev.svensksegling.se"
+      SrsKeelboat.destroy_all #TODO
       srs_table_url = "http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
       for entry in entries
         unless first_row
-          srs_class = SrsClass.new
-          srs_class.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
-          srs_class.pdf_link = srs_pdf_base_url + entry.css('td')[0].css('a').attr('href').to_s.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
-          srs_class.klassning = entry.css('td')[1].text.to_s
-          srs_class.skl = entry.css('td')[2].text.gsub(',', '.').to_f
-          srs_class.b = entry.css('td')[3].text.gsub(',', '.').to_f
-          srs_class.d = entry.css('td')[4].text.gsub(',', '.').to_f
-          srs_class.depl = entry.css('td')[5].text.gsub(',', '.').to_f
-          srs_class.srs = entry.css('td')[6].text.gsub(',', '.').to_f
-          srs_class.srs_wo_fly = entry.css('td')[7].text.gsub(',', '.').to_f
-          srs_class.version = 1
-          srs_class.version_name = 'SRS 2017 kölbåt'
-          srs_class.import_description = 'dev import'
-          srs_class.handicap = (srs_class.srs * 1.215).round(2)
+          boat_type = SrsKeelboat.new
+          boat_type.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          boat_type.srs = entry.css('td')[6].text.gsub(',', '.').to_f
+          boat_type.handicap = (boat_type.srs * 1.215).round(2)
+          boat_type.source = 'SRS kölbåtar 2017'
+          boat_type.best_before = DateTime.now.in_time_zone.end_of_year
+          boat_type.external_system = 'http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter='
+          boat_type.save!
+        else
+          first_row = false
+        end
+      end
+    end
 
-          srs_class.save!
+    task :multihulls => :environment do
+      SrsMultihull.destroy_all #TODO
+      srs_table_url = "http://matbrev.svensksegling.se/home/srsflerskrovlist"
+      doc = Nokogiri::HTML(open(srs_table_url))
+      entries = doc.xpath('//tr')
+      first_row = true
+      for entry in entries
+        unless first_row
+          boat_type = SrsMultihull.new
+          boat_type.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          boat_type.srs = entry.css('td')[1].text.gsub(',', '.').to_f
+          boat_type.handicap = (boat_type.srs * 1.215).round(2)
+          boat_type.source = 'SRS flerskrov 2017'
+          boat_type.best_before = DateTime.now.in_time_zone.end_of_year
+          boat_type.external_system = 'http://matbrev.svensksegling.se/home/srsflerskrovlist'
+          boat_type.save!
         else
           first_row = false
         end
@@ -38,9 +82,44 @@ namespace :scrape do
   end
 end
 
-
-
 namespace :import do
+  namespace :srs do 
+    task :dingies => :environment do
+      SrsDingy.destroy_all
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle-2017.csv"), "r"), :headers => true) do |row|
+        boat_type = SrsDingy.new
+        boat_type.name = row['Typ'].to_s.strip
+        boat_type.srs = row['SRS'].to_f
+        boat_type.handicap = (boat_type.srs * 1.215).round(2)
+        boat_type.source = 'SRS jolle 2017'
+        boat_type.best_before = DateTime.now.in_time_zone.end_of_year
+        boat_type.external_system = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
+        boat_type.save!
+      end
+    end
+  end
+
+  namespace :sxk do 
+    task :certificate => :environment do
+      SxkCertificate.destroy_all
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "sxk-tal-2016.csv"), "r"), :headers => true) do |row|
+        boat_type = SxkCertificate.new
+        boat_type.name = row['Boat'].to_s.strip
+        boat_type.handicap = row['SXKtal'].to_f
+        boat_type.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL' 
+        boat_type.owner_name = row['Owner'].to_s.strip unless row['Owner'].to_s.strip == 'NULL'
+        boat_type.sail_number = row['Segelnr'].to_i
+        boat_type.registry_id = row['Regnr'].to_s.strip
+        boat_type.source = 'SXK-mätbrev'
+        boat_type.best_before = nil #DateTime.now.in_time_zone.end_of_year
+        boat_type.external_system = 'http://aws.24-timmars.nu/phpmyadmin'
+        boat_type.save!
+      end
+    end
+  end
+
+
+
   namespace :starema do 
     task :people => :environment do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Deltagare.csv"), "r"), :headers => true) do |row|
