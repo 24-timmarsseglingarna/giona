@@ -1,6 +1,6 @@
-class CreateBoatTypes < ActiveRecord::Migration[5.0]
+class CreateHandicaps < ActiveRecord::Migration[5.0]
   def change
-    create_table :boat_types do |t|
+    create_table :handicaps do |t|
       t.string :name
       t.float :handicap
       t.datetime :best_before
@@ -11,7 +11,7 @@ class CreateBoatTypes < ActiveRecord::Migration[5.0]
       t.string :boat_name
       t.string :owner_name
       t.string :external_system
-      t.string :external_id
+      t.integer :external_id
       t.string :type
 
       t.timestamps

@@ -1,2 +1,2 @@
-class SrsKeelboat < BoatType
+class SrsKeelboat < Handicap
 end

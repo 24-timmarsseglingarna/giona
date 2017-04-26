@@ -1,2 +1,2 @@
-class LegacyBoatType < BoatType
+class LegacyBoatType < Handicap
 end

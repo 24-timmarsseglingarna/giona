@@ -15,18 +15,18 @@ namespace :scrape do
       first_row = true
       for entry in entries
         unless first_row
-          boat_type = SrsCertificate.new
-          boat_type.registry_id = entry.css('td')[0].text.strip
-          boat_type.owner_name = entry.css('td')[1].text.strip
-          boat_type.name = entry.css('td')[2].text.strip
-          boat_type.boat_name = entry.css('td')[3].text.strip 
-          boat_type.sail_number = entry.css('td')[5].text.to_i
-          boat_type.srs = entry.css('td')[8].text.gsub(',', '.').to_f
-          boat_type.handicap = (boat_type.srs * 1.215).round(2)
-          boat_type.source = 'SRS-mätbrev 2017'
-          boat_type.best_before = DateTime.now.in_time_zone.end_of_year
-          boat_type.external_system = 'http://matbrev.svensksegling.se/Home/ApprovedList'
-          boat_type.save!
+          handicap = SrsCertificate.new
+          handicap.registry_id = entry.css('td')[0].text.strip
+          handicap.owner_name = entry.css('td')[1].text.strip
+          handicap.name = entry.css('td')[2].text.strip
+          handicap.boat_name = entry.css('td')[3].text.strip 
+          handicap.sail_number = entry.css('td')[5].text.to_i
+          handicap.srs = entry.css('td')[8].text.gsub(',', '.').to_f
+          handicap.handicap = (handicap.srs * 1.215).round(2)
+          handicap.source = 'SRS-mätbrev 2017'
+          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.external_system = 'http://matbrev.svensksegling.se/Home/ApprovedList'
+          handicap.save!
         else
           first_row = false
         end
@@ -44,14 +44,14 @@ namespace :scrape do
       first_row = true
       for entry in entries
         unless first_row
-          boat_type = SrsKeelboat.new
-          boat_type.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
-          boat_type.srs = entry.css('td')[6].text.gsub(',', '.').to_f
-          boat_type.handicap = (boat_type.srs * 1.215).round(2)
-          boat_type.source = 'SRS kölbåtar 2017'
-          boat_type.best_before = DateTime.now.in_time_zone.end_of_year
-          boat_type.external_system = 'http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter='
-          boat_type.save!
+          handicap = SrsKeelboat.new
+          handicap.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          handicap.srs = entry.css('td')[6].text.gsub(',', '.').to_f
+          handicap.handicap = (handicap.srs * 1.215).round(2)
+          handicap.source = 'SRS kölbåtar 2017'
+          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.external_system = 'http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter='
+          handicap.save!
         else
           first_row = false
         end
@@ -66,14 +66,14 @@ namespace :scrape do
       first_row = true
       for entry in entries
         unless first_row
-          boat_type = SrsMultihull.new
-          boat_type.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
-          boat_type.srs = entry.css('td')[1].text.gsub(',', '.').to_f
-          boat_type.handicap = (boat_type.srs * 1.215).round(2)
-          boat_type.source = 'SRS flerskrov 2017'
-          boat_type.best_before = DateTime.now.in_time_zone.end_of_year
-          boat_type.external_system = 'http://matbrev.svensksegling.se/home/srsflerskrovlist'
-          boat_type.save!
+          handicap = SrsMultihull.new
+          handicap.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          handicap.srs = entry.css('td')[1].text.gsub(',', '.').to_f
+          handicap.handicap = (handicap.srs * 1.215).round(2)
+          handicap.source = 'SRS flerskrov 2017'
+          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.external_system = 'http://matbrev.svensksegling.se/home/srsflerskrovlist'
+          handicap.save!
         else
           first_row = false
         end
@@ -87,14 +87,14 @@ namespace :import do
     task :dingies => :environment do
       SrsDingy.destroy_all
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle-2017.csv"), "r"), :headers => true) do |row|
-        boat_type = SrsDingy.new
-        boat_type.name = row['Typ'].to_s.strip
-        boat_type.srs = row['SRS'].to_f
-        boat_type.handicap = (boat_type.srs * 1.215).round(2)
-        boat_type.source = 'SRS jolle 2017'
-        boat_type.best_before = DateTime.now.in_time_zone.end_of_year
-        boat_type.external_system = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
-        boat_type.save!
+        handicap = SrsDingy.new
+        handicap.name = row['Typ'].to_s.strip
+        handicap.srs = row['SRS'].to_f
+        handicap.handicap = (handicap.srs * 1.215).round(2)
+        handicap.source = 'SRS jolle 2017'
+        handicap.best_before = DateTime.now.in_time_zone.end_of_year
+        handicap.external_system = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
+        handicap.save!
       end
     end
   end
@@ -103,17 +103,17 @@ namespace :import do
     task :certificate => :environment do
       SxkCertificate.destroy_all
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "sxk-tal-2016.csv"), "r"), :headers => true) do |row|
-        boat_type = SxkCertificate.new
-        boat_type.name = row['Boat'].to_s.strip
-        boat_type.handicap = row['SXKtal'].to_f
-        boat_type.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL' 
-        boat_type.owner_name = row['Owner'].to_s.strip unless row['Owner'].to_s.strip == 'NULL'
-        boat_type.sail_number = row['Segelnr'].to_i
-        boat_type.registry_id = row['Regnr'].to_s.strip
-        boat_type.source = 'SXK-mätbrev'
-        boat_type.best_before = nil #DateTime.now.in_time_zone.end_of_year
-        boat_type.external_system = 'http://aws.24-timmars.nu/phpmyadmin'
-        boat_type.save!
+        handicap = SxkCertificate.new
+        handicap.name = row['Boat'].to_s.strip
+        handicap.handicap = row['SXKtal'].to_f
+        handicap.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL' 
+        handicap.owner_name = row['Owner'].to_s.strip unless row['Owner'].to_s.strip == 'NULL'
+        handicap.sail_number = row['Segelnr'].to_i
+        handicap.registry_id = row['Regnr'].to_s.strip
+        handicap.source = 'SXK-mätbrev'
+        handicap.best_before = nil #DateTime.now.in_time_zone.end_of_year
+        handicap.external_system = 'http://aws.24-timmars.nu/phpmyadmin'
+        handicap.save!
       end
     end
   end
@@ -203,12 +203,12 @@ namespace :import do
             puts row
           else
             team.boat_id = boat.id
-            boat_type = LegacyBoatType.find_or_create_by( name: team.boat_class_name, 
+            handicap = LegacyBoatType.find_or_create_by( name: team.boat_class_name, 
                                                           handicap: team.handicap, 
                                                           external_system: 'Starema-St',
                                                           source: 'Arkiv',
                                                           best_before: DateTime.parse('2016-12-31'))
-            boat.boat_types << boat_type
+            #boat.boat_types << boat_type
 
             if team.boat_sail_number == 0 || team.boat_sail_number.nil? 
               team.boat_sail_number = nil

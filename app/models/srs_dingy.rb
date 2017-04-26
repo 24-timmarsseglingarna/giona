@@ -1,2 +1,2 @@
-class SrsDingy < BoatType
+class SrsDingy < Handicap
 end

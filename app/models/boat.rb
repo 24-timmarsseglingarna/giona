@@ -1,5 +1,4 @@
 class Boat < ApplicationRecord
-  has_and_belongs_to_many :boat_types
   has_many :teams, dependent: :destroy
 
   # scope :from_boat_class, ->(b_id) {joins(:boat_class).where("boat_classes.id = ?", b_id) } #TODO

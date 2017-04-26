@@ -1,2 +1,2 @@
-class SrsMultihull < BoatType
+class SrsMultihull < Handicap
 end

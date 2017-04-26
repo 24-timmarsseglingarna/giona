@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   #Sti::Application.routes.draw do
-  #  resources :boat_types
+  resources :handicaps
   #end
 
   namespace :api, defaults: {format: 'json'} do
@@ -15,7 +15,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :boat_types
   resources :boats
   resources :teams
   post 'teams/set_skipper'

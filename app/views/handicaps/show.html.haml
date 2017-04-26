@@ -1,0 +1,42 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @handicap.name
+%p
+  %b Handicap:
+  = @handicap.handicap
+%p
+  %b Best before:
+  = @handicap.best_before
+%p
+  %b Source:
+  = @handicap.source
+%p
+  %b Srs:
+  = @handicap.srs
+%p
+  %b Registry:
+  = @handicap.registry_id
+%p
+  %b Sail number:
+  = @handicap.sail_number
+%p
+  %b Boat name:
+  = @handicap.boat_name
+%p
+  %b Owner name:
+  = @handicap.owner_name
+%p
+  %b External system:
+  = @handicap.external_system
+%p
+  %b External:
+  = @handicap.external_id
+%p
+  %b Type:
+  = @handicap.type
+
+= link_to 'Edit', edit_handicap_path(@handicap)
+\|
+= link_to 'Back', handicaps_path

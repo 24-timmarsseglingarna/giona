@@ -1,2 +1,2 @@
-class SrsCertificate < BoatType
+class SrsCertificate < Handicap
 end

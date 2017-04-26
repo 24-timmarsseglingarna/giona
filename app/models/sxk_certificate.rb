@@ -1,2 +1,2 @@
-class SxkCertificate < BoatType
+class SxkCertificate < Handicap
 end

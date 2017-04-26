@@ -10,34 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170426144122) do
+ActiveRecord::Schema.define(version: 20170426161227) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "boat_types", force: :cascade do |t|
-    t.string   "name"
-    t.float    "handicap"
-    t.datetime "best_before"
-    t.string   "source"
-    t.float    "srs"
-    t.string   "registry_id"
-    t.integer  "sail_number"
-    t.string   "boat_name"
-    t.string   "owner_name"
-    t.string   "external_system"
-    t.string   "external_id"
-    t.string   "type"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  create_table "boat_types_boats", force: :cascade do |t|
-    t.integer "boat_id"
-    t.integer "boat_type_id"
-    t.index ["boat_id"], name: "index_boat_types_boats_on_boat_id", using: :btree
-    t.index ["boat_type_id"], name: "index_boat_types_boats_on_boat_type_id", using: :btree
-  end
 
   create_table "boats", force: :cascade do |t|
     t.string   "name"
@@ -59,6 +35,23 @@ ActiveRecord::Schema.define(version: 20170426144122) do
     t.index ["person_id", "team_id"], name: "index_crew_members_on_person_id_and_team_id", unique: true, using: :btree
     t.index ["person_id"], name: "index_crew_members_on_person_id", using: :btree
     t.index ["team_id"], name: "index_crew_members_on_team_id", using: :btree
+  end
+
+  create_table "handicaps", force: :cascade do |t|
+    t.string   "name"
+    t.float    "handicap"
+    t.datetime "best_before"
+    t.string   "source"
+    t.float    "srs"
+    t.string   "registry_id"
+    t.integer  "sail_number"
+    t.string   "boat_name"
+    t.string   "owner_name"
+    t.string   "external_system"
+    t.integer  "external_id"
+    t.string   "type"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "people", force: :cascade do |t|
@@ -157,6 +150,4 @@ ActiveRecord::Schema.define(version: 20170426144122) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
-  add_foreign_key "boat_types_boats", "boat_types"
-  add_foreign_key "boat_types_boats", "boats"
 end
