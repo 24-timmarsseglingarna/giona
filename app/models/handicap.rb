@@ -1,4 +1,5 @@
 class Handicap < ApplicationRecord
+  has_many :teams
   scope :srs_keelboat, -> { where(type: 'SrsKeelboat')}
   scope :srs_multihull, -> { where(type: 'SrsMultihull')}
   scope :srs_dingy, -> { where(type: 'SrsDingy')}

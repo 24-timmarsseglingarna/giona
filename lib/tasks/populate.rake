@@ -7,7 +7,7 @@ namespace :scrape do
 
   
   namespace :srs do
-    task :certificate => :environment do
+    task :certificates => :environment do
       SrsCertificate.destroy_all #TODO
       srs_table_url = "http://matbrev.svensksegling.se/Home/ApprovedList"
       doc = Nokogiri::HTML(open(srs_table_url))
@@ -100,7 +100,7 @@ namespace :import do
   end
 
   namespace :sxk do 
-    task :certificate => :environment do
+    task :certificates => :environment do
       SxkCertificate.destroy_all
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "sxk-tal-2016.csv"), "r"), :headers => true) do |row|
         handicap = SxkCertificate.new
@@ -123,7 +123,6 @@ namespace :import do
   namespace :starema do 
     task :people => :environment do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Deltagare.csv"), "r"), :headers => true) do |row|
-        puts row['DeltNamn']
         p = Person.find_or_create_by(external_system: 'Starema-St', external_id: row['DeltNr'].to_s.strip.to_i)
         p.first_name = row['DeltFörnamn'].to_s.strip
         p.last_name = row['DeltEfternamn'].to_s.strip
@@ -195,20 +194,22 @@ namespace :import do
           team.boat_class_name = row['SeglingBåtTyp'].to_s.strip 
           #team.boat_sail_number = 
           team.start_point = row['SeglingFNStartpunkt'].to_s.strip.to_i
-          team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
+          #team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
           team.plaque_distance = row['SeglingPlakatDist'].to_s.strip.to_f
           team.name = "#{team.boat_name} / #{team.boat_class_name}" if team.name.blank?
           boat = Boat.find_by( external_id: row['SeglingFNBoatIndivid'].to_s.strip.to_i, external_system: 'Starema-St')
           if boat.nil?
             puts row
           else
+            boat.boat_type_name = team.boat_class_name
+            boat.save!
             team.boat_id = boat.id
             handicap = LegacyBoatType.find_or_create_by( name: team.boat_class_name, 
-                                                          handicap: team.handicap, 
+                                                          handicap: row['SeglingSxkTal'].to_s.strip.to_f, 
                                                           external_system: 'Starema-St',
                                                           source: 'Arkiv',
                                                           best_before: DateTime.parse('2016-12-31'))
-            #boat.boat_types << boat_type
+            team.handicap = handicap
 
             if team.boat_sail_number == 0 || team.boat_sail_number.nil? 
               team.boat_sail_number = nil
@@ -278,13 +279,7 @@ namespace :import do
         end
         boat.vhf_call_sign = row['BoatIndVHF'].to_s
         boat.ais_mmsi = nil
-        #boat_class = BoatClass.find_by(external_id: row['BoatIndFNBoattyp'].to_i, external_system: 'Starema-St')
-        #if boat_class.present?
-        #  boat.boat_class_id = boat_class.id
-        #  boat.save!
-        #else
-        ##  boat.destroy!
-        #end
+        boat.save
       end
     end
 

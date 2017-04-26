@@ -2,6 +2,7 @@
 
 = link_to 'Lägg in en ny båt', new_boat_path
 
+= @boats.first.name
 .panel.panel-default
   .panel-heading
     Båtar
@@ -20,8 +21,6 @@
           %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{boat_path(boat)}';", :style => "cursor: pointer;"}
             %td= boat.name
             %td
-              
-
             %td= boat.sail_number
             %td= boat.vhf_call_sign
             %td= boat.ais_mmsi

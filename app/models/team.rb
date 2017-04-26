@@ -7,6 +7,7 @@ class Team < ApplicationRecord
   has_many :seamen, :through => :non_skipper_crew_member, :source => :person
   has_one :skipper_crew_member, -> { where(skipper: true) }, class_name: 'CrewMember'
   has_one :skipper, :through => :skipper_crew_member, :source => :person
+  belongs_to :handicap
 
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }

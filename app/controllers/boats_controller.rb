@@ -1,5 +1,5 @@
 class BoatsController < ApplicationController
-  has_scope :from_boat_class, :has_team
+  has_scope :has_team
 
   before_action :set_boat, only: [:show, :edit, :update, :destroy]
 

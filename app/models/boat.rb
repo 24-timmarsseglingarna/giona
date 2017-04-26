@@ -9,4 +9,5 @@ class Boat < ApplicationRecord
   
   #validates_presence_of :name
   validates :sail_number, numericality: { only_integer: true, allow_nil: true }
+  validates_presence_of :name, :boat_type_name
 end
