@@ -1,8 +1,8 @@
 class Boat < ApplicationRecord
-  belongs_to :boat_class
+  has_and_belongs_to_many :boat_types
   has_many :teams, dependent: :destroy
 
-  scope :from_boat_class, ->(b_id) {joins(:boat_class).where("boat_classes.id = ?", b_id) }
+  # scope :from_boat_class, ->(b_id) {joins(:boat_class).where("boat_classes.id = ?", b_id) } #TODO
   scope :has_team, ->(t_id) {joins(:teams).where("teams.id = ?", t_id)}
   #scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   #scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }

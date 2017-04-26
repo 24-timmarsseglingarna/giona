@@ -203,6 +203,13 @@ namespace :import do
             puts row
           else
             team.boat_id = boat.id
+            boat_type = LegacyBoatType.find_or_create_by( name: team.boat_class_name, 
+                                                          handicap: team.handicap, 
+                                                          external_system: 'Starema-St',
+                                                          source: 'Arkiv',
+                                                          best_before: DateTime.parse('2016-12-31'))
+            boat.boat_types << boat_type
+
             if team.boat_sail_number == 0 || team.boat_sail_number.nil? 
               team.boat_sail_number = nil
             else
@@ -251,21 +258,6 @@ namespace :import do
       end
     end
 
-    task :boat_classes => :environment do
-      # File format: 
-      # BoatNr, BoatTyp, BoatSxkTal
-      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatType.csv"), "r"), :headers => true) do |row|
-        boat_class = BoatClass.find_or_create_by(external_id: row['BoatNr'].to_s.strip.to_i, external_system: 'Starema-St')
-        boat_class.name = row['BoatTyp'].to_s
-        boat_class.handicap = row['BoatSxkTal']
-        puts row if boat_class.handicap <= 0
-        if boat_class.name.blank?
-          puts row 
-        else
-          boat_class.save!
-        end
-      end
-    end
 
     task :boats => :environment do
       # File format: 
@@ -286,14 +278,13 @@ namespace :import do
         end
         boat.vhf_call_sign = row['BoatIndVHF'].to_s
         boat.ais_mmsi = nil
-        boat_class = BoatClass.find_by(external_id: row['BoatIndFNBoattyp'].to_i, external_system: 'Starema-St')
-        if boat_class.present?
-          boat.boat_class_id = boat_class.id
-          boat.save!
-        else
-          puts row
-          boat.destroy!
-        end
+        #boat_class = BoatClass.find_by(external_id: row['BoatIndFNBoattyp'].to_i, external_system: 'Starema-St')
+        #if boat_class.present?
+        #  boat.boat_class_id = boat_class.id
+        #  boat.save!
+        #else
+        ##  boat.destroy!
+        #end
       end
     end
 

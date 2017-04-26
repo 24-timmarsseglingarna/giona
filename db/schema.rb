@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170425173159) do
+ActiveRecord::Schema.define(version: 20170426144122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,12 +32,18 @@ ActiveRecord::Schema.define(version: 20170425173159) do
     t.datetime "updated_at",      null: false
   end
 
+  create_table "boat_types_boats", force: :cascade do |t|
+    t.integer "boat_id"
+    t.integer "boat_type_id"
+    t.index ["boat_id"], name: "index_boat_types_boats_on_boat_id", using: :btree
+    t.index ["boat_type_id"], name: "index_boat_types_boats_on_boat_type_id", using: :btree
+  end
+
   create_table "boats", force: :cascade do |t|
     t.string   "name"
     t.integer  "sail_number"
     t.string   "vhf_call_sign"
     t.string   "ais_mmsi"
-    t.integer  "boat_class_id"
     t.integer  "external_id"
     t.string   "external_system"
     t.datetime "created_at",      null: false
@@ -151,4 +157,6 @@ ActiveRecord::Schema.define(version: 20170425173159) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
+  add_foreign_key "boat_types_boats", "boat_types"
+  add_foreign_key "boat_types_boats", "boats"
 end

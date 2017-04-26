@@ -2,8 +2,13 @@
   %i.fa.fa-ship.fa-fw
   = @boat.name
 %p
-  %b Båttyp:
-  = link_to(@boat.boat_class.name, @boat.boat_class) unless @boat.boat_class.nil?
+  %b Båttyp/handikapp:
+  = #link_to(@boat.boat_class.name, @boat.boat_class) unless @boat.boat_class.nil?
+  %ul
+    - for boat_type in @boat.boat_types
+      %li
+        #{boat_type.name}, SXK-tal: #{boat_type.handicap}
+
 %p
   %b Segelnummer:
   = @boat.sail_number

@@ -1,4 +1,5 @@
 class BoatType < ApplicationRecord
+  has_and_belongs_to_many :boats
   scope :srs_keelboat, -> { where(type: 'SrsKeelboat')}
   scope :srs_multihull, -> { where(type: 'SrsMultihull')}
   scope :srs_dingy, -> { where(type: 'SrsDingy')}
