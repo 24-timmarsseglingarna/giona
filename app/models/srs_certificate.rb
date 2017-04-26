@@ -1,0 +1,2 @@
+class SrsCertificate < Handicap
+end

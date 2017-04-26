@@ -126,10 +126,7 @@
       - else
         = @team.boat_name
       |
-      - unless @team.boat.nil?
-        = link_to @team.boat_class_name, @team.boat.boat_class
-      - else
-        = @team.boat_class_name
+      = @team.boat_class_name
       = @team.boat_sail_number
       
     .legend Startnummer:
@@ -138,9 +135,13 @@
       = @team.start_number        
     .legend Handikapp:
     %p
-      %i.fa.fa-calculator(aria-hidden='true')    
-      = @team.handicap
-      enligt SRS-tabell
+      %i.fa.fa-calculator(aria-hidden='true')
+      - unless @team.handicap.nil?    
+        = @team.handicap.handicap
+        för
+        = @team.handicap.name
+        enligt 
+        = @team.handicap.source
 
     =link_to 'Ändra', edit_team_path(@team, :section=>:boat), class: "btn btn-primary"
 

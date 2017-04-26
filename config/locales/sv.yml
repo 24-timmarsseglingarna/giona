@@ -453,6 +453,8 @@ sv:
       long: "%A %e %B %Y kl. %H.%M"
       short: "%A %e %B kl. %H.%M"
       clock: "%H.%M"
+      day: "%Y-%m-%d"
+
     pm: ''
 
   devise:

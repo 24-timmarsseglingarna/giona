@@ -1,0 +1,17 @@
+= semantic_form_for @handicap do |f|
+  = f.inputs do
+    = f.input :name
+    = f.input :handicap
+    = f.input :best_before
+    = f.input :source
+    = f.input :srs
+    = f.input :registry_id
+    = f.input :sail_number
+    = f.input :boat_name
+    = f.input :owner_name
+    = f.input :external_system
+    = f.input :external_id
+    = f.input :type
+
+  = f.actions do
+    = f.action :submit, :as => :input

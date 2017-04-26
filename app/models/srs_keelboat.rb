@@ -1,0 +1,2 @@
+class SrsKeelboat < Handicap
+end

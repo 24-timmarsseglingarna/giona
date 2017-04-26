@@ -1,0 +1,2 @@
+class SrsMultihull < Handicap
+end

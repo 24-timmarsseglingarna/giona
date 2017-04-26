@@ -4,32 +4,76 @@ require 'nokogiri'
 
 
 namespace :scrape do
+
+  
+  namespace :srs do
+    task :certificates => :environment do
+      SrsCertificate.destroy_all #TODO
+      srs_table_url = "http://matbrev.svensksegling.se/Home/ApprovedList"
+      doc = Nokogiri::HTML(open(srs_table_url))
+      entries = doc.xpath('//tr')
+      first_row = true
+      for entry in entries
+        unless first_row
+          handicap = SrsCertificate.new
+          handicap.registry_id = entry.css('td')[0].text.strip
+          handicap.owner_name = entry.css('td')[1].text.strip
+          handicap.name = entry.css('td')[2].text.strip
+          handicap.boat_name = entry.css('td')[3].text.strip 
+          handicap.sail_number = entry.css('td')[5].text.to_i
+          handicap.srs = entry.css('td')[8].text.gsub(',', '.').to_f
+          handicap.handicap = (handicap.srs * 1.215).round(2)
+          handicap.source = 'SRS-mätbrev 2017'
+          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.external_system = 'http://matbrev.svensksegling.se/Home/ApprovedList'
+          handicap.save!
+        else
+          first_row = false
+        end
+      end
+    end
+  end
+
+
   namespace :srs do
     task :keelboats => :environment do
-      SrsClass.destroy_all #TODO
-      srs_pdf_base_url = "http://matbrev.svensksegling.se"
+      SrsKeelboat.destroy_all #TODO
       srs_table_url = "http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
       for entry in entries
         unless first_row
-          srs_class = SrsClass.new
-          srs_class.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
-          srs_class.pdf_link = srs_pdf_base_url + entry.css('td')[0].css('a').attr('href').to_s.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
-          srs_class.klassning = entry.css('td')[1].text.to_s
-          srs_class.skl = entry.css('td')[2].text.gsub(',', '.').to_f
-          srs_class.b = entry.css('td')[3].text.gsub(',', '.').to_f
-          srs_class.d = entry.css('td')[4].text.gsub(',', '.').to_f
-          srs_class.depl = entry.css('td')[5].text.gsub(',', '.').to_f
-          srs_class.srs = entry.css('td')[6].text.gsub(',', '.').to_f
-          srs_class.srs_wo_fly = entry.css('td')[7].text.gsub(',', '.').to_f
-          srs_class.version = 1
-          srs_class.version_name = 'SRS 2017 kölbåt'
-          srs_class.import_description = 'dev import'
-          srs_class.handicap = (srs_class.srs * 1.215).round(2)
+          handicap = SrsKeelboat.new
+          handicap.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          handicap.srs = entry.css('td')[6].text.gsub(',', '.').to_f
+          handicap.handicap = (handicap.srs * 1.215).round(2)
+          handicap.source = 'SRS kölbåtar 2017'
+          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.external_system = 'http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter='
+          handicap.save!
+        else
+          first_row = false
+        end
+      end
+    end
 
-          srs_class.save!
+    task :multihulls => :environment do
+      SrsMultihull.destroy_all #TODO
+      srs_table_url = "http://matbrev.svensksegling.se/home/srsflerskrovlist"
+      doc = Nokogiri::HTML(open(srs_table_url))
+      entries = doc.xpath('//tr')
+      first_row = true
+      for entry in entries
+        unless first_row
+          handicap = SrsMultihull.new
+          handicap.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          handicap.srs = entry.css('td')[1].text.gsub(',', '.').to_f
+          handicap.handicap = (handicap.srs * 1.215).round(2)
+          handicap.source = 'SRS flerskrov 2017'
+          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.external_system = 'http://matbrev.svensksegling.se/home/srsflerskrovlist'
+          handicap.save!
         else
           first_row = false
         end
@@ -38,13 +82,47 @@ namespace :scrape do
   end
 end
 
-
-
 namespace :import do
+  namespace :srs do 
+    task :dingies => :environment do
+      SrsDingy.destroy_all
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle-2017.csv"), "r"), :headers => true) do |row|
+        handicap = SrsDingy.new
+        handicap.name = row['Typ'].to_s.strip
+        handicap.srs = row['SRS'].to_f
+        handicap.handicap = (handicap.srs * 1.215).round(2)
+        handicap.source = 'SRS jolle 2017'
+        handicap.best_before = DateTime.now.in_time_zone.end_of_year
+        handicap.external_system = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
+        handicap.save!
+      end
+    end
+  end
+
+  namespace :sxk do 
+    task :certificates => :environment do
+      SxkCertificate.destroy_all
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "sxk-tal-2016.csv"), "r"), :headers => true) do |row|
+        handicap = SxkCertificate.new
+        handicap.name = row['Boat'].to_s.strip
+        handicap.handicap = row['SXKtal'].to_f
+        handicap.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL' 
+        handicap.owner_name = row['Owner'].to_s.strip unless row['Owner'].to_s.strip == 'NULL'
+        handicap.sail_number = row['Segelnr'].to_i
+        handicap.registry_id = row['Regnr'].to_s.strip
+        handicap.source = 'SXK-mätbrev'
+        handicap.best_before = nil #DateTime.now.in_time_zone.end_of_year
+        handicap.external_system = 'http://aws.24-timmars.nu/phpmyadmin'
+        handicap.save!
+      end
+    end
+  end
+
+
+
   namespace :starema do 
     task :people => :environment do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Deltagare.csv"), "r"), :headers => true) do |row|
-        puts row['DeltNamn']
         p = Person.find_or_create_by(external_system: 'Starema-St', external_id: row['DeltNr'].to_s.strip.to_i)
         p.first_name = row['DeltFörnamn'].to_s.strip
         p.last_name = row['DeltEfternamn'].to_s.strip
@@ -116,14 +194,23 @@ namespace :import do
           team.boat_class_name = row['SeglingBåtTyp'].to_s.strip 
           #team.boat_sail_number = 
           team.start_point = row['SeglingFNStartpunkt'].to_s.strip.to_i
-          team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
+          #team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
           team.plaque_distance = row['SeglingPlakatDist'].to_s.strip.to_f
           team.name = "#{team.boat_name} / #{team.boat_class_name}" if team.name.blank?
           boat = Boat.find_by( external_id: row['SeglingFNBoatIndivid'].to_s.strip.to_i, external_system: 'Starema-St')
           if boat.nil?
             puts row
           else
+            boat.boat_type_name = team.boat_class_name
+            boat.save!
             team.boat_id = boat.id
+            handicap = LegacyBoatType.find_or_create_by( name: team.boat_class_name, 
+                                                          handicap: row['SeglingSxkTal'].to_s.strip.to_f, 
+                                                          external_system: 'Starema-St',
+                                                          source: 'Arkiv',
+                                                          best_before: DateTime.parse('2016-12-31'))
+            team.handicap = handicap
+
             if team.boat_sail_number == 0 || team.boat_sail_number.nil? 
               team.boat_sail_number = nil
             else
@@ -172,21 +259,6 @@ namespace :import do
       end
     end
 
-    task :boat_classes => :environment do
-      # File format: 
-      # BoatNr, BoatTyp, BoatSxkTal
-      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatType.csv"), "r"), :headers => true) do |row|
-        boat_class = BoatClass.find_or_create_by(external_id: row['BoatNr'].to_s.strip.to_i, external_system: 'Starema-St')
-        boat_class.name = row['BoatTyp'].to_s
-        boat_class.handicap = row['BoatSxkTal']
-        puts row if boat_class.handicap <= 0
-        if boat_class.name.blank?
-          puts row 
-        else
-          boat_class.save!
-        end
-      end
-    end
 
     task :boats => :environment do
       # File format: 
@@ -207,14 +279,7 @@ namespace :import do
         end
         boat.vhf_call_sign = row['BoatIndVHF'].to_s
         boat.ais_mmsi = nil
-        boat_class = BoatClass.find_by(external_id: row['BoatIndFNBoattyp'].to_i, external_system: 'Starema-St')
-        if boat_class.present?
-          boat.boat_class_id = boat_class.id
-          boat.save!
-        else
-          puts row
-          boat.destroy!
-        end
+        boat.save
       end
     end
 

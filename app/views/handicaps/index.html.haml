@@ -1,0 +1,39 @@
+%h1 Alla båttyper/handikapp
+
+
+.panel.panel-default
+  .panel-heading
+    Båttyper
+  / /.panel-heading
+  .panel-body
+    %table#giona-handicaps.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th Namn
+          %th SXK
+          %th Källa
+          %th Ref.
+          %th Båtnamn
+          %th Segelnr
+          %th Ägare
+          %th SRS
+          %th Gäller t.o.m.
+
+      %tbody
+        - @handicaps.each do |handicap|
+          %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{handicap_path(handicap)}';", :style => "cursor: pointer;"}
+            %td= handicap.name
+            %td= handicap.handicap
+            %td= handicap.source
+            %td= handicap.registry_id
+            %td= handicap.boat_name
+            %td= handicap.sail_number
+            %td= handicap.owner_name
+            %td= handicap.srs
+            %td= I18n.l(handicap.best_before, format: :day) unless handicap.best_before.nil?
+
+
+:javascript
+  $(document).ready(function() {
+  $('#giona-handicaps').DataTable();
+  } );  

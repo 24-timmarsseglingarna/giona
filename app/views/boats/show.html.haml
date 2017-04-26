@@ -3,7 +3,8 @@
   = @boat.name
 %p
   %b Båttyp:
-  = link_to(@boat.boat_class.name, @boat.boat_class) unless @boat.boat_class.nil?
+  = @boat.boat_type_name
+
 %p
   %b Segelnummer:
   = @boat.sail_number
