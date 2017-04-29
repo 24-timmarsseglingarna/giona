@@ -41,6 +41,7 @@ class TeamsController < ApplicationController
       @known_people = Person.all
     end
     @boats = Boat.all
+
   end
 
   # POST /teams
@@ -67,7 +68,7 @@ class TeamsController < ApplicationController
         format.html { redirect_to @team, notice: 'Deltagaranmälan uppdaterad.' }
         format.json { render :show, status: :ok, location: @team }
       else
-        format.html { render :edit }
+        format.html { redirect_to @team, alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.' }
         format.json { render json: @team.errors, status: :unprocessable_entity }
       end
     end
@@ -101,6 +102,9 @@ class TeamsController < ApplicationController
     boat_name = @team.boat.name
     @team.boat = nil
     @team.handicap = nil
+    @team.boat_name = nil
+    @team.boat_type_name = nil
+    @team.boat_sail_number = nil
     @team.save!
     redirect_to @team, notice: "Båten #{boatname unless @boatname.blank?} är nu bortplockad. Välj en annan båt."
   end
