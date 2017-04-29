@@ -1,4 +1,4 @@
-%h1 Deltagare
+%h1 Deltagare #{@team.name}
 
 .panel.panel-default
   .panel-heading
@@ -137,14 +137,20 @@
     .legend Handikapp:
     %p
       %i.fa.fa-calculator(aria-hidden='true')
-      - unless @team.handicap.nil?    
+      - if @team.handicap.nil?    
+        -if @team.boat.nil?
+          Välj först båt, sedan handikapp.
+        -else
+          =link_to 'Välj handikapp (från SRS-tabell, SRS-mätbrev eller SXK-mätbrev).', edit_team_path(@team, :section => :handicap)
+      - else
         = @team.handicap.handicap
         för
         = @team.handicap.name
         enligt 
         = @team.handicap.source
+        %i.fa.fa-remove(aria-hidden='true')
+        =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}
 
-    =link_to 'Ändra', edit_team_path(@team, :section=>:boat), class: "btn btn-primary"
 
 .panel.panel-default
   .panel-heading

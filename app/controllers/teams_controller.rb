@@ -41,7 +41,11 @@ class TeamsController < ApplicationController
       @known_people = Person.all
     end
     @boats = Boat.all
-
+    #@srs_keelboats = SrsKeelboat.select_srs_keelboat
+    @srs_multihulls = SrsMultihull.all
+    @srs_dingies = SrsDingy.all
+    @srs_certificates = SrsCertificate.all
+    @sxk_certificates = SxkCertificate.all
   end
 
   # POST /teams
@@ -95,6 +99,13 @@ class TeamsController < ApplicationController
     crew_member = CrewMember.find_by person_id: person.id, team_id: @team.id
     @team.set_skipper person
     redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
+  end
+
+  def remove_handicap
+    set_team
+    @team.handicap = nil
+    @team.save!
+    redirect_to @team, notice: "Handikappet är nu bortplockad. Du behöver välja handikapp för att kunna delta."
   end
 
   def remove_boat
