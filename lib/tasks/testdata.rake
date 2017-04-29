@@ -38,7 +38,7 @@ namespace :testdata do
     team.race = race
     team.boat = boat
     team.boat_name = boat.name
-    team.boat_class_name = boat.boat_class.name
+    team.boat_type_name = boat.boat_class.name
     team.boat_sail_number = boat.sail_number
     team.start_point = 552
     team.finish_point = 552
@@ -62,7 +62,7 @@ namespace :testdata do
     team.race = race
     team.boat = boat
     team.boat_name = boat.name
-    team.boat_class_name = boat.boat_class.name
+    team.boat_type_name = boat.boat_class.name
     team.boat_sail_number = boat.sail_number
     team.start_point = 552
     team.finish_point = 552
@@ -113,7 +113,7 @@ namespace :testdata do
     team.race = race
     team.boat = boat
     team.boat_name = boat.name
-    team.boat_class_name = boat.boat_class.name
+    team.boat_type_name = boat.boat_class.name
     team.boat_sail_number = boat.sail_number
     team.start_point = 552
     team.finish_point = 553
@@ -137,7 +137,7 @@ namespace :testdata do
     team.race = race
     team.boat = boat
     team.boat_name = boat.name
-    team.boat_class_name = boat.boat_class.name
+    team.boat_type_name = boat.boat_class.name
     team.boat_sail_number = boat.sail_number
     team.start_point = 540
     team.finish_point = 553

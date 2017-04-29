@@ -6,7 +6,7 @@ one:
   external_system: MyString
   name: MyString
   boat_name: MyString
-  boat_class_name: MyString
+  boat_type_name: MyString
   boat_sail_number: MyString
   start_point: 1
   start_number: 1
@@ -22,7 +22,7 @@ two:
   external_system: MyString
   name: MyString
   boat_name: MyString
-  boat_class_name: MyString
+  boat_type_name: MyString
   boat_sail_number: MyString
   start_point: 1
   start_number: 1

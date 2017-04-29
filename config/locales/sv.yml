@@ -477,6 +477,12 @@ sv:
     submit: Skicka
     required: Obligatorisk
     labels:
+      boat:
+        name: Namn
+        boat_type_name: Båttyp/klass
+        sail_number: Segelnummer
+        vhf_call_sign: Anropssignal VHF ombord
+        ais_mmsi: MMSI-nummer för AIS ombord
       person:
         first_name: Förnamn
         last_name: Efternamn

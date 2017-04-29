@@ -1,21 +1,16 @@
+%h1 Välj båt för #{@team.race.regatta.name}
 .panel.panel-default
   .panel-heading
-    Båten
+    3. Nej, båten finns inte här, lägg till den.
   .panel-body    
-    .legend Regatta:
-    %p
-      %i.fa.fa-trophy(aria-hidden='true')    
-      =@team.race.regatta.name  
-    .legend Segling:
-    %p  
-      %i.fa.fa-bell(aria-hidden='true')
-      = @team.race.name  
+    = @boat
+    = semantic_form_for @team do |f| 
+      = f.inputs :name
+      = f.semantic_fields_for :boat do |boat|
+        = boat.inputs :name, :boat_type_name, :name => "Boat"
+      = f.actions
 
-
-    = semantic_form_for @team do |f|
-      = f.inputs do
-        = f.input :boat
-      = f.actions do
-        = f.action :submit, :as => :input
-    %br
-    = link_to 'Tillbaka', @team, :class => :get_back
+:javascript
+  $(document).ready(function() {
+  $('#giona-boats').DataTable();
+  } );      

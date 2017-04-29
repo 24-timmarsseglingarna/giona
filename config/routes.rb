@@ -10,8 +10,6 @@ Rails.application.routes.draw do
   resources :srs_certificates, controller: 'handicaps', type: 'SrsCertificates'
   resources :sxk_certificates, controller: 'handicaps', type: 'SxkCertificates'
 
-  resources :lions, controller: 'animals', type: 'Lion' 
-
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       resources :people,        only: [:index, :show]
@@ -23,10 +21,13 @@ Rails.application.routes.draw do
   end
 
   resources :boats
-  resources :teams
   post 'teams/set_skipper'
   get 'teams/add_seaman'
   post 'teams/remove_seaman'
+  post 'teams/remove_boat'
+  post 'teams/set_boat'
+  get 'teams/choose_boat'
+  resources :teams
 
   resources :races
   resources :regattas

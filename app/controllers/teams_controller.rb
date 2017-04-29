@@ -32,12 +32,15 @@ class TeamsController < ApplicationController
   # GET /teams/1/edit
   def edit
     @races = @team.race.regatta.races
+    @boat = Boat.new
+    @team.boat = @boat
     if current_user
       @known_people = current_user.person.friends
+      @known_boats = current_user.person.boats
     else
       @known_people = Person.all
     end
-
+    @boats = Boat.all
   end
 
   # POST /teams
@@ -73,7 +76,7 @@ class TeamsController < ApplicationController
 
   def remove_seaman
     person_id = params[:person_id]
-    @team = Team.find params[:id]
+    set_team
     crew_member = CrewMember.find_by person_id: person_id, team_id: @team.id
     unless crew_member.skipper
       name = crew_member.person.name
@@ -86,11 +89,31 @@ class TeamsController < ApplicationController
 
 
   def set_skipper
+    set_team
     person = Person.find params[:person_id]
-    @team = Team.find params[:id]
     crew_member = CrewMember.find_by person_id: person.id, team_id: @team.id
     @team.set_skipper person
     redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
+  end
+
+  def remove_boat
+    set_team
+    boat_name = @team.boat.name
+    @team.boat = nil
+    @team.handicap = nil
+    @team.save!
+    redirect_to @team, notice: "Båten #{boatname unless @boatname.blank?} är nu bortplockad. Välj en annan båt."
+  end
+
+  def set_boat
+    set_team
+    boat = Boat.find params[:boat_id]
+    @team.boat = boat
+    @team.boat_name = boat.name
+    @team.boat_type_name = boat.boat_type_name
+    @team.boat_sail_number = boat.sail_number
+    @team.save!
+    redirect_to @team, notice: "Båten #{@team.boat.name unless @team.boat.blank?} är nu vald."
   end
 
 
@@ -112,6 +135,6 @@ class TeamsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
-      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_class_name, :boat_sail_number, :start_point, :finish_point, :start_number, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :handicap_id, :boat_id, person_ids: [])
+      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_type_name, :boat_sail_number, :start_point, :finish_point, :start_number, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :handicap_id, :boat_id, boat_attributes: [:id, :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi], person_ids: [])
     end
 end
