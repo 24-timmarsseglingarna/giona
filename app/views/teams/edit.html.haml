@@ -7,5 +7,11 @@
   = render 'crew'  
 - elsif params[:section] == 'boat'
   = render 'boat'    
+- elsif params[:section] == 'handicap'
+  = render 'handicap'      
 - else
-  = render 'race'
+
+  %h1 Nu blev det fel.
+  %p Och det är inte ditt fel. Uppgiften som du precis fyllde i sparades inte. Du får tyvärr göra om det momentet.
+  %br
+  %p=link_to 'Gå tillbaka till deltagaranmälan.', @team

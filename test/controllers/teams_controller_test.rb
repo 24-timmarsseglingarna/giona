@@ -17,7 +17,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create team" do
     assert_difference('Team.count') do
-      post teams_url, params: { team: { boat_class_name: @team.boat_class_name, boat_name: @team.boat_name, boat_sail_number: @team.boat_sail_number, did_not_finish: @team.did_not_finish, did_not_start: @team.did_not_start, external_id: @team.external_id, external_system: @team.external_system, handicap: @team.handicap, name: @team.name, paid_fee: @team.paid_fee, plaque_distance: @team.plaque_distance, race_id: @team.race_id, start_number: @team.start_number, start_point: @team.start_point } }
+      post teams_url, params: { team: { boat_type_name: @team.boat_type_name, boat_name: @team.boat_name, boat_sail_number: @team.boat_sail_number, did_not_finish: @team.did_not_finish, did_not_start: @team.did_not_start, external_id: @team.external_id, external_system: @team.external_system, handicap: @team.handicap, name: @team.name, paid_fee: @team.paid_fee, plaque_distance: @team.plaque_distance, race_id: @team.race_id, start_number: @team.start_number, start_point: @team.start_point } }
     end
 
     assert_redirected_to team_url(Team.last)
@@ -34,7 +34,7 @@ class TeamsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update team" do
-    patch team_url(@team), params: { team: { boat_class_name: @team.boat_class_name, boat_name: @team.boat_name, boat_sail_number: @team.boat_sail_number, did_not_finish: @team.did_not_finish, did_not_start: @team.did_not_start, external_id: @team.external_id, external_system: @team.external_system, handicap: @team.handicap, name: @team.name, paid_fee: @team.paid_fee, plaque_distance: @team.plaque_distance, race_id: @team.race_id, start_number: @team.start_number, start_point: @team.start_point } }
+    patch team_url(@team), params: { team: { boat_type_name: @team.boat_type_name, boat_name: @team.boat_name, boat_sail_number: @team.boat_sail_number, did_not_finish: @team.did_not_finish, did_not_start: @team.did_not_start, external_id: @team.external_id, external_system: @team.external_system, handicap: @team.handicap, name: @team.name, paid_fee: @team.paid_fee, plaque_distance: @team.plaque_distance, race_id: @team.race_id, start_number: @team.start_number, start_point: @team.start_point } }
     assert_redirected_to team_url(@team)
   end
 

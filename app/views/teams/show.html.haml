@@ -1,4 +1,4 @@
-%h1 Deltagaranmälan/loggbok
+%h1 Deltagare #{@team.name}
 
 .panel.panel-default
   .panel-heading
@@ -26,8 +26,6 @@
       = @team.race.period
       timmar
     =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-primary"
-    
-
 
 .panel.panel-default
   .panel-heading
@@ -121,29 +119,63 @@
   .panel-body
     %p
       %i.fa.fa-ship(aria-hidden='true') 
-      - unless @team.boat.nil?
-        = link_to @team.boat_name, @team.boat
-      - else
-        = @team.boat_name
-      |
-      = @team.boat_class_name
-      = @team.boat_sail_number
-      
+      - if @team.boat.nil?
+        %i.fa.fa-plus(aria-hidden='true')    
+        =link_to 'lägg till båt', edit_team_path(@team, :section=>:boat)
+      -else
+        = link_to "#{@team.boat.name} | #{@team.boat.boat_type_name} | Segelnummer: #{@team.boat.sail_number}", @team.boat
+        %i.fa.fa-remove(aria-hidden='true')
+        =link_to 'ta bort båten', teams_remove_boat_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort båten #{@team.boat.name} från deltagaranmälan?"}
+
     .legend Startnummer:
     %p
       %i.fa.fa-file-text-o(aria-hidden='true') 
-      = @team.start_number        
+      -unless @team.start_number.nil? || @team.start_number == 0
+        = @team.start_number        
+      - else
+        Sätts senare
     .legend Handikapp:
     %p
-      %i.fa.fa-calculator(aria-hidden='true')
-      - unless @team.handicap.nil?    
-        = @team.handicap.handicap
-        för
-        = @team.handicap.name
-        enligt 
-        = @team.handicap.source
-
-    =link_to 'Ändra', edit_team_path(@team, :section=>:boat), class: "btn btn-primary"
+      %i.fa.fa-calculator(aria-hidden='true') 
+      -if @team.boat.nil?
+        Välj först båt, sedan handikapp.
+      -else
+        - if @team.handicap_type.blank?
+          Välj en sorts handikapp
+          %ul
+            - Handicap.types.each do |key, value|
+              %li 
+                %i.fa.fa-plus(aria-hidden='true')    
+                =link_to value, teams_set_handicap_type_path(:id => @team.id, :handicap_type => key ), method: :post        
+        - else  
+          - if @team.handicap_type == 'SoonSrsCertificate'
+            Ska återkomma med SRS-mätbrev.
+            %i.fa.fa-remove(aria-hidden='true')
+            =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post     
+          - elsif @team.handicap_type == 'SoonSxkCertificate'
+            Ska återkomma med SXK-mätbrev.
+            %i.fa.fa-remove(aria-hidden='true')
+            =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post
+          - else 
+            - if @team.handicap.nil?
+              =Handicap.types[@team.handicap_type]
+              %i.fa.fa-plus(aria-hidden='true')    
+              =link_to 'ange handikapp', edit_team_path(:id => @team.id, :section => :handicap)  
+              %i.fa.fa-remove(aria-hidden='true')
+              =link_to 'nollställ', teams_remove_handicap_path(:id => @team.id), method: :post
+            - else
+              - if @team.race.start_from > @team.handicap.best_before  
+                %span.error
+                  Handikappet gäller inte vid seglingen. Gäller till: #{I18n.l(@team.handicap.best_before, format: :day)}.
+                %br
+              SXK-tal
+              = @team.handicap.handicap
+              för
+              = @team.handicap.name
+              enligt 
+              = @team.handicap.source
+              %i.fa.fa-remove(aria-hidden='true')
+              =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}        
 
 .panel.panel-default
   .panel-heading

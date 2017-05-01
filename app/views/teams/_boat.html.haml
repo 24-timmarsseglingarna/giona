@@ -1,21 +1,46 @@
+%h1 Välj båt för #{@team.race.regatta.name}
+
 .panel.panel-default
   .panel-heading
-    Båten
+    1. Finns båten här? Båtar vi tror att du seglat med tidigare.
   .panel-body    
-    .legend Regatta:
-    %p
-      %i.fa.fa-trophy(aria-hidden='true')    
-      =@team.race.regatta.name  
-    .legend Segling:
-    %p  
-      %i.fa.fa-bell(aria-hidden='true')
-      = @team.race.name  
+    %ul
+      -for boat in @known_boats
+        %li
+          %i.fa.fa-ship(aria-hidden='true')  
+          =link_to "#{boat.boat_type_name} #{boat.sail_number} #{boat.name}", teams_set_boat_path(:boat_id => boat.id, :id => @team.id), method: :post
 
+.panel.panel-default
+  .panel-heading
+    2. Finns båten här? Några båtar som deltagit tidigare. Använd sökrutan.
+  .panel-body    
+    %table#giona-boats.table.table-striped.table-bordered.table-hover 
+      %thead
+        %tr
+          %th Välj
+          %th Namn
+          %th Typ
+          %th Segelnr
+      %tbody
+        -for boat in @boats
+          %tr{:class => cycle('even', 'odd')}
+            %td= link_to 'Välj', teams_set_boat_path(:boat_id => boat.id, :id => @team.id), method: :post
+            %td= boat.name
+            %td= boat.boat_type_name
+            %td= boat.sail_number
 
-    = semantic_form_for @team do |f|
-      = f.inputs do
-        = f.input :boat
+.panel.panel-default
+  .panel-heading
+    3. Nej, båten finns inte här, lägg till den.
+  .panel-body    
+    - @boat = Boat.new
+    = semantic_form_for @team do |f| 
+      = f.semantic_fields_for :boat do |boat|
+        = boat.inputs :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi
       = f.actions do
-        = f.action :submit, :as => :input
-    %br
-    = link_to 'Tillbaka', @team, :class => :get_back
+        = f.action :submit, :as => :input, :label => 'Spara'
+
+:javascript
+  $(document).ready(function() {
+  $('#giona-boats').DataTable();
+  } );      

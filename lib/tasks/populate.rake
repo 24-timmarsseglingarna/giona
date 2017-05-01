@@ -191,27 +191,28 @@ namespace :import do
           team.race_id = race.id
           team.start_number = row['SeglingStartnr'].to_s.strip
           team.boat_name = row['SeglingBåtIndivid'].to_s.strip
-          team.boat_class_name = row['SeglingBåtTyp'].to_s.strip 
+          team.boat_type_name = row['SeglingBåtTyp'].to_s.strip 
           #team.boat_sail_number = 
           team.start_point = row['SeglingFNStartpunkt'].to_s.strip.to_i
           #team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
           team.plaque_distance = row['SeglingPlakatDist'].to_s.strip.to_f
-          team.name = "#{team.boat_name} / #{team.boat_class_name}" if team.name.blank?
+          team.name = "#{team.boat_name} / #{team.boat_type_name}" if team.name.blank?
           boat = Boat.find_by( external_id: row['SeglingFNBoatIndivid'].to_s.strip.to_i, external_system: 'Starema-St')
           if boat.nil?
             puts row
           else
-            boat.boat_type_name = team.boat_class_name
+            boat.boat_type_name = team.boat_type_name
             boat.save!
             team.boat_id = boat.id
-            handicap = LegacyBoatType.find_or_create_by( name: team.boat_class_name, 
+            handicap = LegacyBoatType.find_or_create_by( name: team.boat_type_name, 
                                                           handicap: row['SeglingSxkTal'].to_s.strip.to_f, 
                                                           external_system: 'Starema-St',
                                                           source: 'Arkiv',
                                                           best_before: DateTime.parse('2016-12-31'))
             team.handicap = handicap
+            team.handicap_type = 'LegacyBoatType'
 
-            if team.boat_sail_number == 0 || team.boat_sail_number.nil? 
+            if boat.sail_number == 0 || boat.sail_number.nil? 
               team.boat_sail_number = nil
             else
               team.boat_sail_number = boat.sail_number

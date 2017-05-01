@@ -16,7 +16,8 @@
   %p
     %b AIS mmsi:
     = @boat.ais_mmsi
--unless @boat.teams.nil?
+
+- if @boat.teams.count > 0
   %p
     %b Varit anmäld till    
   %ul

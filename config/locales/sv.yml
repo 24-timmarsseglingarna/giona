@@ -477,6 +477,12 @@ sv:
     submit: Skicka
     required: Obligatorisk
     labels:
+      boat:
+        name: Namn
+        boat_type_name: Båttyp/klass
+        sail_number: Segelnummer
+        vhf_call_sign: Anropssignal VHF ombord
+        ais_mmsi: MMSI-nummer för AIS ombord
       person:
         first_name: Förnamn
         last_name: Efternamn
@@ -520,6 +526,8 @@ sv:
         phone: Det nummer som är lättast att nå dig på, gärna mobilen.
         email: Du ändrar din mejladress under \Min profil\.
       race:
+      boat:
+        sail_number: Ange endast siffrorna i segelnumret, inte nationsbeteckningen.
       regatta:
         email_to: En rad mejladresser, separerade med kommatecken.
         active: Det går att anmäla sig och segla.
