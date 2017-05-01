@@ -9,6 +9,4 @@ module HandicapsHelper
     handicap_array 
   end
 
-  
-
 end

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get 'teams/add_seaman'
   post 'teams/remove_seaman'
   post 'teams/remove_handicap'
+  post 'teams/set_handicap_type'
   post 'teams/remove_boat'
   post 'teams/set_boat'
   get 'teams/edit_boat'

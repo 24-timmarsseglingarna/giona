@@ -104,8 +104,20 @@ class TeamsController < ApplicationController
   def remove_handicap
     set_team
     @team.handicap = nil
+    @team.handicap_type = nil
     @team.save!
-    redirect_to @team, notice: "Handikappet är nu bortplockad. Du behöver välja handikapp för att kunna delta."
+    redirect_to @team, notice: "Du behöver välja handikapp för att kunna delta."
+  end
+
+  def set_handicap_type
+    set_team
+    @team.handicap_type = params[:handicap_type].to_s
+    @team.save!
+    if ['SrsKeelboat', 'SrsMultihull', 'SrsDingy', 'SrsCertificate', 'SxkCertificate'].include? @team.handicap_type
+      redirect_to edit_team_path(:id => @team.id, :section => :handicap)
+    else
+      redirect_to @team, notice: "Se till att återkomma med mätbrev."
+    end
   end
 
   def remove_boat
@@ -113,6 +125,7 @@ class TeamsController < ApplicationController
     boat_name = @team.boat.name
     @team.boat = nil
     @team.handicap = nil
+    @team.handicap_type = nil
     @team.boat_name = nil
     @team.boat_type_name = nil
     @team.boat_sail_number = nil
@@ -150,6 +163,6 @@ class TeamsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
-      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_type_name, :boat_sail_number, :start_point, :finish_point, :start_number, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :handicap_id, :boat_id, boat_attributes: [:id, :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi], person_ids: [])
+      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_type_name, :boat_sail_number, :start_point, :finish_point, :start_number, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :handicap_id, :handicap_type, :boat_id, boat_attributes: [:id, :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi], person_ids: [])
     end
 end

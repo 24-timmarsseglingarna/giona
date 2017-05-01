@@ -26,8 +26,6 @@
       = @team.race.period
       timmar
     =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-primary"
-    
-
 
 .panel.panel-default
   .panel-heading
@@ -133,24 +131,41 @@
     .legend Startnummer:
     %p
       %i.fa.fa-file-text-o(aria-hidden='true') 
-      = @team.start_number        
+      -unless @team.start_number.nil? || @team.start_number == 0
+        = @team.start_number        
+      - else
+        Sätts senare
     .legend Handikapp:
     %p
-      %i.fa.fa-calculator(aria-hidden='true')
-      - if @team.handicap.nil?    
-        -if @team.boat.nil?
-          Välj först båt, sedan handikapp.
-        -else
-          =link_to 'Välj handikapp (från SRS-tabell, SRS-mätbrev eller SXK-mätbrev).', edit_team_path(@team, :section => :handicap)
-      - else
-        = @team.handicap.handicap
-        för
-        = @team.handicap.name
-        enligt 
-        = @team.handicap.source
-        %i.fa.fa-remove(aria-hidden='true')
-        =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}
-
+      %i.fa.fa-calculator(aria-hidden='true') 
+      -if @team.boat.nil?
+        Välj först båt, sedan handikapp.
+      -else
+        - if @team.handicap_type.blank?
+          Välj en sorts handikapp
+          %ul
+            - Handicap.types.each do |key, value|
+              %li 
+                %i.fa.fa-plus(aria-hidden='true')    
+                =link_to value, teams_set_handicap_type_path(:id => @team.id, :handicap_type => key ), method: :post        
+        - else  
+          - if @team.handicap_type == 'SoonSrsCertificate'
+            Ska återkomma med SRS-mätbrev.
+            %i.fa.fa-remove(aria-hidden='true')
+            =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post     
+          - elsif @team.handicap_type == 'SoonSxkCertificate'
+            Ska återkomma med SXK-mätbrev.
+            %i.fa.fa-remove(aria-hidden='true')
+            =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post
+          - else     
+            SXK-tal
+            = @team.handicap.handicap
+            för
+            = @team.handicap.name
+            enligt 
+            = @team.handicap.source
+            %i.fa.fa-remove(aria-hidden='true')
+            =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}        
 
 .panel.panel-default
   .panel-heading

@@ -5,20 +5,25 @@
     .legend Regatta:
     %p
       %i.fa.fa-trophy(aria-hidden='true')    
-      =link_to @team.race.regatta.name, @team.race.regatta  
-    .legend Segling:
+      =@team.race.regatta.name  
+    .legend Båt:
     %p  
-      %i.fa.fa-bell(aria-hidden='true')
-      = @team.race.name  
+      %i.fa.fa-ship(aria-hidden='true')
+      = @team.boat_name  
 
     = semantic_form_for @team do |f|
       = f.inputs do
-        = f.input :handicap, :collection => handicap_table('SrsKeelboat'), :include_blank => false, :label => 'Kölbåtar enligt SRS-tabellen'
-        = f.input :handicap, :collection => handicap_table('SrsMultihull'), :include_blank => false, :label => 'Flerskrovsbåtar enligt SRS-tabellen'
-        = f.input :handicap, :collection => handicap_table('SrsDingy'), :include_blank => false, :label => 'Jollar enligt SRS-tabellen'
-        = f.input :handicap, :collection => handicap_table('SrsCertificate'), :include_blank => false, :label => 'SRS-mätbrev (för individuell båt)'
-        = f.input :handicap, :collection => handicap_table('SxkCertificate'), :include_blank => false, :label => 'SXK-mätbrev (för individuell båt)'
-        = f.input :handicap, :collection => handicap_table('LegacyBoatType'), :include_blank => false, :label => 'SXK-mätbrev (för individuell båt)'
+        = #f.input :handicap_type, :as => :radio, :collection => Handicap.types
+
+        =#@team.handicap_type
+        
+
+        = f.input :handicap, :collection => handicap_table(@team.handicap_type), :include_blank => false, :label => Handicap.types[@team.handicap_type]
+        = #f.input :handicap, :collection => handicap_table('SrsMultihull'), :include_blank => false, :label => 'Flerskrovsbåt enligt SRS-tabellen'
+        = #f.input :handicap, :collection => handicap_table('SrsDingy'), :include_blank => false, :label => 'Jolle enligt SRS-tabellen'
+        = #f.input :handicap, :collection => handicap_table('SrsCertificate'), :include_blank => false, :label => 'SRS-mätbrev (för individuell båt)'
+        = #f.input :handicap, :collection => handicap_table('SxkCertificate'), :include_blank => false, :label => 'SXK-mätbrev (för individuell båt)'
+        = #f.input :handicap, :collection => handicap_table('LegacyBoatType'), :include_blank => false, :label => 'SXK-mätbrev (för individuell båt)'
 
       = f.actions do
         = f.action :submit, :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}
