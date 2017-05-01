@@ -22,9 +22,6 @@
       Stängt    
 
 
-%h3 Arrangör
-
-
 %h3 Seglingsperiod (timmar)
 .list-group.race-select
   - for period in Race.is_active(true).select('DISTINCT period').map(&:period).sort
@@ -45,7 +42,7 @@
   - @races.each do |race|
     %a.list-group-item{:href => "#{new_team_path(:race_id => race.id)}"}
       %p.list-group-item-text 
-        =race.regatta.organizer
+        =race.regatta.organizer.name
       %h4.list-group-item-heading
         =race.regatta.name
       %p.list-group-item-text 

@@ -483,6 +483,12 @@ sv:
         sail_number: Segelnummer
         vhf_call_sign: Anropssignal VHF ombord
         ais_mmsi: MMSI-nummer för AIS ombord
+      organizer:
+        name: Namn
+        email_from: Mejlavsändare
+        name_from: Avsändarnamn
+        email_to: Informera om anmälan
+        confirmation: Mejlbekräftelse        
       person:
         first_name: Förnamn
         last_name: Efternamn
@@ -526,6 +532,7 @@ sv:
         phone: Det nummer som är lättast att nå dig på, gärna mobilen.
         email: Du ändrar din mejladress under \Min profil\.
       race:
+        name: Namnge seglingen så att den går att särskilja. Använd t.ex. seglingsperiod i namnet. Om regattan har flera seglingar med samma seglingsperiod, berätta när start eller mål sker.
       boat:
         sail_number: Ange endast siffrorna i segelnumret, inte nationsbeteckningen.
       regatta:

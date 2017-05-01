@@ -3,7 +3,7 @@ module Api
     class RegattasController < ApiController
 
       has_scope :is_active, :type => :boolean, allow_blank: true
-      has_scope :has_race
+      has_scope :has_race, :from_organizer
 
       def index
         respond_with apply_scopes(Regatta).all

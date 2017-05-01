@@ -1,2 +1,3 @@
 class LegacyBoatType < Handicap
+  
 end

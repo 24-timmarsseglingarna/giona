@@ -2,7 +2,7 @@
   = @regatta.name
 %p
   %b Arrangör:
-  = @regatta.organizer
+  = link_to @regatta.organizer.name, @regatta.organizer
 
 %p
   %b Status, är aktiv:
@@ -29,7 +29,7 @@
     = @regatta.confirmation
 
   %p
-    %b **Admin** Lägg till en segling:
+    %b Lägg till en segling:
     %ul 
       %li=link_to "Period: 12", new_race_path(:regatta_id => @regatta.id, :period => '12')  
       %li=link_to "Period: 24", new_race_path(:regatta_id => @regatta.id, :period => '24')  

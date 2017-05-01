@@ -2,7 +2,7 @@
 .col-lg-12
 %h1 Regattor
 %p
-  = link_to('New Regatta', new_regatta_path) if user_signed_in?
+  = "Skapa nya regattor från arrangörssidor.  " if user_signed_in?
 .panel.panel-default
   .panel-heading
     Regattor
@@ -18,7 +18,7 @@
       %tbody
         - @regattas.each do |regatta|
           %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
-            %td= regatta.organizer
+            %td= regatta.organizer.name
             %td= regatta.name 
             %td
               - for race in regatta.races

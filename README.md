@@ -15,6 +15,7 @@ rake scrape:srs:certificates
 rake import:sxk:certificates
 rake scrape:srs:multihulls
 rake import:srs:dingies
+rake batch:pod:organizers
 rake import:starema:people
 rake import:starema:regattas
 rake import:starema:boats

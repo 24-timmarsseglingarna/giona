@@ -1,6 +1,6 @@
 class RacesController < ApplicationController
   before_action :set_race, only: [:show, :edit, :update, :destroy]
-  has_scope :from_regatta, :has_team, :has_period
+  has_scope :from_organizer, :from_regatta, :has_team, :has_period
   has_scope :is_active, :type => :boolean, allow_blank: true
 
   # GET /races
@@ -16,9 +16,14 @@ class RacesController < ApplicationController
 
   # GET /races/new
   def new
-    @race = Race.new
-    @race.period = params[:period]
-    @race.regatta_id = params[:regatta_id]
+    if params[:regatta_id].blank?
+      redirect_to regattas_path, alert: 'Seglingar kan bara skapas från regattasidor.'
+    else   
+      @race = Race.new
+      @race.period = params[:period] 
+      regatta = Regatta.find params[:regatta_id]
+      @race.regatta_id = regatta.id 
+    end
   end
 
   # GET /races/1/edit
@@ -29,6 +34,7 @@ class RacesController < ApplicationController
   # POST /races.json
   def create
     @race = Race.new(race_params)
+    @race.start_to = @race.start_from if( @race.start_to.blank? && @race.start_from.present?)
     respond_to do |format|
       if @race.save
         format.html { redirect_to @race, notice: 'Race was successfully created.' }

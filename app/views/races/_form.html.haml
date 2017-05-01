@@ -1,13 +1,11 @@
 %p
-  %b Regatta:
-  = @race.regatta.name unless @race.regatta.nil?
-%p
   %b Arrangör:
-  =@race.regatta.organizer unless @race.regatta.nil?
+  =@race.regatta.organizer.name unless @race.regatta.nil?
 
 = semantic_form_for @race do |f|
   = f.inputs do
-    = f.input :name
+    = f.input :regatta, input_html: { disabled: true } 
+    = f.input :name, :label => 'Seglingens namn'
     = f.input :start_from, :as => :string
     = f.input :start_to, :as => :string
     = f.input :period, :as => :radio, :collection => [12, 24, 48, 72, 96, 120]

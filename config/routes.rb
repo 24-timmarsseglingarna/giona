@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :organizers
   #Sti::Application.routes.draw do
   resources :handicaps
   #end

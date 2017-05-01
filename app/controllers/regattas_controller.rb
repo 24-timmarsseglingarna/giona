@@ -1,6 +1,6 @@
 class RegattasController < ApplicationController
   has_scope :is_active, :type => :boolean, allow_blank: true
-  has_scope :has_race
+  has_scope :has_race, :from_organizer
 
   before_action :set_regatta, only: [:show, :edit, :update, :destroy]
  
@@ -18,7 +18,17 @@ class RegattasController < ApplicationController
 
   # GET /regattas/new
   def new
-    @regatta = Regatta.new
+    if params[:organizer_id].blank?
+      redirect_to regattas_path, alert: 'Regattor kan bara skapas från arrangörssidor.'
+    else   
+      @regatta = Regatta.new
+      organizer = Organizer.find params[:organizer_id]
+      @regatta.organizer_id = organizer.id
+      @regatta.email_from = organizer.email_from
+      @regatta.name_from = organizer.name_from
+      @regatta.email_to = organizer.email_to
+      @regatta.confirmation = organizer.confirmation
+    end
   end
 
   # GET /regattas/1/edit
@@ -29,7 +39,6 @@ class RegattasController < ApplicationController
   # POST /regattas.json
   def create
     @regatta = Regatta.new(regatta_params)
-
     respond_to do |format|
       if @regatta.save
         format.html { redirect_to @regatta, notice: 'Regatta was successfully created.' }
@@ -73,6 +82,6 @@ class RegattasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def regatta_params
-      params.require(:regatta).permit(:name, :organizer, :email_from, :name_from, :email_to, :confirmation, :active)
+      params.require(:regatta).permit(:name, :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :external_id, :external_system)
     end
 end
