@@ -210,6 +210,7 @@ namespace :import do
                                                           source: 'Arkiv',
                                                           best_before: DateTime.parse('2016-12-31'))
             team.handicap = handicap
+            team.handicap_type = 'LegacyBoatType'
 
             if boat.sail_number == 0 || boat.sail_number.nil? 
               team.boat_sail_number = nil
