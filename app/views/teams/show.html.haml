@@ -121,7 +121,6 @@
       %i.fa.fa-ship(aria-hidden='true') 
       - if @team.boat.nil?
         %i.fa.fa-plus(aria-hidden='true')    
-        =#link_to 'lägg till båt', teams_choose_boat_path(:id => @team.id, :known => true)
         =link_to 'lägg till båt', edit_team_path(@team, :section=>:boat)
       -else
         = link_to "#{@team.boat.name} | #{@team.boat.boat_type_name} | Segelnummer: #{@team.boat.sail_number}", @team.boat
@@ -158,18 +157,25 @@
             %i.fa.fa-remove(aria-hidden='true')
             =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post
           - else 
-            - if @team.race.start_from > @team.handicap.best_before  
-              %span.error
-                Handikappet gäller inte vid seglingen. Gäller till: #{I18n.l(@team.handicap.best_before, format: :day)}.
-              %br
-            SXK-tal
-            = @team.handicap.handicap
-            för
-            = @team.handicap.name
-            enligt 
-            = @team.handicap.source
-            %i.fa.fa-remove(aria-hidden='true')
-            =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}        
+            - if @team.handicap.nil?
+              =Handicap.types[@team.handicap_type]
+              %i.fa.fa-plus(aria-hidden='true')    
+              =link_to 'ange handikapp', edit_team_path(:id => @team.id, :section => :handicap)  
+              %i.fa.fa-remove(aria-hidden='true')
+              =link_to 'nollställ', teams_remove_handicap_path(:id => @team.id), method: :post
+            - else
+              - if @team.race.start_from > @team.handicap.best_before  
+                %span.error
+                  Handikappet gäller inte vid seglingen. Gäller till: #{I18n.l(@team.handicap.best_before, format: :day)}.
+                %br
+              SXK-tal
+              = @team.handicap.handicap
+              för
+              = @team.handicap.name
+              enligt 
+              = @team.handicap.source
+              %i.fa.fa-remove(aria-hidden='true')
+              =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}        
 
 .panel.panel-default
   .panel-heading

@@ -1,10 +1,11 @@
 class HandicapsController < ApplicationController
   before_action :set_handicap, only: [:show, :edit, :update, :destroy]
+  before_action :set_type
 
   # GET /handicaps
   # GET /handicaps.json
   def index
-    @handicaps = Handicap.all
+    @handicaps = type_class.all
   end
 
   # GET /handicaps/1
@@ -64,11 +65,23 @@ class HandicapsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_handicap
-      @handicap = Handicap.find(params[:id])
+      @handicap = type_class.find(params[:id])
     end
+
+    def set_type 
+       @type = type 
+    end
+
+    def type 
+        Handicap.types.include?(params[:type]) ? params[:type] : "Handicap"
+    end
+
+    def type_class 
+        type.constantize 
+    end    
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def handicap_params
-      params.require(type.underscore.to_sym).permit(:name, :handicap, :best_before, :source, :srs, :registry_id, :sail_number, :boat_name, :owner_name, :external_system, :external_id, :type)
+      params.require(@handicap.type.underscore.to_sym).permit(:name, :handicap, :best_before, :source, :srs, :registry_id, :sail_number, :boat_name, :owner_name, :external_system, :external_id)
     end
 end

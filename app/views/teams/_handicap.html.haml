@@ -9,7 +9,7 @@
     .legend Båt:
     %p  
       %i.fa.fa-ship(aria-hidden='true')
-      = @team.boat_name  
+      #{@team.boat_name} | #{@team.boat_type_name} | Segelnummer: #{@team.boat_sail_number}
 
     = semantic_form_for @team do |f|
       = f.inputs do
