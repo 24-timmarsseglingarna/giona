@@ -1,5 +1,5 @@
 class BoatsController < ApplicationController
-  has_scope :from_boat_class, :has_team
+  has_scope :has_team
 
   before_action :set_boat, only: [:show, :edit, :update, :destroy]
 
@@ -71,6 +71,6 @@ class BoatsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def boat_params
-      params.require(:boat).permit(:name, :sail_number, :vhf_call_sign, :ais_mmsi, :boat_class_id, :external_id, :external_system)
+      params.require(:boat).permit(:name, :sail_number, :boat_type_name, :vhf_call_sign, :ais_mmsi, :external_id, :external_system)
     end
 end

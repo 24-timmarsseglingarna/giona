@@ -1,0 +1,29 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  handicap: 1.5
+  best_before: 2017-04-25 17:31:59
+  source: MyString
+  srs: 1.5
+  registry_id: MyString
+  sail_number: 1
+  boat_name: MyString
+  owner_name: MyString
+  external_system: MyString
+  external_id: MyString
+  type: 
+
+two:
+  name: MyString
+  handicap: 1.5
+  best_before: 2017-04-25 17:31:59
+  source: MyString
+  srs: 1.5
+  registry_id: MyString
+  sail_number: 1
+  boat_name: MyString
+  owner_name: MyString
+  external_system: MyString
+  external_id: MyString
+  type: 

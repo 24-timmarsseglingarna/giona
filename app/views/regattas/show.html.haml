@@ -2,7 +2,7 @@
   = @regatta.name
 %p
   %b Arrangör:
-  = @regatta.organizer
+  = link_to @regatta.organizer.name, @regatta.organizer
 
 %p
   %b Status, är aktiv:
@@ -28,8 +28,16 @@
     %b Anmälningsmejl:
     = @regatta.confirmation
 
+  %p= link_to 'Redigera', edit_regatta_path(@regatta)
+
   %p
-    %b **Admin** Lägg till en segling:
+    %b Seglingar
+    %ul
+      - for race in @regatta.races.order :period
+        %li= link_to race_brief(race), race
+
+  %p
+    %b Lägg till en segling:
     %ul 
       %li=link_to "Period: 12", new_race_path(:regatta_id => @regatta.id, :period => '12')  
       %li=link_to "Period: 24", new_race_path(:regatta_id => @regatta.id, :period => '24')  
@@ -62,14 +70,11 @@
             %td= team.start_number
             %td= team.start_point
             %td= team.boat_name
-            %td= team.boat_class_name
+            %td= team.boat_type_name
             %td= team.boat_sail_number
-            %td= team.handicap
+            %td= team.handicap.handicap unless team.handicap.nil?
             %td= team.skipper.name unless team.skipper.nil?
 
-
-
-%p= link_to 'Redigera', edit_regatta_path(@regatta)
 
 :javascript
   $(document).ready(function() {

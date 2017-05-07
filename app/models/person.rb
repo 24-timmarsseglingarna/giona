@@ -4,6 +4,7 @@ class Person < ApplicationRecord
   has_many :crew_members, dependent: :destroy
   has_many :teams, through: :crew_members
   has_many :friends, -> { distinct }, :through => :teams, :source => :people
+  has_many :boats, -> { distinct }, :through => :teams
 
   default_scope { order 'last_name, first_name' }
 

@@ -1,57 +1,23 @@
-%h1 Seglingar
+%h1 Deltagaranmälan
 
-%p= link_to 'Nollställ allt', '?'
-%p Antal seglingar
-%p= @races.count
+- unless @organizers.blank?
+  %p Hitta en segling att anmäla dig, båten och besättningen till.
+- else 
+  %p Just nu finns det inte några seglingar att anmäla sig till för ditt urval.
 
-%h3 Anmälningsstatus
-.list-group.race-select
-  - if params[:is_active] == 'true'
-    %a.list-group-item.active{:href => "#{url_for(params.permit(:from_regatta, :from_organizer, :has_period))}"}
-      Öppet
-      %span.badge x
-  - else
-    %a.list-group-item{:href => "#{url_for(params.permit(:from_regatta, :from_organizer, :has_period).merge( { "is_active" => "true" }))}"}
-      Öppet
-  - if params[:is_active] == 'false'      
-    %a.list-group-item.active{:href => "#{url_for(params.permit(:from_regatta, :from_organizer, :has_period))}"}
-      Stängt
-      %span.badge x
-  - else
-    %a.list-group-item{:href => "#{url_for(params.permit(:from_regatta, :from_organizer, :has_period).merge( { "is_active" => "false" }))}"}
-      Stängt    
+- for organizer in @organizers
+  .panel.panel-default
+    .panel-heading
+      %i.fa.fa-institution(aria-hidden='true')
+      =organizer.name
+    .panel-body    
+      %ul
+      - for regatta in organizer.regattas.is_active(true)
+        %li 
+          %i.fa.fa-trophy(aria-hidden='true')
+          = regatta.name
+          %ul
+            -for race in regatta.races.order(:period, :start_from)
+              %li
+                = link_to race_brief(race), new_team_path(:race_id => race.id)
 
-
-%h3 Arrangör
-
-
-%h3 Seglingsperiod (timmar)
-.list-group.race-select
-  - for period in Race.is_active(true).select('DISTINCT period').map(&:period).sort
-    - if period == params[:has_period].to_i
-      %a.list-group-item.active{:href => "#{url_for(params.permit(:is_active, :from_regatta, :from_organizer))}"}
-        =period
-        %span.badge x
-    - else 
-      = link_to period, params.permit(:is_active, :from_regatta, :from_organizer).merge( { "has_period" => "#{period}" }), class: 'list-group-item'
-
-%h3 Startplats
-
-%h3 Målgång
-
-
-
-.list-group
-  - @races.each do |race|
-    %a.list-group-item{:href => "#{new_team_path(:race_id => race.id)}"}
-      %p.list-group-item-text 
-        =race.regatta.organizer
-      %h4.list-group-item-heading
-        =race.regatta.name
-      %p.list-group-item-text 
-        =race.name
-      %p.list-group-item-text 
-        Seglingsperiod: #{race.period} timmar
-
-
-= link_to 'New Race', new_race_path

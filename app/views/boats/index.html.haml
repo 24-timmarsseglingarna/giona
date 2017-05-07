@@ -15,21 +15,14 @@
           %th Segelnr
           %th VHF
           %th AIS
-          %th Anmäld gånger
       %tbody
         - @boats.each do |boat|
           %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{boat_path(boat)}';", :style => "cursor: pointer;"}
             %td= boat.name
             %td
-              - if boat.boat_class.nil?
-                ***
-              - else
-                = boat.boat_class.name
-
             %td= boat.sail_number
             %td= boat.vhf_call_sign
             %td= boat.ais_mmsi
-            %td= boat.teams.count
 
 
 :javascript

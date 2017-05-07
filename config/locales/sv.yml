@@ -453,6 +453,8 @@ sv:
       long: "%A %e %B %Y kl. %H.%M"
       short: "%A %e %B kl. %H.%M"
       clock: "%H.%M"
+      day: "%Y-%m-%d"
+
     pm: ''
 
   devise:
@@ -475,6 +477,18 @@ sv:
     submit: Skicka
     required: Obligatorisk
     labels:
+      boat:
+        name: Namn
+        boat_type_name: Båttyp/klass
+        sail_number: Segelnummer
+        vhf_call_sign: Anropssignal VHF ombord
+        ais_mmsi: MMSI-nummer för AIS ombord
+      organizer:
+        name: Namn
+        email_from: Mejlavsändare
+        name_from: Avsändarnamn
+        email_to: Informera om anmälan
+        confirmation: Mejlbekräftelse        
       person:
         first_name: Förnamn
         last_name: Efternamn
@@ -489,7 +503,7 @@ sv:
         external_id: Id i annat system
         external_system: Annat system
       race:
-        name: Segling
+        description: Kort beskrivning
         start_from: Startperiodens början
         start_to: Startperiodens slut
         period: Seglingsperiod
@@ -518,6 +532,9 @@ sv:
         phone: Det nummer som är lättast att nå dig på, gärna mobilen.
         email: Du ändrar din mejladress under \Min profil\.
       race:
+        description: Endast om det är något speciellt med den som behöver särskiljas från andra seglingar i samma regatta. T.ex. segling med gemensam målgång vs segling med mål vid start.
+      boat:
+        sail_number: Ange endast siffrorna i segelnumret, inte nationsbeteckningen.
       regatta:
         email_to: En rad mejladresser, separerade med kommatecken.
         active: Det går att anmäla sig och segla.

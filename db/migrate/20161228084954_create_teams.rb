@@ -10,7 +10,6 @@ class CreateTeams < ActiveRecord::Migration[5.0]
       t.string :boat_sail_number
       t.integer :start_point
       t.integer :start_number
-      t.float :handicap
       t.float :plaque_distance
       t.boolean :did_not_start
       t.boolean :did_not_finish

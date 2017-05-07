@@ -1,8 +1,8 @@
 class Boat < ApplicationRecord
-  belongs_to :boat_class
   has_many :teams, dependent: :destroy
+  default_scope { order 'name, boat_type_name' }
 
-  scope :from_boat_class, ->(b_id) {joins(:boat_class).where("boat_classes.id = ?", b_id) }
+  # scope :from_boat_class, ->(b_id) {joins(:boat_class).where("boat_classes.id = ?", b_id) } #TODO
   scope :has_team, ->(t_id) {joins(:teams).where("teams.id = ?", t_id)}
   #scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   #scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
@@ -10,4 +10,6 @@ class Boat < ApplicationRecord
   
   #validates_presence_of :name
   validates :sail_number, numericality: { only_integer: true, allow_nil: true }
+  validates_presence_of :name, :boat_type_name
+
 end

@@ -1,10 +1,27 @@
 %h1 Ny deltagaranmälan
 
+.panel.panel-default
+  .panel-heading
+    Ny deltagaranmälan
+  .panel-body    
+    .legend Regatta:
+    %p
+      %i.fa.fa-trophy(aria-hidden='true')    
+      = @race.regatta.name  
+    .legend Arrangör:
+    %p  
+      %i.fa.fa-institution(aria-hidden='true')
+      = @race.regatta.organizer.name  
+    .legend Segling:
+    %p  
+      %i.fa.fa-bell(aria-hidden='true')
+      = race_brief(@race)     
 
-= semantic_form_for @team do |f|
-  = f.inputs do
-    = f.input :race, :as => :radio, :collection => @races
-  = f.actions do
-    = f.action :submit, :as => :input
-
-= link_to 'Back', :back
+    = semantic_form_for @team do |f|
+      = f.inputs do
+        = f.input :race_id, :as => :hidden
+      = f.actions do
+        = f.action :submit, :as => :input
+    
+    %br
+    = link_to 'Tillbaka', :back

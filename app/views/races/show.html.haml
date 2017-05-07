@@ -1,12 +1,17 @@
-%h1=@race.name
+%h1 Segling
 
+%p
+  %b Arrangör:
+  =link_to @race.regatta.organizer.name, @race.regatta.organizer
 %p
   %b Regatta:
   = link_to( @race.regatta.name, @race.regatta ) unless @race.regatta.nil?
-
+%p
+  %b Beskrivning:
+  = @race.description
 %p
   %b Startperiod:
-  = @race.name
+  = @race.period
 %p
   %b Startperiod:
   från
@@ -24,6 +29,10 @@
     %b Gemansamma målgången är obligatorisk:
     = @race.mandatory_common_finish
 
+%p
+  = link_to 'Redigera', edit_race_path(@race)
+
+
 .panel.panel-default
   .panel-heading
     Deltagare
@@ -32,8 +41,8 @@
     %table#giona-teams.table.table-striped.table-bordered.table-hover{:width => "100%"}
       %thead
         %tr
-          %th Nr
-          %th Start
+          %th Startnr
+          %th Startplats
           %th Båt
           %th Typ
           %th Segelnr
@@ -45,14 +54,11 @@
             %td= team.start_number
             %td= team.start_point
             %td= team.boat_name
-            %td= team.boat_class_name
+            %td= team.boat_type_name
             %td= team.boat_sail_number
-            %td= team.handicap
-            %td= team.skipper.name
+            %td= team.handicap.handicap unless team.handicap.blank?
+            %td= team.skipper.name unless team.skipper.blank?
 
-
-%p
-  = link_to 'Redigera', edit_race_path(@race)
 
 :javascript
   $(document).ready(function() {

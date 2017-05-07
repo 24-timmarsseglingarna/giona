@@ -10,26 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170419183559) do
+ActiveRecord::Schema.define(version: 20170507085324) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "boat_classes", force: :cascade do |t|
-    t.string   "name"
-    t.float    "handicap"
-    t.integer  "external_id"
-    t.string   "external_system"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
   create_table "boats", force: :cascade do |t|
     t.string   "name"
+    t.string   "boat_type_name"
     t.integer  "sail_number"
     t.string   "vhf_call_sign"
     t.string   "ais_mmsi"
-    t.integer  "boat_class_id"
     t.integer  "external_id"
     t.string   "external_system"
     t.datetime "created_at",      null: false
@@ -45,6 +36,35 @@ ActiveRecord::Schema.define(version: 20170419183559) do
     t.index ["person_id", "team_id"], name: "index_crew_members_on_person_id_and_team_id", unique: true, using: :btree
     t.index ["person_id"], name: "index_crew_members_on_person_id", using: :btree
     t.index ["team_id"], name: "index_crew_members_on_team_id", using: :btree
+  end
+
+  create_table "handicaps", force: :cascade do |t|
+    t.string   "name"
+    t.float    "handicap"
+    t.datetime "best_before"
+    t.string   "source"
+    t.float    "srs"
+    t.string   "registry_id"
+    t.integer  "sail_number"
+    t.string   "boat_name"
+    t.string   "owner_name"
+    t.string   "external_system"
+    t.integer  "external_id"
+    t.string   "type"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  create_table "organizers", force: :cascade do |t|
+    t.string   "name"
+    t.string   "email_from"
+    t.string   "name_from"
+    t.string   "email_to"
+    t.text     "confirmation"
+    t.string   "external_id"
+    t.string   "external_system"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "people", force: :cascade do |t|
@@ -77,38 +97,21 @@ ActiveRecord::Schema.define(version: 20170419183559) do
     t.integer  "regatta_id"
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
-    t.string   "name"
+    t.string   "description"
   end
 
   create_table "regattas", force: :cascade do |t|
     t.string   "name"
-    t.string   "organizer"
     t.string   "email_from"
     t.string   "name_from"
     t.string   "email_to"
     t.text     "confirmation"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
-    t.boolean  "active",       default: false
-  end
-
-  create_table "srs_classes", force: :cascade do |t|
-    t.string   "name"
-    t.string   "pdf_link"
-    t.string   "klassning"
-    t.string   "skl"
-    t.float    "b"
-    t.float    "d"
-    t.float    "depl"
-    t.float    "srs"
-    t.float    "srs_wo_fly"
-    t.integer  "boat_class_id"
-    t.integer  "version"
-    t.string   "version_name"
-    t.string   "import_description"
-    t.float    "handicap"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.boolean  "active",          default: false
+    t.integer  "organizer_id"
+    t.string   "external_id"
+    t.string   "external_system"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -117,11 +120,10 @@ ActiveRecord::Schema.define(version: 20170419183559) do
     t.string   "external_system"
     t.string   "name"
     t.string   "boat_name"
-    t.string   "boat_class_name"
+    t.string   "boat_type_name"
     t.string   "boat_sail_number"
     t.integer  "start_point"
     t.integer  "start_number"
-    t.float    "handicap"
     t.float    "plaque_distance"
     t.boolean  "did_not_start"
     t.boolean  "did_not_finish"
@@ -133,6 +135,8 @@ ActiveRecord::Schema.define(version: 20170419183559) do
     t.integer  "finish_point"
     t.boolean  "offshore",         default: false
     t.string   "vacancies"
+    t.integer  "handicap_id"
+    t.string   "handicap_type"
   end
 
   create_table "users", force: :cascade do |t|

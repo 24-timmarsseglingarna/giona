@@ -1,0 +1,23 @@
+%h1 Listing organizers
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Name from
+      %th
+      %th
+      %th
+
+  %tbody
+    - @organizers.each do |organizer|
+      %tr
+        %td= organizer.name
+        %td= organizer.name_from
+        %td= link_to 'Show', organizer
+        %td= link_to 'Edit', edit_organizer_path(organizer)
+        %td= link_to 'Destroy', organizer, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Organizer', new_organizer_path

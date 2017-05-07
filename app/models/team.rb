@@ -7,6 +7,7 @@ class Team < ApplicationRecord
   has_many :seamen, :through => :non_skipper_crew_member, :source => :person
   has_one :skipper_crew_member, -> { where(skipper: true) }, class_name: 'CrewMember'
   has_one :skipper, :through => :skipper_crew_member, :source => :person
+  belongs_to :handicap
 
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
@@ -15,6 +16,8 @@ class Team < ApplicationRecord
   scope :did_not_start, ->(value = true) { where(did_not_start: value) }
   scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
   scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
+
+  accepts_nested_attributes_for :boat
   
   after_initialize :set_defaults, unless: :persisted?
   # The set_defaults will only work if the object is new
@@ -31,7 +34,7 @@ class Team < ApplicationRecord
     self.did_not_start  ||= false
     self.did_not_finish  ||= false
     self.paid_fee  ||= false
-    self.name ||= "#{self.boat_name} / #{boat_class_name}"
+    self.name ||= "#{self.boat_name} / #{boat_type_name}"
   end
 
   def set_skipper person
