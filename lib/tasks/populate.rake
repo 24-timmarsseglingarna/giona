@@ -262,17 +262,29 @@ namespace :import do
     end
 
 
+
     task :boats => :environment do
+      boat_type_name = Hash.new
+      boat_handicap = Hash.new
+      # File format: 
+      # BoatNr,BoatTyp,BoatSxkTal
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatType.csv"), "r"), :headers => true) do |row|
+        i = row['BoatNr'].to_i
+        boat_type_name[i] = row['BoatTyp']
+        boat_handicap[i] = row['BoatSxkTal']
+      end
+
       # File format: 
       # BoatIndNr, BoatIndFNBoattyp, BoatIndNamn, BoatIndParmNr, BoatIndVHF, BoatIndMobil
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatIndivid.csv"), "r"), :headers => true) do |row|
         boat = Boat.find_or_create_by(external_id: row['BoatIndNr'].to_s.strip.to_i, external_system: 'Starema-St')
         name = row['BoatIndNamn'].to_s
         if name.blank?
-          puts row
-          name = '*** no name ***'
+          name = '* Okänt'
         end
         boat.name = name
+        i = row['BoatIndFNBoattyp'].to_i
+        boat.boat_type_name = boat_type_name[i]
         sail_number = row['BoatIndParmNr'].to_i
         if sail_number == 0
           boat.sail_number = nil
@@ -281,7 +293,8 @@ namespace :import do
         end
         boat.vhf_call_sign = row['BoatIndVHF'].to_s
         boat.ais_mmsi = nil
-        boat.save
+        boat.boat_type_name = "* Okänd" if boat.boat_type_name.blank?
+        boat.save!
       end
     end
 
@@ -397,13 +410,16 @@ namespace :destroy do
     CrewMember.destroy_all
   end  
 
-  task :boat_classes => :environment do
-    BoatClass.destroy_all
-  end  
-
   task :boats => :environment do
     Boat.destroy_all
   end  
 
+  task :handicaps => :environment do
+    Handicap.destroy_all
+  end  
+
+  task :organizers => :environment do
+    Organizer.destroy_all
+  end  
 
 end
