@@ -28,6 +28,14 @@
     %b Anmälningsmejl:
     = @regatta.confirmation
 
+  %p= link_to 'Redigera', edit_regatta_path(@regatta)
+
+  %p
+    %b Seglingar
+    %ul
+      - for race in @regatta.races.order :period
+        %li= link_to race_brief(race), race
+
   %p
     %b Lägg till en segling:
     %ul 
@@ -67,9 +75,6 @@
             %td= team.handicap.handicap unless team.handicap.nil?
             %td= team.skipper.name unless team.skipper.nil?
 
-
-
-%p= link_to 'Redigera', edit_regatta_path(@regatta)
 
 :javascript
   $(document).ready(function() {

@@ -22,6 +22,7 @@ teams?from_regatta=M&from_race=N&from_boat=O&has_person=P?is_active=boolean&did_
 people?from_team=N&has_user=O
 user.from_person=N
 boats?from_team=O
+organizers?has_regatta=N&is_active=boolean
 
 
 TODO

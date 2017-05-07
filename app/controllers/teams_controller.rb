@@ -24,9 +24,16 @@ class TeamsController < ApplicationController
   # GET /teams/new
   def new
     @team = Team.new
-    @team.race_id = params[:race_id]
-    @team.skipper = current_user.person if current_user
-    @races = Race.is_active true
+    if params[:race_id].present?
+      @race = Race.is_active(true).find params[:race_id]
+
+      redirect_to races_path, alert: "Börja med att välja regatta eller segling." if @race.blank?
+
+      @team.race = @race
+      @team.skipper = current_user.person if current_user
+    else
+      redirect_to races_path, alert: "Börja med att välja regatta eller segling."
+    end
   end
 
   # GET /teams/1/edit

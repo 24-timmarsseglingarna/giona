@@ -12,13 +12,22 @@ class Race < ApplicationRecord
 
   validates :start_from, presence: true
   validate :check_start_period
-
+  validates_presence_of :regatta
+  
   def check_start_period
     errors.add(:base, "end date should be greater than start") if self.start_from > self.start_to
   end
 
   def self.from_organizer o_id
     Organizer.find(o_id).races
+  end
+  
+  def name
+    #{self.period}
+  end
+
+  def to_s
+    #{self.period}
   end
 
 end

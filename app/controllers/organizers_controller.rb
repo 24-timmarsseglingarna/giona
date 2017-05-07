@@ -1,10 +1,12 @@
 class OrganizersController < ApplicationController
   before_action :set_organizer, only: [:show, :edit, :update, :destroy]
+  has_scope :is_active, :type => :boolean, allow_blank: true
+  has_scope :has_regatta
 
   # GET /organizers
   # GET /organizers.json
   def index
-    @organizers = Organizer.all
+    @organizers = apply_scopes(Organizer).all
   end
 
   # GET /organizers/1
