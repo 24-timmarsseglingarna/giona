@@ -251,13 +251,21 @@ namespace :import do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-DeltariSeling.csv"), "r"), :headers => true) do |row|
         team = Team.find_by(external_id: row['DeltariFNSegling'].to_i, external_system: 'Starema-St')
         person = Person.find_by(external_id: row['DeltariFNDeltagare'].to_i, external_system: 'Starema-St')
-        crew_member = CrewMember.find_or_create_by(team: team, person: person)
-        if(row['DeltariFNSkipperGast'].to_i == 2)
-          crew_member.skipper = true 
+        unless person.nil? || team.nil?
+          crew_member = CrewMember.find_or_create_by(team_id: team.id, person_id: person.id)
+          #puts "person #{person.id unless person.nil?} team #{team.id unless team.nil?}"
+          #puts "crew_member.person #{crew_member.person_id} crew_member.team #{crew_member.team_id}"
+          #puts "--------"
+          if(row['DeltariFNSkipperGast'].to_i == 2)
+            crew_member.skipper = true 
+          else
+            crew_member.skipper = false
+          end
+          crew_member.save!
         else
-          crew_member.skipper = false
+          puts "Missing one part. Person #{person.id unless person.nil?}: Team: #{team.id unless team.nil?}."
+          puts "Starema team: #{row['DeltariFNSegling']} Starema person: #{row['DeltariFNDeltagare']}"
         end
-        crew_member.save!
       end
     end
 
