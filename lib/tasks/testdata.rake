@@ -6,7 +6,7 @@ namespace :testdata do
       regatta.destroy!
     end
     regatta = Regatta.new
-    regatta.organizer = 'Svenska Kryssarklubbens Stockholmskrets'
+    regatta.organizer = Organizer.find_by name: 'Svenska Kryssarklubbens Stockholmskrets'
     regatta.name = 'Testregatta 2017'
     regatta.email_from = 'stefan@24-timmars.nu'
     regatta.name_from = 'Stefan Pettersson'
@@ -17,7 +17,6 @@ namespace :testdata do
 
     race = Race.new
     race.regatta = regatta
-    race.name = '24-timmars 2017T Stockholm'
     race.start_from = DateTime.parse('2017-06-03 12:00+2')
     race.start_to = DateTime.parse('2017-06-03 12:00+2')
     race.period = 24
@@ -29,21 +28,19 @@ namespace :testdata do
 
     boat = Boat.find_by(name: 'Gumman 100')
     skipper = Person.find_by(email: 'mbj4668@gmail.com')
-    user = User.find_by(email: 'mbj4668@gmail.com')
-    user.person=skipper
-    user.save!
 
     team = Team.new
     team.name = 'Gumman 100/Martin'
     team.race = race
     team.boat = boat
     team.boat_name = boat.name
-    team.boat_type_name = boat.boat_class.name
+    team.boat_type_name = boat.boat_type_name
     team.boat_sail_number = boat.sail_number
     team.start_point = 552
     team.finish_point = 552
     team.start_number = 11
-    team.handicap = 1.185
+    team.handicap = SrsKeelboat.find_by name: 'Linjett 33'
+    team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
     team.active = true
     team.save!
@@ -62,12 +59,13 @@ namespace :testdata do
     team.race = race
     team.boat = boat
     team.boat_name = boat.name
-    team.boat_type_name = boat.boat_class.name
+    team.boat_type_name = boat.boat_type_name
     team.boat_sail_number = boat.sail_number
     team.start_point = 552
     team.finish_point = 552
     team.start_number = 12
-    team.handicap = 1.097
+    team.handicap = SrsKeelboat.find_by name: 'Scampi'
+    team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
     team.active = true
     team.save!
@@ -84,7 +82,7 @@ namespace :testdata do
       regatta.destroy!
     end
     regatta = Regatta.new
-    regatta.organizer = 'Svenska Kryssarklubbens Stockholmskrets'
+    regatta.organizer = Organizer.find_by name: 'Svenska Kryssarklubbens Stockholmskrets'
     regatta.name = 'Ensamseglingen test 2017'
     regatta.email_from = 'stefan@24-timmars.nu'
     regatta.name_from = 'Stefan Pettersson'
@@ -95,7 +93,6 @@ namespace :testdata do
 
     race = Race.new
     race.regatta = regatta
-    race.name = '12-timmars ensam 2017E Stockholm'
     race.start_from = DateTime.parse('2017-06-17 07:00+2')
     race.start_to = DateTime.parse('2017-06-17 07:00+2')
     race.period = 12
@@ -113,12 +110,13 @@ namespace :testdata do
     team.race = race
     team.boat = boat
     team.boat_name = boat.name
-    team.boat_type_name = boat.boat_class.name
+    team.boat_type_name = boat.boat_type_name
     team.boat_sail_number = boat.sail_number
     team.start_point = 552
     team.finish_point = 553
     team.start_number = 1
-    team.handicap = 1.185
+    team.handicap = SrsKeelboat.find_by name: 'Linjett 33'
+    team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
     team.active = true
     team.save!
@@ -137,12 +135,13 @@ namespace :testdata do
     team.race = race
     team.boat = boat
     team.boat_name = boat.name
-    team.boat_type_name = boat.boat_class.name
+    team.boat_type_name = boat.boat_type_name
     team.boat_sail_number = boat.sail_number
     team.start_point = 540
     team.finish_point = 553
     team.start_number = 2
-    team.handicap = 1.097
+    team.handicap = SrsKeelboat.find_by name: 'Scampi'
+    team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
     team.active = true
     team.save!

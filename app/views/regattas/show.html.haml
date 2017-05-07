@@ -9,13 +9,6 @@
   = @regatta.active
 
 %p
-  %b Seglingar:
-%ul
-  - @regatta.races.each do |race|
-    %li  
-      =link_to race.name, race
-
-%p
   %b Kontaktperson: 
   = @regatta.name_from + ' <' + @regatta.email_from + '>'
 
@@ -29,6 +22,8 @@
     = @regatta.confirmation
 
   %p= link_to 'Redigera', edit_regatta_path(@regatta)
+  %br
+  %p= link_to 'Radera', @regatta, :method => :delete, :data => { :confirm => "Vill du radera #{@regatta.name}?" }
 
   %p
     %b Seglingar
