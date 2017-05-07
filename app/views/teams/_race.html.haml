@@ -9,7 +9,7 @@
     .legend Arrangör:
     %p  
       %i.fa.fa-institution(aria-hidden='true')
-      = @team.race.regatta.organizer  
+      = @team.race.regatta.organizer.name
  
     = semantic_form_for @team do |f|
       = f.inputs do

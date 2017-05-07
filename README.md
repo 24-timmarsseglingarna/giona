@@ -15,12 +15,12 @@ rake scrape:srs:certificates
 rake import:sxk:certificates
 rake scrape:srs:multihulls
 rake import:srs:dingies
+rake batch:pod:organizers
 rake import:starema:people
 rake import:starema:regattas
 rake import:starema:boats
 rake import:starema:teams
 rake import:starema:crew_members
 rake batch:team_names
-rake batch:race_names
 rake mess:details # In development only
 rake testdata:team # In development/test only

@@ -144,9 +144,10 @@ namespace :import do
       # File format: SeglingFNStart,SeglingStartDag,SeglingStartTid,SeglingPeriod,StartDagCtr,StartVeckodag,
       # StartDag,StartAr,StartVH,StartFNTid,UrvalStartTid,TmpRegatta,TmpOrganizer,TmpRace,TmpRegattaName  
       # If imported start period covers midnight --> #fail  
+      organizer = Organizer.find_by(name: 'Svenska Kryssarklubbens Stockholmskrets')
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "starema-sthlm-regatta-race.csv"), "r"), :headers => true) do |row|
-        regatta = Regatta.find_or_create_by(name: row['TmpRegattaName'].to_s.strip)
-        regatta.organizer = row['TmpOrganizer'].to_s.strip
+        regatta = Regatta.find_or_create_by(name: row['TmpRegattaName'].to_s.strip, external_system: 'Starema-St')
+        regatta.organizer = organizer
         regatta.email_from = 'arne@24-timmars.nu'
         regatta.name_from = 'Arne Wallers'
         regatta.email_to = 'arne@24-timmars.nu, stefan@24-timmars.nu'
@@ -291,6 +292,33 @@ namespace :import do
 end 
 
 namespace :batch do
+  namespace :pod do
+    task :organizers => :environment do
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Västkustkrets', external_system: 'PoD', external_id: 'Vk')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Vänerkrets', external_system: 'PoD', external_id: 'Va' )
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Blekingekrets', external_system: 'PoD', external_id: 'Bl')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Dackekrets', external_system: 'PoD', external_id: 'Da')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens S:t Annakrets', external_system: 'PoD', external_id: 'SA')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Sörmlandskrets', external_system: 'PoD', external_id: 'So')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Västermälarkrets', external_system: 'PoD', external_id: 'Vm')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Stockholmskrets', external_system: 'PoD', external_id: 'St')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Uppsalakrets', external_system: 'PoD', external_id: 'Up')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Eggegrundskrets', external_system: 'PoD', external_id: 'Eg')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Bottenhavskrets', external_system: 'PoD', external_id: 'Bo')
+      Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Bottenvikskrets', external_system: 'PoD', external_id: 'Sk')
+    end
+  end
+
+  namespace :starema do
+    task :organizers => :environment do
+      organizer = Organizer.find_by(name: 'Svenska Kryssarklubbens Stockholmskrets')
+      for regatta in Regatta.where("organizer_id IS NULL")
+        regatta.organizer = organizer
+        regatta.save!
+      end
+    end
+  end
+
 
   task :team_names => :environment do
     for team in Team.all
@@ -311,10 +339,15 @@ namespace :batch do
 
   task :race_names => :environment do
     for race in Race.all
-      if race.name.nil?
-        race.name = race.regatta.name + ', period: ' + race.period.to_s + ', start från: ' + I18n.l(race.start_from, format: :short)
-        race.save!
-      end
+      race.name = nil
+      race.save!
+    end
+  end  
+
+  task :regatta_names => :environment do
+    for regatta in Organizer.find_by( name: 'Svenska Kryssarklubbens Stockholmskrets' ).regattas
+      regatta.name = regatta.name.gsub(/\ i\ Stockholm/, '')
+      regatta.save!
     end
   end  
 

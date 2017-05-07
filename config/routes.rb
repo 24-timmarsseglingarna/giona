@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :organizers
   #Sti::Application.routes.draw do
   resources :handicaps
   #end
@@ -17,6 +18,7 @@ Rails.application.routes.draw do
       resources :teams,         only: [:index, :show]
       resources :races,         only: [:index, :show]
       resources :regattas,      only: [:index, :show]
+      resources :organizers,      only: [:index, :show]
     end
   end
 

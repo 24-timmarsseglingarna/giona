@@ -1,0 +1,30 @@
+%p
+  %b Namn:
+  = @organizer.name
+%p
+  %b Deltagarmejl skickas med avsändarmejladress:
+  = @organizer.email_from
+%p
+  %b Deltagarmejl skickas med avsändare :
+  = @organizer.name_from
+%p
+  %b Aviseringar till arrangörer mejlas till:
+  = @organizer.email_to
+%p
+  %b Text för bekräftelsemejl:
+  = @organizer.confirmation
+
+
+= link_to 'Redigera', edit_organizer_path(@organizer)
+
+%hr
+
+= link_to 'Skapa ny regatta', new_regatta_path(:organizer_id => @organizer.id)
+
+%hr
+
+%p
+  %b Regattor:
+%ul
+  - for regatta in @organizer.regattas
+    %li= link_to regatta.name, regatta_path(regatta)
