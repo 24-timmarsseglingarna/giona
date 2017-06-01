@@ -14,7 +14,7 @@ class RacesController < ApplicationController
     if params[:organizer_id].present?
       @organizers = Organizer.where("id = ?", params[:organizer_id])
     else
-      @organizers = Organizer.is_active(true)
+      @organizers = Organizer.is_active(true).distinct
     end
   end
 
