@@ -249,8 +249,8 @@ namespace :import do
       # DeltariFNSegling, DeltariSkipperGastqq, DeltariFNSkipperGast
 
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-DeltariSeling.csv"), "r"), :headers => true) do |row|
-        team = Team.find_by(external_id: row['DeltariFNSegling'].to_i, external_system: 'Starema-St')
-        person = Person.find_by(external_id: row['DeltariFNDeltagare'].to_i, external_system: 'Starema-St')
+        team = Team.find_by(external_id: row['DeltariFNSegling'].to_s.strip.to_i, external_system: 'Starema-St')
+        person = Person.find_by(external_id: row['DeltariFNDeltagare'].to_s.strip.to_i, external_system: 'Starema-St')
         unless person.nil? || team.nil?
           crew_member = CrewMember.find_or_create_by(team_id: team.id, person_id: person.id)
           #puts "person #{person.id unless person.nil?} team #{team.id unless team.nil?}"
