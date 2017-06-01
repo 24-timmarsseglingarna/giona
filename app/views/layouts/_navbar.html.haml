@@ -10,7 +10,7 @@
   -if user_signed_in?
     %li
       =current_user.email 
-      =current_user.role if not current_user.user?
+      = t("role.#{current_user.role}") if not current_user.user?
     %li
       =link_to "Min profil", current_user 
     %li

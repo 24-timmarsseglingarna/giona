@@ -26,3 +26,10 @@ rake batch:team_names
 rake batch:regatta_names
 rake mess:details # In development only
 rake testdata:team # In development/test only
+
+======
+
+Mail setup in development environment:
+
+export SENDGRID_USERNAME=`heroku config:get SENDGRID_USERNAME`
+export SENDGRID_PASSWORD=`heroku config:get SENDGRID_PASSWORD`

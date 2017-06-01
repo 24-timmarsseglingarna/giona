@@ -21,7 +21,7 @@
         %i.fa.fa-file.fa-fw(aria-hidden='true')
         Anmäl båt och besättning
 
-    -if user_signed_in?
+    -if has_assistant_rights?
       %li
         %a{:href => people_path}
           %i.fa.fa-users.fa-fw(aria-hidden='true')
