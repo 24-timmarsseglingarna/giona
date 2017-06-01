@@ -1,5 +1,9 @@
 class RacesController < ApplicationController
+  include ApplicationHelper
   before_action :set_race, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, :except => [:show, :index]
+  before_action :authorized?, :except => [:show, :index]
+
   has_scope :from_organizer, :from_regatta, :has_team, :has_period
   has_scope :is_active, :type => :boolean, allow_blank: true
 
@@ -42,7 +46,7 @@ class RacesController < ApplicationController
     @race.start_to = @race.start_from if( @race.start_to.blank? && @race.start_from.present?)
     respond_to do |format|
       if @race.save
-        format.html { redirect_to @race, notice: 'Race was successfully created.' }
+        format.html { redirect_to @race, notice: 'Seglingen har lagts till.' }
         format.json { render :show, status: :created, location: @race }
       else
         format.html { render :new }
@@ -56,7 +60,7 @@ class RacesController < ApplicationController
   def update
     respond_to do |format|
       if @race.update(race_params)
-        format.html { redirect_to @race, notice: 'Race was successfully updated.' }
+        format.html { redirect_to @race, notice: 'Uppgifterna om seglingen är uppdateraee.' }
         format.json { render :show, status: :ok, location: @race }
       else
         format.html { render :edit }
@@ -70,7 +74,7 @@ class RacesController < ApplicationController
   def destroy
     @race.destroy
     respond_to do |format|
-      format.html { redirect_to races_url, notice: 'Race was successfully destroyed.' }
+      format.html { redirect_to races_url, notice: 'Seglingen är bortplockad.' }
       format.json { head :no_content }
     end
   end
@@ -85,4 +89,12 @@ class RacesController < ApplicationController
     def race_params
       params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :mandatory_common_finish, :external_system, :external_id, :regatta_id, :description)
     end
+
+    def authorized?
+      if ! has_organizer_rights? 
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end  
+    end
+
 end
