@@ -1,23 +1,22 @@
-%h1 Listing organizers
+%h1 Arrangörer
 
-%table
+%p
+  - if has_admin_rights?
+    %p Hej admin! 
+    %p= link_to 'Lägg upp en ny arrangör.', new_organizer_path
+
+%table#giona-organizers.table.table-striped.table-bordered.table-hover{:width => "100%"}
   %thead
     %tr
-      %th Name
-      %th Name from
-      %th
-      %th
-      %th
-
+      %th Arrangör
+      %th Kontaktperson
   %tbody
     - @organizers.each do |organizer|
-      %tr
+      %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{organizer_path(organizer)}';", :style => "cursor: pointer;"}
         %td= organizer.name
-        %td= organizer.name_from
-        %td= link_to 'Show', organizer
-        %td= link_to 'Edit', edit_organizer_path(organizer)
-        %td= link_to 'Destroy', organizer, :method => :delete, :data => { :confirm => 'Are you sure?' }
+        %td= organizer.name_from 
 
-%br
-
-= link_to 'New Organizer', new_organizer_path
+:javascript
+  $(document).ready(function() {
+  $('#giona-organizers').DataTable();
+  } );  

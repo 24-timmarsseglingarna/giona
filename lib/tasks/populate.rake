@@ -209,7 +209,7 @@ namespace :import do
                                                           handicap: row['SeglingSxkTal'].to_s.strip.to_f, 
                                                           external_system: 'Starema-St',
                                                           source: 'Arkiv',
-                                                          best_before: DateTime.parse('2016-12-31'))
+                                                          best_before: DateTime.parse('2017-06-30'))
             team.handicap = handicap
             team.handicap_type = 'LegacyBoatType'
 

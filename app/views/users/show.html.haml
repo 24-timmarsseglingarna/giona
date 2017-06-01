@@ -1,29 +1,43 @@
+.panel.panel-default
+  .panel-heading
+    %i.fa.fa-user(aria-hidden='true')
+    Användarkonto
+  .panel-body    
+    .legend Mejladress:
+    %p  
+      %i.fa.fa-envelope-open-o(aria-hidden='true')
+      =@user.email
+    .legend Användarroll:
+    %p  
+      %i.fa.fa-drivers-license-o(aria-hidden='true')
+      = t "role.#{@user.role}"
 
-%p
-  %b Mejl:
-  = @user.email
-%p
-  %b Roll:
-  = @user.role
-%p
-  %b Granska:
-  = @user.review
+    - if @user.person
+      .legend Personuppgifter/kontaktinformation:  
+      %p  
+        %i.fa.fa-vcard-o(aria-hidden='true')
+        = link_to @user.person.name, @user.person
 
-- if @user.person
-  %p
-    %b Person
-    = link_to @user.person.name, @user.person
-
-%p
-  = link_to 'Admin: Redigera', edit_user_path(@user)
-
-  - if @user.deleted_at.present?
-    %p= link_to 'Admin: Radera för alltid', @user, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
-    %p= link_to 'Admin: Återvinn', recover_user_path(@user)  
-  - else 
-    %p= link_to 'Admin: Radera', @user, :method => :delete, :data => { :confirm => 'Vill du plocka bort användaren?' }
-
-    %p=link_to "Användare: Byt lösenord/byt mejladress", edit_user_registration_path
-
-
-= link_to 'Tillbaka', users_path
+    
+    - if has_assistant_rights?
+      .legend Kontrollera datakvalitet:  
+      %p  
+        %i.fa.fa-vcard-o(aria-hidden='true')
+        - if @user.review
+          ja
+        - else
+          nej  
+    
+      - if has_admin_rights?
+        = link_to 'Redigera', edit_user_path(@user), class: "btn btn-primary"
+        %p
+          %br
+        - if @user.deleted_at.present?
+          %p= link_to 'Radera för alltid', @user, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
+          %p= link_to 'Återvinn', recover_user_path(@user)  
+        - else 
+          %p= link_to 'Radera', @user, :method => :delete, :data => { :confirm => 'Vill du plocka bort användaren?' }
+  
+    - else  
+      %p=link_to "Byt lösenord eller mejladress", edit_user_registration_path, class: "btn btn-primary"
+    

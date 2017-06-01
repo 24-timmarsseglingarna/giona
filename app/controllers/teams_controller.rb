@@ -1,14 +1,15 @@
 class TeamsController < ApplicationController
-
+  include ApplicationHelper
+  before_action :set_team, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, :except => [:show]
+  before_action :interims_authenticate!, :except => [:show]
   has_scope :from_regatta, :from_race, :from_boat, :has_person
   has_scope :is_active, :type => :boolean, allow_blank: true
   has_scope :did_not_start, :type => :boolean, allow_blank: true
   has_scope :did_not_finish, :type => :boolean, allow_blank: true
   has_scope :has_paid_fee, :type => :boolean, allow_blank: true
 
-  before_action :set_team, only: [:show, :edit, :update, :destroy]
 
-  before_action :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
 
   # GET /teams
   # GET /teams.json
@@ -171,5 +172,12 @@ class TeamsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
       params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_type_name, :boat_sail_number, :start_point, :finish_point, :start_number, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :handicap_id, :handicap_type, :boat_id, boat_attributes: [:id, :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi], person_ids: [])
+    end
+
+    def interims_authenticate!
+      unless has_assistant_rights?
+        flash[:alert] = 'Den här funktionen är avstängd pga utvecklingsarbete.'
+        redirect_to :back
+      end
     end
 end

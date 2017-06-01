@@ -1,4 +1,8 @@
 class HandicapsController < ApplicationController
+  include ApplicationHelper
+  before_action :authenticate_user!
+  before_action :authorized?, :except => [:show, :index]
+
   before_action :set_handicap, only: [:show, :edit, :update, :destroy]
   before_action :set_type
 
@@ -29,7 +33,7 @@ class HandicapsController < ApplicationController
 
     respond_to do |format|
       if @handicap.save
-        format.html { redirect_to @handicap, notice: 'Handicap was successfully created.' }
+        format.html { redirect_to @handicap, notice: 'Handikappet är upplagt.' }
         format.json { render :show, status: :created, location: @handicap }
       else
         format.html { render :new }
@@ -43,7 +47,7 @@ class HandicapsController < ApplicationController
   def update
     respond_to do |format|
       if @handicap.update(handicap_params)
-        format.html { redirect_to @handicap, notice: 'Handicap was successfully updated.' }
+        format.html { redirect_to @handicap, notice: 'Handikappet är uppdaterat.' }
         format.json { render :show, status: :ok, location: @handicap }
       else
         format.html { render :edit }
@@ -57,7 +61,7 @@ class HandicapsController < ApplicationController
   def destroy
     @handicap.destroy
     respond_to do |format|
-      format.html { redirect_to handicaps_url, notice: 'Handicap was successfully destroyed.' }
+      format.html { redirect_to handicaps_url, notice: 'Handikappet är borttaget.' }
       format.json { head :no_content }
     end
   end
@@ -84,4 +88,12 @@ class HandicapsController < ApplicationController
     def handicap_params
       params.require(@handicap.type.underscore.to_sym).permit(:name, :handicap, :best_before, :source, :srs, :registry_id, :sail_number, :boat_name, :owner_name, :external_system, :external_id)
     end
+
+    def authorized?
+      if ! has_admin_rights? 
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end  
+    end
+
 end

@@ -1,12 +1,15 @@
 class UsersController < ApplicationController
+  include ApplicationHelper
   before_action :set_user, only: [:show, :edit, :update, :destroy, :recover]
+  before_action :authenticate_user!
+  before_action :authorize_me!, only: [:show, :edit, :update]
+  before_action :authorize_admin!, :except => [:show, :edit, :update]
   has_scope :from_person
 
   # GET /users
   # GET /users.json
   def index
     @users = apply_scopes(User).all
-    #@users = User.only_deleted
   end
 
   def inactive
@@ -82,6 +85,26 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:email, :role)
+      if has_assistant_rights?
+        params.require(:user).permit(:email, :role)
+      else
+        params.require(:user).permit(:email)
+      end
+        
+
+    end
+
+    def authorize_me!
+      unless (@user.id == current_user.id) || has_assistant_rights?
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end
+    end
+
+    def authorize_admin!
+      unless has_assistant_rights?
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end
     end
 end
