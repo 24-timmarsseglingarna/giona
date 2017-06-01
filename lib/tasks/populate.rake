@@ -125,6 +125,9 @@ namespace :import do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Deltagare.csv"), "r"), :headers => true) do |row|
         p = Person.find_or_create_by(external_system: 'Starema-St', external_id: row['DeltNr'].to_s.strip.to_i)
         p.first_name = row['DeltFörnamn'].to_s.strip
+        if p.first_name.blank?
+          p.first_name = '*'
+        end
         p.last_name = row['DeltEfternamn'].to_s.strip
         p.birthday = ('19' + row['DeltFodd'].to_s.strip).to_date
         p.co = row['DeltAdressCO'].to_s.strip
