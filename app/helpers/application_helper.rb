@@ -14,4 +14,31 @@ module ApplicationHelper
     nil
   end
 
+  def has_organizer_rights?
+    logger.info 'org_rg ******************************************************'
+    if current_user
+      if current_user.role == 'organizer' || current_user.role == 'admin'
+        logger.info 'true ******************************************************'
+        true
+      else
+        false
+      end
+    else
+      false
+    end
+  end
+
+  def has_assistant_rights?
+    if current_user
+      if current_user.role == 'assistant' || current_user.role == 'organizer' || current_user.role == 'admin'
+        true
+      else
+        false
+      end
+    else
+      false
+    end
+  end
+
+
 end

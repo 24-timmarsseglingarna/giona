@@ -1,6 +1,11 @@
 class RegattasController < ApplicationController
+  include ApplicationHelper
+
   has_scope :is_active, :type => :boolean, allow_blank: true
   has_scope :has_race, :from_organizer
+
+  before_action :authenticate_user!, :except => [:show, :index]
+  before_action :authorized?, :except => [:show, :index]
 
   before_action :set_regatta, only: [:show, :edit, :update, :destroy]
  
@@ -41,7 +46,7 @@ class RegattasController < ApplicationController
     @regatta = Regatta.new(regatta_params)
     respond_to do |format|
       if @regatta.save
-        format.html { redirect_to @regatta, notice: 'Regatta was successfully created.' }
+        format.html { redirect_to @regatta, notice: 'Regattan är skapad.' }
         format.json { render :show, status: :created, location: @regatta }
       else
         format.html { render :new }
@@ -55,7 +60,7 @@ class RegattasController < ApplicationController
   def update
     respond_to do |format|
       if @regatta.update(regatta_params)
-        format.html { redirect_to @regatta, notice: 'Regatta was successfully updated.' }
+        format.html { redirect_to @regatta, notice: 'Regattan är ändrad.' }
         format.json { render :show, status: :ok, location: @regatta }
       else
         format.html { render :edit }
@@ -69,7 +74,7 @@ class RegattasController < ApplicationController
   def destroy
     @regatta.destroy
     respond_to do |format|
-      format.html { redirect_to regattas_url, notice: 'Regatta was successfully destroyed.' }
+      format.html { redirect_to regattas_url, notice: 'Regattan är raderad.' }
       format.json { head :no_content }
     end
   end
@@ -84,4 +89,12 @@ class RegattasController < ApplicationController
     def regatta_params
       params.require(:regatta).permit(:name, :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :external_id, :external_system)
     end
+
+    def authorized?
+      if ! has_organizer_rights? 
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end  
+    end
+
 end
