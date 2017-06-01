@@ -1,36 +1,34 @@
-.row
-.col-lg-12
-%h1 Personer
+%h1 Deltagare
 %p
-  = link_to( 'Ny person', new_person_path ) if user_signed_in?
+  = link_to( 'Ny deltagare', new_person_path ) if user_signed_in?
 
-.panel.panel-default
-  .panel-heading
-    Personer
-  / /.panel-heading
-  .panel-body
-    %table#giona-people.table.table-striped.table-bordered.table-hover{:width => "100%"}
-      %thead
-        %tr
-          %th Efternamn
-          %th Förnamn
-          %th Postort
-          %th Födelsedatum
-      %tbody
-        -if user_signed_in?
-          - @people.each do |person|
-            %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{person_path(person)}';", :style => "cursor: pointer;"}
-              %td= person.last_name
-              %td= person.first_name
-              %td= person.zip + ' ' + person.city
-              %td= person.birthday
-        - else
-          - @people.each do |person|
-            %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{person_path(person)}';", :style => "cursor: pointer;"}
-              %td= person.last_name
-              %td= person.first_name
-              %td= person.city
-              %td YYYY-MM-DD
+%table#giona-people.table.table-striped.table-bordered.table-hover{:width => "100%"}
+  - if has_assistant_rights?
+    %thead
+      %tr
+        %th Efternamn
+        %th Förnamn
+        %th Postort
+        %th Födelsedatum
+    %tbody
+      - @people.each do |person|
+        %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{person_path(person)}';", :style => "cursor: pointer;"}
+          %td= person.last_name
+          %td= person.first_name
+          %td= person.zip + ' ' + person.city
+          %td= person.birthday
+  - else
+    %thead
+      %tr
+        %th Efternamn
+        %th Förnamn
+        %th Postort
+    %tbody
+      - @people.each do |person|
+        %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{person_path(person)}';", :style => "cursor: pointer;"}
+          %td= person.last_name
+          %td= person.first_name
+          %td= person.city
   :javascript
     $(document).ready(function() {
     $('#giona-people').DataTable();

@@ -1,19 +1,25 @@
 class PeopleController < ApplicationController
+  include ApplicationHelper
+  include PeopleHelper
+
+  before_action :authenticate_user!
+  before_action :authorize_assistant!, only: [:inactive, :recover, :destroy]
+  before_action :set_person, only: [:show, :edit, :update, :destroy]
+  before_action :insert_token_headers
 
   acts_as_token_authentication_handler_for User
 
   has_scope :has_team, :has_user
 
 
-  before_action :set_person, only: [:show, :edit, :update, :destroy]
-  before_action :insert_token_headers
-
-
   # GET /people
   # GET /people.json
   def index
-    @people = apply_scopes(Person).all
-    #authorize Person
+    if has_assistant_rights?
+      @people = apply_scopes(Person).all
+    else
+      @people = apply_scopes(Person).select("id, first_name, last_name, city, deleted_at")
+    end
   end
 
   def inactive
@@ -30,7 +36,9 @@ class PeopleController < ApplicationController
   # GET /people/1
   # GET /people/1.json
   def show
-    #authorize Person
+    if ! authorized?
+      @person = Person.select("id, first_name, last_name, city, country").with_deleted.find(params[:id])
+    end
   end
 
   # GET /people/new
@@ -70,8 +78,6 @@ class PeopleController < ApplicationController
   # PATCH/PUT /people/1
   # PATCH/PUT /people/1.json
   def update
-    logger.info "-------------------- person.update ----------------------"
-    logger.info params[:add_me]
     respond_to do |format|
       if @person.update(person_params)
         if current_user
@@ -109,5 +115,12 @@ class PeopleController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def person_params
       params.require(:person).permit(:email, :first_name, :last_name, :co, :street, :zip, :city, :country, :birthday, :phone, :external_system, :external_id)
+    end
+
+    def authorize_assistant!
+      if ! has_assistant_rights? 
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end  
     end
 end
