@@ -375,6 +375,14 @@ namespace :batch do
     end
   end  
 
+  task :activate_teams => :environment do
+    r = Regatta.find_by name: 'Vårregattan 2017'
+    for team in Team.from_regatta r.id 
+      team.active = true
+      team.save
+    end
+  end
+
 end
 
 

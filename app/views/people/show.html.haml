@@ -59,12 +59,8 @@
       - if authorized?
         = link_to 'Redigera', edit_person_path(@person), class: "btn btn-primary"
     %p
-      - if has_assistant_rights?
-        - if @person.deleted_at.present?
-          = link_to 'Radera för alltid', @person, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
-          = link_to 'Återvinn', recover_person_path(@person)  
-        - else 
-          = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
+
+      = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
     %p
       %br      
       = link_to 'Tillbaka', :back
