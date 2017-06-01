@@ -1,71 +1,70 @@
-%h1=@person.name
-
-%p
-  %b Förnamn:
-  = @person.first_name
-%p
-  %b Efternamn:
-  = @person.last_name
-
-- if user_signed_in?   
-  %p
-    %b c/o:
-    = @person.co
-  %p
-    %b Gata:
-    = @person.street
-  %p
-    %b Postnummer:
-    = @person.zip
-
-%p
-  %b Postort:
-  = @person.city
-%p
-  %b Land:
-  = @person.country  
-- if user_signed_in?
-  %p
-    %b Mejladress:
-    = @person.email
-  %p
-    %b Födelsedatum:
-    = @person.birthday
-  %p
-    %b Telefonnummer:
-    = @person.phone
-  %p
-    %b Finns i externt system:
-    = @person.external_system
-  %p
-    %b Id i externt system:
-    = @person.external_id
-
-  - if @person.user
+.panel.panel-default
+  .panel-heading
+    %i.fa.fa-user-o(aria-hidden='true')
+    =@person.name
+  .panel-body    
+    %p  
+      =@person.first_name
+      =@person.last_name
     %p
-      %b Användarkonto:
-      = user_role @person
-      = link_to @person.user.email, @person.user
+      -if authorized?
+        = @person.email
+        %br
+        = @person.phone
+        %p
+        -unless @person.co.blank?
+          c/o
+          =@person.co
+          %br
+        =@person.street
+        %br  
+        =@person.zip
+      =@person.city
+      %br
+      =@person.country
+      %p
+        -if authorized?
+          
+          %p
+            Födelsedatum:
+            =@person.birthday
+          %p  
+          - if @person.user
+            %p
+              = (t("role.#{user_role @person}")).titleize + ':'
+              = link_to @person.user.email, @person.user
+          
+          - if has_assistant_rights?    
+            %p
+              Finns i externt system
+              %i= @person.external_system
+              med id:
+              %i= @person.external_id
+            %p
+              Kvalitetsgranska:
+              - if @person.review
+                ja
+              -else
+                nej
 
+    - unless @person.teams.nil?
+      .legend Regattor:
+      %ul
+        - for team in @person.teams
+          %li
+            %i.fa.fa-trophy(aria-hidden='true')
+            = link_to team_in_regatta(team), team 
 
-  %p
-    %b Granska:
-    = @person.review
-
-- unless @person.teams.nil?
-  %p
-    %b Regattor:
-    %ul
-      - for team in @person.teams
-        %li= link_to team_in_regatta(team), team 
-
-%p
-  = link_to 'Redigera', edit_person_path(@person)
-
-  - if @person.deleted_at.present?
-    = link_to 'Radera för alltid', @person, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
-    = link_to 'Återvinn', recover_person_path(@person)  
-  - else 
-    = link_to 'Radera', @person, :method => :delete, :data => { :confirm => 'Vill du plocka bort personen?' }
-
-= link_to 'Tillbaka', people_path
+    %p
+      - if authorized?
+        = link_to 'Redigera', edit_person_path(@person), class: "btn btn-primary"
+    %p
+      - if has_assistant_rights?
+        - if @person.deleted_at.present?
+          = link_to 'Radera för alltid', @person, :method => :delete, :data => { :confirm => 'Är du verkligen verkligen säker?' }
+          = link_to 'Återvinn', recover_person_path(@person)  
+        - else 
+          = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
+    %p
+      %br      
+      = link_to 'Tillbaka', :back

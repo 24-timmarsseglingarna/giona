@@ -1,27 +1,27 @@
 .sidebar-nav.navbar-collapse
   %ul#side-menu.nav
     %li
+      %a{:href => races_path}
+        %i.fa.fa-file.fa-fw(aria-hidden='true')
+        Anmäl båt och besättning
+    %li
       %a{:href => organizers_path}
         %i.fa.fa-institution(aria-hidden='true')
         Arrangörer    
     %li
       %a{:href => regattas_path}
-        %i.fa.fa-font-awesome.fa-fw(aria-hidden='true')
+        %i.fa.fa-font.fa-trophy.fa-fw(aria-hidden='true')
         Regattor    
     %li
       %a{:href => people_path}
         %i.fa.fa-users.fa-fw(aria-hidden='true')
-        Personer
+        Deltagare
     %li
       %a{:href => boats_path}
         %i.fa.fa-ship.fa-fw(aria-hidden='true')
         Båtar
-    %li
-      %a{:href => races_path}
-        %i.fa.fa-file.fa-fw(aria-hidden='true')
-        Anmäl båt och besättning
 
-    -if user_signed_in?
+    -if has_assistant_rights?
       %li
         %a{:href => people_path}
           %i.fa.fa-users.fa-fw(aria-hidden='true')

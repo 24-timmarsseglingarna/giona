@@ -1,7 +1,11 @@
 class BoatsController < ApplicationController
-  has_scope :has_team
+  include ApplicationHelper
 
   before_action :set_boat, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, :except => [:show, :index]
+
+  has_scope :has_team
+
 
   # GET /boats
   # GET /boats.json
@@ -30,7 +34,7 @@ class BoatsController < ApplicationController
 
     respond_to do |format|
       if @boat.save
-        format.html { redirect_to @boat, notice: 'Boat was successfully created.' }
+        format.html { redirect_to @boat, notice: 'Båten är tillagd.' }
         format.json { render :show, status: :created, location: @boat }
       else
         format.html { render :new }
@@ -44,7 +48,7 @@ class BoatsController < ApplicationController
   def update
     respond_to do |format|
       if @boat.update(boat_params)
-        format.html { redirect_to @boat, notice: 'Boat was successfully updated.' }
+        format.html { redirect_to @boat, notice: 'Uppgifter om båten är ändrade.' }
         format.json { render :show, status: :ok, location: @boat }
       else
         format.html { render :edit }
@@ -56,11 +60,17 @@ class BoatsController < ApplicationController
   # DELETE /boats/1
   # DELETE /boats/1.json
   def destroy
-    @boat.destroy
-    respond_to do |format|
-      format.html { redirect_to boats_url, notice: 'Boat was successfully destroyed.' }
-      format.json { head :no_content }
+    if has_admin_rights? 
+      @boat.destroy
+      respond_to do |format|
+        format.html { redirect_to boats_url, notice: 'Båten har tagits bort.' }
+        format.json { head :no_content }
+      end
+    else
+      flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+      redirect_to :back
     end
+
   end
 
   private

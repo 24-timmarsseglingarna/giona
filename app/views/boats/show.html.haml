@@ -1,29 +1,39 @@
-%h1 
-  %i.fa.fa-ship.fa-fw
-  = @boat.name
-%p
-  %b Båttyp:
-  = @boat.boat_type_name
+.panel.panel-default
+  .panel-heading
+    %i.fa.fa-ship(aria-hidden='true')
+    = @boat.name
+  .panel-body    
+    .legend Båttyp:
+    %p
+      = @boat.boat_type_name
+    .legend Segelnummer:
+    %p
+      = @boat.sail_number
+    - unless @boat.vhf_call_sign.blank?  
+      .legend VHF-anrop:
+      %p
+        = @boat.vhf_call_sign
+    - unless @boat.ais_mmsi.blank?    
+      .legend AIS mmsi:
+      %p
+        = @boat.ais_mmsi
 
-%p
-  %b Segelnummer:
-  = @boat.sail_number
-- unless @boat.vhf_call_sign.blank?  
-  %p
-    %b VHF-anrop:
-    = @boat.vhf_call_sign
-- unless @boat.ais_mmsi.blank?    
-  %p
-    %b AIS mmsi:
-    = @boat.ais_mmsi
+    - if @boat.teams.count > 0
+      .legend Anmäld till:
+      %ul
+        - for team in @boat.teams
+          %li= link_to team_in_regatta(team), team  
 
-- if @boat.teams.count > 0
-  %p
-    %b Varit anmäld till    
-  %ul
-    - for team in @boat.teams
-      %li= link_to team_in_regatta(team), team  
+    %p
+      %br
+    %p= link_to 'Ändra', edit_boat_path(@boat), class: "btn btn-primary"
 
-= link_to 'Edit', edit_boat_path(@boat)
-\|
-= link_to 'Back', boats_path
+
+    %p
+      %br
+    %p= link_to 'Tillbaka', boats_path
+
+    - if has_admin_rights?
+      %p
+        %br
+      %p= link_to 'Radera', @boat, :method => :delete, :data => { :confirm => "Vill du radera #{@boat.name}?" }

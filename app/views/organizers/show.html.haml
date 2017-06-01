@@ -1,30 +1,62 @@
-%p
-  %b Namn:
-  = @organizer.name
-%p
-  %b Deltagarmejl skickas med avsändarmejladress:
-  = @organizer.email_from
-%p
-  %b Deltagarmejl skickas med avsändare :
-  = @organizer.name_from
-%p
-  %b Aviseringar till arrangörer mejlas till:
-  = @organizer.email_to
-%p
-  %b Text för bekräftelsemejl:
-  = @organizer.confirmation
+.panel.panel-default
+  .panel-heading
+    %i.fa.fa-institution(aria-hidden='true')
+    = @organizer.name
+  .panel-body    
+    .legend Kontaktperson:
+    %p
+      %i.fa.fa-vcard-o(aria-hidden='true')    
+      =@organizer.name_from 
+      <
+      =@organizer.email_from
+      >
+
+    - if has_assistant_rights?
+      .legend Informera dessa funktionärer:
+      %p
+        %i.fa.fa-users(aria-hidden='true')    
+        = @organizer.email_to
+      .legend Text i bekräftelsen på anmälan:
+      %p
+        = @organizer.confirmation
+
+    - if has_organizer_rights?    
+      %i.fa.fa-trophy(aria-hidden='true')
+      = link_to 'Skapa ny regatta', new_regatta_path(:organizer_id => @organizer.id)
+
+      %p
+        %br
+      %p
+
+      =link_to 'Ändra', edit_organizer_path(@organizer), class: "btn btn-primary"
+
+    - if has_admin_rights?
+      %p
+        %br
+      %p= link_to 'Radera', @organizer, :method => :delete, :data => { :confirm => "Vill du radera #{@organizer.name}?" }
+    
+
+%h2 Regattor
 
 
-= link_to 'Redigera', edit_organizer_path(@organizer)
+%table#giona-regattas.table.table-striped.table-bordered.table-hover{:width => "100%"}
+  %thead
+    %tr
+      %th Regatta
+      %th Perioder
+      %th En starttid
+      %th Öppen
+  %tbody
+    - @organizer.regattas.each do |regatta|
+      %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
+        %td= regatta.name 
+        %td
+          - for race in regatta.races
+            = race.period
+        %td= l(regatta.races.first.start_from, format: :long)
+        %td= "ja" if regatta.active
 
-%hr
-
-= link_to 'Skapa ny regatta', new_regatta_path(:organizer_id => @organizer.id)
-
-%hr
-
-%p
-  %b Regattor:
-%ul
-  - for regatta in @organizer.regattas
-    %li= link_to regatta.name, regatta_path(regatta)
+:javascript
+  $(document).ready(function() {
+  $('#giona-regattas').DataTable();
+  } );  
