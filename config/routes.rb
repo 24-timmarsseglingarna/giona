@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   post 'teams/remove_boat'
   post 'teams/set_boat'
   get 'teams/edit_boat'
+  get 'teams/welcome'
 
   resources :teams
 

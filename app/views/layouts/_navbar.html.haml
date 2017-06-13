@@ -4,7 +4,7 @@
     %span.icon-bar
     %span.icon-bar
     %span.icon-bar
-  %a.navbar-brand{:href => root_path} Giona v. 0.4.0.2
+  %a.navbar-brand{:href => root_path} Giona v. 0.4.1
 / /.navbar-header
 %ul.nav.navbar-top-links.navbar-right
   -if user_signed_in?
@@ -12,7 +12,7 @@
       =current_user.email 
       = t("role.#{current_user.role}") if not current_user.user?
     %li
-      =link_to "Min profil", current_user 
+      =link_to "Mitt konto", current_user 
     %li
       =link_to "Logga ut", destroy_user_session_path, method: :delete
   -else

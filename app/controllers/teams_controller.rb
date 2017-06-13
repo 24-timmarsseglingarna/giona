@@ -1,20 +1,24 @@
 class TeamsController < ApplicationController
   include ApplicationHelper
-  before_action :set_team, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, :except => [:show]
-  before_action :interims_authenticate!, :except => [:show]
-  has_scope :from_regatta, :from_race, :from_boat, :has_person
-  has_scope :is_active, :type => :boolean, allow_blank: true
-  has_scope :did_not_start, :type => :boolean, allow_blank: true
-  has_scope :did_not_finish, :type => :boolean, allow_blank: true
-  has_scope :has_paid_fee, :type => :boolean, allow_blank: true
+  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap]
+  before_action :authenticate_user!, :except => [:show, :welcome]
+  before_action :check_active!, :except => [:show, :welcome, :index, :new, :create]
+  before_action :interims_authenticate!, :except => [:show, :welcome, :index]
 
 
+  def welcome
+    render 'welcome'
+  end
 
   # GET /teams
   # GET /teams.json
   def index
-    @teams = apply_scopes(Team).all
+    @teams = nil
+    if current_user
+      if current_user.person
+        @teams = current_user.person.teams.order active: :desc, created_at: :desc
+      end
+    end
   end
 
   # GET /teams/1
@@ -89,7 +93,6 @@ class TeamsController < ApplicationController
 
   def remove_seaman
     person_id = params[:person_id]
-    set_team
     crew_member = CrewMember.find_by person_id: person_id, team_id: @team.id
     unless crew_member.skipper
       name = crew_member.person.name
@@ -102,15 +105,19 @@ class TeamsController < ApplicationController
 
 
   def set_skipper
-    set_team
     person = Person.find params[:person_id]
     crew_member = CrewMember.find_by person_id: person.id, team_id: @team.id
     @team.set_skipper person
+    unless @team.boat.blank? 
+      @team.name = @team.boat.name + '/' + @team.skipper.last_name
+    else
+      @team.name =  '? /' + team.skipper.last_name
+    end
+    @team.save!
     redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
   end
 
   def remove_handicap
-    set_team
     @team.handicap = nil
     @team.handicap_type = nil
     @team.save!
@@ -118,7 +125,6 @@ class TeamsController < ApplicationController
   end
 
   def set_handicap_type
-    set_team
     @team.handicap_type = params[:handicap_type].to_s
     @team.save!
     if ['SrsKeelboat', 'SrsMultihull', 'SrsDingy', 'SrsCertificate', 'SxkCertificate'].include? @team.handicap_type
@@ -129,7 +135,6 @@ class TeamsController < ApplicationController
   end
 
   def remove_boat
-    set_team
     boat_name = @team.boat.name
     @team.boat = nil
     @team.handicap = nil
@@ -142,12 +147,18 @@ class TeamsController < ApplicationController
   end
 
   def set_boat
-    set_team
     boat = Boat.find params[:boat_id]
     @team.boat = boat
     @team.boat_name = boat.name
     @team.boat_type_name = boat.boat_type_name
     @team.boat_sail_number = boat.sail_number
+    
+    if @team.skipper 
+      @team.name = boat.name + '/' + @team.skipper.last_name
+    else
+      @team.name = boat.name + '/ ?'
+    end
+
     @team.save!
     redirect_to @team, notice: "Båten #{@team.boat.name unless @team.boat.blank?} är nu vald."
   end
@@ -180,4 +191,12 @@ class TeamsController < ApplicationController
         redirect_to :back
       end
     end
+
+    def check_active!
+      unless @team.active
+        flash[:alert] = 'Anmälan/loggboken är arkiverad och kan inte ändras.'
+        redirect_to :back  
+      end
+    end
+
 end

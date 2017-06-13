@@ -5,6 +5,19 @@
   - if has_organizer_rights?
     %p Hej admin! Du skapar nya regattor från arrangörens sida.
     %p= link_to 'Gå till arrangörer.', organizers_path
+
+%p 
+  - if params[:is_active] == 'true'
+    Visar regattor som är öppna.
+    =link_to 'Visa arkiverade regattor.', regattas_path(:is_active => false)
+  - elsif params[:is_active] == 'false'
+    Visar regattor som är arkiverade.
+    =link_to 'Visa öppna regattor.', regattas_path(:is_active => true)
+  - else
+    =link_to 'Visa arkiverade regattor.', regattas_path(:is_active => false)
+    =link_to 'Visa öppna regattor.', regattas_path(:is_active => true)
+
+
 %table#giona-regattas.table.table-striped.table-bordered.table-hover{:width => "100%"}
   %thead
     %tr
