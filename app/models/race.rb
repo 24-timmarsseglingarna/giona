@@ -13,7 +13,17 @@ class Race < ApplicationRecord
   validates :start_from, presence: true
   validate :check_start_period
   validates_presence_of :regatta
-  
+
+  delegate :name, to: :regatta, prefix: true
+
+  def organizer_name
+    self.regatta.organizer.name
+  end
+
+  def organizer_id
+    self.regatta.organizer.id
+  end
+
   def check_start_period
     errors.add(:base, "end date should be greater than start") if self.start_from > self.start_to
   end
