@@ -474,6 +474,7 @@ sv:
         unauthenticated: Nu behöver du logga in.
         not_found_in_database: Vi hittar inte någon användare med den mejladressen. Kolla att du stavade rätt. Annars får du registrera ett nytt konto.
         already_authenticated: Du var redan inloggad.
+        invalid: Kan inte logga in. Kontrollera lösenordet.
   formtastic:
     :yes: Ja
     :no: Nej
