@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.4.0.2
+Version 0.4.1
 
 =======
 
