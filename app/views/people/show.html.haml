@@ -47,14 +47,6 @@
               -else
                 nej
 
-    - unless @person.teams.nil?
-      .legend Regattor:
-      %ul
-        - for team in @person.teams
-          %li
-            %i.fa.fa-trophy(aria-hidden='true')
-            = link_to team_in_regatta(team), team 
-
     %p
       - if authorized?
         = link_to 'Redigera', edit_person_path(@person), class: "btn btn-primary"
@@ -64,3 +56,34 @@
     %p
       %br      
       = link_to 'Tillbaka', :back
+
+-unless @person.teams.blank?
+  %h3 Mitt deltagande
+
+  %table#giona-teams.table.table-striped.table-bordered.table-hover{:width => "100%"}
+    %thead
+      %tr
+        %th Arrangör
+        %th Regatta
+        %th Segling
+        %th Båt
+        %th Båttyp
+        %th Plakettdistans
+        %th Öppen
+    %tbody
+      - @person.teams.order(active: :desc, created_at: :desc).each do |team|
+        %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
+          %td= team.race.regatta.organizer.name
+          %td= team.race.regatta.name
+          %td= team.race.period
+          %td= team.boat_name
+          %td= team.boat_type_name
+          %td= team.plaque_distance
+          %td= "ja" if team.active
+
+= link_to 'Anmäl båt och skeppare', races_path
+
+:javascript
+  $(document).ready(function() {
+  $('#giona-teams').DataTable();
+  } );  

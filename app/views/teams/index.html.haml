@@ -1,49 +1,29 @@
-%h1 Listing teams
+%h1 Mitt deltagande
 
-%table
+%table#giona-teams.table.table-striped.table-bordered.table-hover{:width => "100%"}
   %thead
     %tr
-      %th Race
-      %th External
-      %th External system
-      %th Name
-      %th Boat name
-      %th Boat class name
-      %th Boat sail number
-      %th Start point
-      %th Start number
-      %th Handicap
-      %th Plaque distance
-      %th Did not start
-      %th Did not finish
-      %th Paid fee
-      %th Active
-      %th
-      %th
-      %th
-
+      %th Arrangör
+      %th Regatta
+      %th Segling
+      %th Båt
+      %th Båttyp
+      %th Plakettdistans
+      %th Öppen
   %tbody
     - @teams.each do |team|
-      %tr
-        %td= team.race_id
-        %td= team.external_id
-        %td= team.external_system
-        %td= team.name
+      %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
+        %td= team.race.regatta.organizer.name
+        %td= team.race.regatta.name
+        %td= team.race.period
         %td= team.boat_name
         %td= team.boat_type_name
-        %td= team.boat_sail_number
-        %td= team.start_point
-        %td= team.start_number
-        %td=# team.handicap
         %td= team.plaque_distance
-        %td= team.did_not_start
-        %td= team.did_not_finish
-        %td= team.paid_fee
-        %td= team.active
-        %td= link_to 'Show', team
-        %td= link_to 'Edit', edit_team_path(team)
-        %td= link_to 'Destroy', team, :method => :delete, :data => { :confirm => 'Are you sure?' }
+        %td= "ja" if team.active
 
-%br
+= link_to 'Anmäl båt och skeppare', races_path
 
-= link_to 'New Team', new_team_path
+:javascript
+  $(document).ready(function() {
+  $('#giona-teams').DataTable();
+  } );  

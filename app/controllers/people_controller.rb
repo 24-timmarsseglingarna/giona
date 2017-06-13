@@ -38,6 +38,7 @@ class PeopleController < ApplicationController
   def show
     if ! authorized?
       @person = Person.select("id, first_name, last_name, city, country").with_deleted.find(params[:id])
+      @teams = @person.teams.order active: :desc, created_at: :desc
     end
   end
 
