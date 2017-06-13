@@ -6,11 +6,14 @@ module Api
       has_scope :is_active, :type => :boolean, allow_blank: true
 
       def index
-        respond_with apply_scopes(Race).all
+        @races = apply_scopes(Race).all
+        render 'races/index'
       end
 
       def show
-        respond_with Race.find(params[:id])
+        @race = Race.find(params[:id])
+        render 'races/show'
+        #respond_with Race.find(params[:id])
       end
     end
   end
