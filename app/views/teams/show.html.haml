@@ -15,7 +15,11 @@
     .legend Segling:
     %p  
       %i.fa.fa-bell(aria-hidden='true')
-      = @team.race.name      
+      - if @team.race.description.present?
+        = @team.race.description
+      - else
+        = @team.race.period
+
     .legend Starttid:
     %p  
       %i.fa.fa-clock-o(aria-hidden='true')    
