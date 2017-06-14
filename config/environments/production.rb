@@ -83,4 +83,8 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Link in mails to application. 
+  config.action_mailer.default_url_options = { host: 'giona-dev.24-timmars.nu' }
+
 end
