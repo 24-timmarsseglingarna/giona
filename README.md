@@ -33,3 +33,15 @@ Mail setup in development environment:
 
 export SENDGRID_USERNAME=`heroku config:get SENDGRID_USERNAME`
 export SENDGRID_PASSWORD=`heroku config:get SENDGRID_PASSWORD`
+
+
+======
+
+# Database heroku --> dev
+heroku pg:backups:capture
+heroku pg:backups:download
+pg_restore --verbose --clean --no-acl --no-owner -h localhost -U giona -d giona_development latest.dump
+
+# Database dev --> heroku
+pg_dump -Fc --no-acl --no-owner -h localhost -U giona giona_development > mydb.dump
+heroku pg:backups:restore 'https://what.ever/giona/mydb.dump' HEROKU_POSTGRESQL_PUCE_URL
