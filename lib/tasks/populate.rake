@@ -118,7 +118,52 @@ namespace :import do
     end
   end
 
+  namespace :xls do
+    task :shorthand => :environment do
+      CSV.foreach( File.open(File.join("/", "tmp", "import", "2017E-startlista--A.csv"), "r"), :headers => true) do |row|
+        
+        # pre req: Regatta exists, one race only
 
+        regatta = Regatta.find_by name: 'Ensamseglingen 2017' 
+        race = regatta.races.take
+       
+        person = Person.find_or_create_by email: row['person_email'].to_s.strip
+        person.first_name = row['person_first_name'].to_s.strip if person.first_name.blank?
+        person.last_name = row['person_last_name'].to_s.strip if person.last_name.blank?
+        person.external_system = '2017E-startlista--A' if person.external_system.blank?
+        person.save!
+
+        boat = Boat.find_or_create_by   name: row['boat_name'].to_s.strip, 
+                                        boat_type_name: row['boat_type_name'].to_s.strip, 
+                                        sail_number: row['boat_sail_no'].to_s.strip
+        boat.external_system = '2017E-startlista--A' if boat.external_system.blank?     
+        boat.save!
+
+        handicap = LegacyBoatType.new
+        handicap.handicap = row['handicap_handicap'].to_s.strip
+        handicap.external_system = '2017E-startlista--A'
+        handicap.source = 'Arkiv'
+        handicap.best_before = DateTime.parse('2017-06-30')
+        handicap.save!
+        
+        t = Team.find_or_create_by race: race, boat: boat
+        t.active = true
+        t.offshore = true
+        t.finish_point = 553
+        t.name = boat.name + ' / ' + person.last_name
+        t.skipper = person
+        t.handicap = handicap
+        t.handicap_type = 'LegacyBoatType'
+        t.boat_type_name = boat.boat_type_name
+        t.boat_name = boat.name
+        t.boat_sail_number = boat.sail_number
+        t.start_point = row['team_start_no']
+        t.start_number = row['team_start_number']
+        t.external_system = '2017E-startlista--A'
+        t.save!
+      end
+    end
+  end
 
   namespace :starema do 
     task :people => :environment do
