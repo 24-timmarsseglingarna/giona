@@ -18,3 +18,4 @@
 
 # Ignore sensible data
 /db/import/Starema-St-Deltagare.csv
+/.ruby-version
