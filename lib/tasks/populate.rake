@@ -169,6 +169,7 @@ namespace :import do
     task :people => :environment do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Deltagare.csv"), "r"), :headers => true) do |row|
         p = Person.find_or_create_by(external_system: 'Starema-St', external_id: row['DeltNr'].to_s.strip.to_i)
+		puts p.external_id
         p.first_name = row['DeltFörnamn'].to_s.strip
         if p.first_name.blank?
           p.first_name = '*'
@@ -195,7 +196,7 @@ namespace :import do
       organizer = Organizer.find_by(name: 'Svenska Kryssarklubbens Stockholmskrets')
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "starema-sthlm-regatta-race.csv"), "r"), :headers => true) do |row|
         regatta = Regatta.find_or_create_by(name: row['TmpRegattaName'].to_s.strip, external_system: 'Starema-St')
-        regatta.organizer = organizer
+		regatta.organizer = organizer
         regatta.email_from = 'arne@24-timmars.nu'
         regatta.name_from = 'Arne Wallers'
         regatta.email_to = 'arne@24-timmars.nu, stefan@24-timmars.nu'
@@ -257,7 +258,7 @@ namespace :import do
                                                           handicap: row['SeglingSxkTal'].to_s.strip.to_f, 
                                                           external_system: 'Starema-St',
                                                           source: 'Arkiv',
-                                                          best_before: DateTime.parse('2017-06-30'))
+                                                          best_before: DateTime.parse('2017-12-31'))
             team.handicap = handicap
             team.handicap_type = 'LegacyBoatType'
 
@@ -421,7 +422,7 @@ namespace :batch do
   end  
 
   task :activate_teams => :environment do
-    r = Regatta.find_by name: 'Vårregattan 2017'
+    r = Regatta.find_by name: 'Höstregattan 2017'
     for team in Team.from_regatta r.id 
       team.active = true
       team.save
