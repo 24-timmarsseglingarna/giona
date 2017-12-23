@@ -1,3 +1,4 @@
+# coding: utf-8
 class HandicapsController < ApplicationController
   include ApplicationHelper
   before_action :authenticate_user!
@@ -86,7 +87,7 @@ class HandicapsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def handicap_params
-      params.require(@handicap.type.underscore.to_sym).permit(:name, :handicap, :best_before, :source, :srs, :registry_id, :sail_number, :boat_name, :owner_name, :external_system, :external_id)
+      params.require(@handicap.type.underscore.to_sym).permit(:name, :sxk, :best_before, :source, :srs, :registry_id, :sail_number, :boat_name, :owner_name, :external_system, :external_id)
     end
 
     def authorized?

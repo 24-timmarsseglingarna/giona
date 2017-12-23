@@ -2,7 +2,7 @@
 
 one:
   name: MyString
-  handicap: 1.5
+  sxk: 1.5
   best_before: 2017-04-26 16:12:27
   source: MyString
   srs: 1.5
@@ -16,7 +16,7 @@ one:
 
 two:
   name: MyString
-  handicap: 1.5
+  sxk: 1.5
   best_before: 2017-04-26 16:12:27
   source: MyString
   srs: 1.5

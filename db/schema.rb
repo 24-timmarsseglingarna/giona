@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170507085324) do
+ActiveRecord::Schema.define(version: 20171223142052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20170507085324) do
 
   create_table "handicaps", force: :cascade do |t|
     t.string   "name"
-    t.float    "handicap"
+    t.float    "sxk"
     t.datetime "best_before"
     t.string   "source"
     t.float    "srs"

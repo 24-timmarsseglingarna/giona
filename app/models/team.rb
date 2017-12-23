@@ -23,7 +23,7 @@ class Team < ApplicationRecord
   # The set_defaults will only work if the object is new
 
   def sxk
-    self.handicap.handicap
+    self.handicap.sxk
   end
 
   def from_same_regatta

@@ -1,3 +1,4 @@
+# coding: utf-8
 class Handicap < ApplicationRecord
   has_many :teams
   scope :srs_keelboat, -> { where(type: 'SrsKeelboat')}
@@ -10,8 +11,8 @@ class Handicap < ApplicationRecord
 
   default_scope { order 'name', 'sail_number' }
 
-  def description 
-  	"#{self.name}, SRS: #{self.srs}, SXK: #{self.handicap}"
+  def description
+        "#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}"
   end
 
   def self.types
