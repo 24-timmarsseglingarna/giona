@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  team: one
+  time: 2017-12-26 11:17:41
+  user: one
+  client: MyString
+  type: 
+  point: 1
+  data: MyString
+
+two:
+  team: two
+  time: 2017-12-26 11:17:41
+  user: two
+  client: MyString
+  type: 
+  point: 1
+  data: MyString
