@@ -24,6 +24,9 @@ class Team < ApplicationRecord
 
   def sxk
     self.handicap.sxk
+
+  def regatta_id
+    self.race.regatta_id
   end
 
   def from_same_regatta
