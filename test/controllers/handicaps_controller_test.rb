@@ -17,7 +17,7 @@ class HandicapsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create handicap" do
     assert_difference('Handicap.count') do
-      post handicaps_url, params: { handicap: { best_before: @handicap.best_before, boat_name: @handicap.boat_name, external_id: @handicap.external_id, external_system: @handicap.external_system, handicap: @handicap.handicap, name: @handicap.name, owner_name: @handicap.owner_name, registry_id: @handicap.registry_id, sail_number: @handicap.sail_number, source: @handicap.source, srs: @handicap.srs, type: @handicap.type } }
+      post handicaps_url, params: { handicap: { best_before: @handicap.best_before, boat_name: @handicap.boat_name, external_id: @handicap.external_id, external_system: @handicap.external_system, sxk: @handicap.sxk, name: @handicap.name, owner_name: @handicap.owner_name, registry_id: @handicap.registry_id, sail_number: @handicap.sail_number, source: @handicap.source, srs: @handicap.srs, type: @handicap.type } }
     end
 
     assert_redirected_to handicap_url(Handicap.last)
@@ -34,7 +34,7 @@ class HandicapsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update handicap" do
-    patch handicap_url(@handicap), params: { handicap: { best_before: @handicap.best_before, boat_name: @handicap.boat_name, external_id: @handicap.external_id, external_system: @handicap.external_system, handicap: @handicap.handicap, name: @handicap.name, owner_name: @handicap.owner_name, registry_id: @handicap.registry_id, sail_number: @handicap.sail_number, source: @handicap.source, srs: @handicap.srs, type: @handicap.type } }
+    patch handicap_url(@handicap), params: { handicap: { best_before: @handicap.best_before, boat_name: @handicap.boat_name, external_id: @handicap.external_id, external_system: @handicap.external_system, sxk: @handicap.sxk, name: @handicap.name, owner_name: @handicap.owner_name, registry_id: @handicap.registry_id, sail_number: @handicap.sail_number, source: @handicap.source, srs: @handicap.srs, type: @handicap.type } }
     assert_redirected_to handicap_url(@handicap)
   end
 

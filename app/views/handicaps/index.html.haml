@@ -23,7 +23,7 @@
         - @handicaps.each do |handicap|
           %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{handicap_path(handicap)}';", :style => "cursor: pointer;"}
             %td= handicap.name
-            %td= handicap.handicap
+            %td= handicap.sxk
             %td= handicap.source
             %td= handicap.registry_id
             %td= handicap.boat_name

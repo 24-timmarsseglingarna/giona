@@ -18,11 +18,15 @@ class Team < ApplicationRecord
   scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
 
   accepts_nested_attributes_for :boat
-  
+
   after_initialize :set_defaults, unless: :persisted?
   # The set_defaults will only work if the object is new
 
-  def from_same_regatta  
+  def sxk
+    self.handicap.sxk
+  end
+
+  def from_same_regatta
      race.regatta.teams
   end
 
