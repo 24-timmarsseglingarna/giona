@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170507085324) do
+ActiveRecord::Schema.define(version: 20180309073558) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20170507085324) do
 
   create_table "handicaps", force: :cascade do |t|
     t.string   "name"
-    t.float    "handicap"
+    t.float    "sxk"
     t.datetime "best_before"
     t.string   "source"
     t.float    "srs"
@@ -112,6 +112,14 @@ ActiveRecord::Schema.define(version: 20170507085324) do
     t.integer  "organizer_id"
     t.string   "external_id"
     t.string   "external_system"
+  end
+
+  create_table "start_finishes", force: :cascade do |t|
+    t.integer  "point_number"
+    t.integer  "organizer_id"
+    t.boolean  "start"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "teams", force: :cascade do |t|

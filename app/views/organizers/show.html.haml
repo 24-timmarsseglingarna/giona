@@ -2,11 +2,11 @@
   .panel-heading
     %i.fa.fa-institution(aria-hidden='true')
     = @organizer.name
-  .panel-body    
+  .panel-body
     .legend Kontaktperson:
     %p
-      %i.fa.fa-vcard-o(aria-hidden='true')    
-      =@organizer.name_from 
+      %i.fa.fa-vcard-o(aria-hidden='true')
+      =@organizer.name_from
       <
       =@organizer.email_from
       >
@@ -14,13 +14,22 @@
     - if has_assistant_rights?
       .legend Informera dessa funktionärer:
       %p
-        %i.fa.fa-users(aria-hidden='true')    
+        %i.fa.fa-users(aria-hidden='true')
         = @organizer.email_to
       .legend Text i bekräftelsen på anmälan:
       %p
         = @organizer.confirmation
+      .legend Standardstartplatser
+      %ul
+        - for start_place in @organizer.start_places
+          %li= start_place.point_number
+      .legend Gemensam målgång
+      %ul
+        - for finish_place in @organizer.finish_places
+          %li= finish_place.point_number
 
-    - if has_organizer_rights?    
+
+    - if has_organizer_rights?
       %i.fa.fa-trophy(aria-hidden='true')
       = link_to 'Skapa ny regatta', new_regatta_path(:organizer_id => @organizer.id)
 
@@ -34,7 +43,7 @@
       %p
         %br
       %p= link_to 'Radera', @organizer, :method => :delete, :data => { :confirm => "Vill du radera #{@organizer.name}?" }
-    
+
 
 %h2 Regattor
 
@@ -49,7 +58,7 @@
   %tbody
     - @organizer.regattas.each do |regatta|
       %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
-        %td= regatta.name 
+        %td= regatta.name
         %td
           - for race in regatta.races
             = race.period
@@ -59,4 +68,4 @@
 :javascript
   $(document).ready(function() {
   $('#giona-regattas').DataTable();
-  } );  
+  } );
