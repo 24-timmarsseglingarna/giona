@@ -21,4 +21,9 @@ module PointsHelper
         out << "#{hemisphere} #{point.longitude.floor}°#{number_with_precision(((point.longitude-point.longitude.floor)*60), precision: 2) }'"
       end
   end
+
+  def name_number point
+    "#{point.number} #{point.name}"
+  end
+  
 end
