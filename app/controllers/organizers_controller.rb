@@ -20,26 +20,26 @@ class OrganizersController < ApplicationController
 
   # GET /organizers/new
   def new
-    if has_admin_rights? 
-      @organizer = Organizer.new     
-    else 
+    if has_admin_rights?
+      @organizer = Organizer.new
+    else
       flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
       redirect_to :back
-    end  
+    end
   end
 
   # GET /organizers/1/edit
   def edit
-    unless has_admin_rights? 
+    unless has_admin_rights?
       flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
       redirect_to :back
-    end  
+    end
   end
 
   # POST /organizers
   # POST /organizers.json
   def create
-    if has_admin_rights? 
+    if has_admin_rights?
       @organizer = Organizer.new(organizer_params)
       respond_to do |format|
         if @organizer.save
@@ -59,7 +59,7 @@ class OrganizersController < ApplicationController
   # PATCH/PUT /organizers/1
   # PATCH/PUT /organizers/1.json
   def update
-    if has_admin_rights? 
+    if has_admin_rights?
       respond_to do |format|
         if @organizer.update(organizer_params)
           format.html { redirect_to @organizer, notice: 'Arrangören är uppdaterad.' }
@@ -78,7 +78,7 @@ class OrganizersController < ApplicationController
   # DELETE /organizers/1
   # DELETE /organizers/1.json
   def destroy
-    if has_admin_rights? 
+    if has_admin_rights?
       @organizer.destroy
       respond_to do |format|
         format.html { redirect_to organizers_url, notice: 'Arrangören togs bort.' }

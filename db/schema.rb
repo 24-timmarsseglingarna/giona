@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170507085324) do
+ActiveRecord::Schema.define(version: 20180309132226) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20170507085324) do
 
   create_table "handicaps", force: :cascade do |t|
     t.string   "name"
-    t.float    "handicap"
+    t.float    "sxk"
     t.datetime "best_before"
     t.string   "source"
     t.float    "srs"
@@ -86,6 +86,17 @@ ActiveRecord::Schema.define(version: 20170507085324) do
     t.boolean  "review",          default: false
   end
 
+  create_table "points", force: :cascade do |t|
+    t.integer  "number"
+    t.string   "name"
+    t.string   "definition"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "version"
+  end
+
   create_table "races", force: :cascade do |t|
     t.datetime "start_from"
     t.datetime "start_to"
@@ -112,6 +123,14 @@ ActiveRecord::Schema.define(version: 20170507085324) do
     t.integer  "organizer_id"
     t.string   "external_id"
     t.string   "external_system"
+  end
+
+  create_table "start_finishes", force: :cascade do |t|
+    t.integer  "point_number"
+    t.integer  "organizer_id"
+    t.boolean  "start"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "teams", force: :cascade do |t|
