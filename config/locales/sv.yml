@@ -61,7 +61,7 @@ sv:
     - :year
   datetime:
     formats:
-      day: "%Y-%m-%d"    
+      day: "%Y-%m-%d"
     distance_in_words:
       about_x_hours:
         one: ungefär en timme
@@ -496,7 +496,8 @@ sv:
         email_from: Mejlavsändare
         name_from: Avsändarnamn
         email_to: Informera om anmälan
-        confirmation: Mejlbekräftelse        
+        confirmation: Mejlbekräftelse
+        external_id: Arrangörsbeteckning i PoD  
       person:
         first_name: Förnamn
         last_name: Efternamn
@@ -552,4 +553,4 @@ sv:
     admin: administratör
     organizer: arrangör
     assistant: assistent
-    user: användare        
+    user: användare

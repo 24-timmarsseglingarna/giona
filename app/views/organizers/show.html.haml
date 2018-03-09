@@ -27,7 +27,9 @@
       %ul
         - for finish_place in @organizer.finish_places
           %li= finish_place.point_number
-
+      .legend Arrangörskod i PoD
+      %p
+        =@organizer.external_id
 
     - if has_organizer_rights?
       %i.fa.fa-trophy(aria-hidden='true')
