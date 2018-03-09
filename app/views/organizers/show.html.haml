@@ -22,7 +22,7 @@
       .legend Standardstartplatser
       %ul
         - for start_place in @organizer.start_places
-          %li= start_place
+          %li= start_place.point_number
       .legend Gemensam målgång
       %ul
         - for finish_place in @organizer.finish_places

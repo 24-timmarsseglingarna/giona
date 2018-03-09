@@ -1,0 +1,25 @@
+%h1 Listing start_finishes
+
+%table
+  %thead
+    %tr
+      %th Point number
+      %th Organizer
+      %th Start
+      %th
+      %th
+      %th
+
+  %tbody
+    - @start_finishes.each do |start_finish|
+      %tr
+        %td= start_finish.point_number
+        %td= start_finish.organizer_id
+        %td= start_finish.start
+        %td= link_to 'Show', start_finish
+        %td= link_to 'Edit', edit_start_finish_path(start_finish)
+        %td= link_to 'Destroy', start_finish, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Start finish', new_start_finish_path
