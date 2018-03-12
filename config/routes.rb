@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
 
+  resources :start_finishes
   resources :organizers
   #Sti::Application.routes.draw do
+  resources :start_finishes
   resources :handicaps
   #end
   resources :srs_keelboats, controller: 'handicaps', type: 'SrsKeelboats'

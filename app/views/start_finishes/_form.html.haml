@@ -1,0 +1,8 @@
+= semantic_form_for @start_finish do |f|
+  = f.inputs do
+    = f.input :point_number
+    = f.input :organizer
+    = f.input :start
+
+  = f.actions do
+    = f.action :submit, :as => :input

@@ -1,11 +1,13 @@
 require 'csv'
 require 'open-uri'
 require 'nokogiri'
+require 'erb'
+include ERB::Util
 
 
 namespace :scrape do
 
-  
+
   namespace :srs do
     task :certificates => :environment do
       SrsCertificate.destroy_all #TODO
@@ -19,7 +21,7 @@ namespace :scrape do
           handicap.registry_id = entry.css('td')[0].text.strip
           handicap.owner_name = entry.css('td')[1].text.strip
           handicap.name = entry.css('td')[2].text.strip
-          handicap.boat_name = entry.css('td')[3].text.strip 
+          handicap.boat_name = entry.css('td')[3].text.strip
           handicap.sail_number = entry.css('td')[5].text.to_i
           handicap.srs = entry.css('td')[8].text.gsub(',', '.').to_f
           handicap.handicap = (handicap.srs * 1.215).round(2)
@@ -83,7 +85,22 @@ namespace :scrape do
 end
 
 namespace :import do
-  namespace :srs do 
+  namespace :pod do
+    task :start_places => :environment do
+      for organizer in Organizer.all
+        unless organizer.external_id.blank?
+          doc = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?krets=#{url_encode(organizer.external_id.strip)}"), nil, 'ISO-8859-1')
+          doc.xpath("//startpunkter//startpunkt//nummer").each do |number|
+            point = number.content.strip.to_i
+            start_place = StartFinish.find_or_create_by organizer: organizer, start: true, point_number: point
+            start_place.save!
+          end
+        end
+      end
+    end
+  end
+
+  namespace :srs do
     task :dingies => :environment do
       SrsDingy.destroy_all
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle-2017.csv"), "r"), :headers => true) do |row|
@@ -99,14 +116,14 @@ namespace :import do
     end
   end
 
-  namespace :sxk do 
+  namespace :sxk do
     task :certificates => :environment do
       SxkCertificate.destroy_all
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "sxk-tal-2016.csv"), "r"), :headers => true) do |row|
         handicap = SxkCertificate.new
         handicap.name = row['Boat'].to_s.strip
         handicap.handicap = row['SXKtal'].to_f
-        handicap.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL' 
+        handicap.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL'
         handicap.owner_name = row['Owner'].to_s.strip unless row['Owner'].to_s.strip == 'NULL'
         handicap.sail_number = row['Segelnr'].to_i
         handicap.registry_id = row['Regnr'].to_s.strip
@@ -121,22 +138,22 @@ namespace :import do
   namespace :xls do
     task :shorthand => :environment do
       CSV.foreach( File.open(File.join("/", "tmp", "import", "2017E-startlista--A.csv"), "r"), :headers => true) do |row|
-        
+
         # pre req: Regatta exists, one race only
 
-        regatta = Regatta.find_by name: 'Ensamseglingen 2017' 
+        regatta = Regatta.find_by name: 'Ensamseglingen 2017'
         race = regatta.races.take
-       
+
         person = Person.find_or_create_by email: row['person_email'].to_s.strip
         person.first_name = row['person_first_name'].to_s.strip if person.first_name.blank?
         person.last_name = row['person_last_name'].to_s.strip if person.last_name.blank?
         person.external_system = '2017E-startlista--A' if person.external_system.blank?
         person.save!
 
-        boat = Boat.find_or_create_by   name: row['boat_name'].to_s.strip, 
-                                        boat_type_name: row['boat_type_name'].to_s.strip, 
+        boat = Boat.find_or_create_by   name: row['boat_name'].to_s.strip,
+                                        boat_type_name: row['boat_type_name'].to_s.strip,
                                         sail_number: row['boat_sail_no'].to_s.strip
-        boat.external_system = '2017E-startlista--A' if boat.external_system.blank?     
+        boat.external_system = '2017E-startlista--A' if boat.external_system.blank?
         boat.save!
 
         handicap = LegacyBoatType.new
@@ -145,7 +162,7 @@ namespace :import do
         handicap.source = 'Arkiv'
         handicap.best_before = DateTime.parse('2017-06-30')
         handicap.save!
-        
+
         t = Team.find_or_create_by race: race, boat: boat
         t.active = true
         t.offshore = true
@@ -165,7 +182,7 @@ namespace :import do
     end
   end
 
-  namespace :starema do 
+  namespace :starema do
     task :people => :environment do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Deltagare.csv"), "r"), :headers => true) do |row|
         p = Person.find_or_create_by(external_system: 'Starema-St', external_id: row['DeltNr'].to_s.strip.to_i)
@@ -191,8 +208,8 @@ namespace :import do
 
     task :regattas => :environment do
       # File format: SeglingFNStart,SeglingStartDag,SeglingStartTid,SeglingPeriod,StartDagCtr,StartVeckodag,
-      # StartDag,StartAr,StartVH,StartFNTid,UrvalStartTid,TmpRegatta,TmpOrganizer,TmpRace,TmpRegattaName  
-      # If imported start period covers midnight --> #fail  
+      # StartDag,StartAr,StartVH,StartFNTid,UrvalStartTid,TmpRegatta,TmpOrganizer,TmpRace,TmpRegattaName
+      # If imported start period covers midnight --> #fail
       organizer = Organizer.find_by(name: 'Svenska Kryssarklubbens Stockholmskrets')
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "starema-sthlm-regatta-race.csv"), "r"), :headers => true) do |row|
         regatta = Regatta.find_or_create_by(name: row['TmpRegattaName'].to_s.strip, external_system: 'Starema-St')
@@ -201,7 +218,7 @@ namespace :import do
         regatta.name_from = 'Arne Wallers'
         regatta.email_to = 'arne@24-timmars.nu, stefan@24-timmars.nu'
         regatta.save!
-        
+
         period = row['SeglingPeriod'].to_s.strip.to_i
         start_day = row['SeglingStartDag'][0..7]
         start_time_from = row['SeglingStartTid'][0..4]
@@ -209,9 +226,9 @@ namespace :import do
         start_from = DateTime.strptime(start_day + ' ' + start_time_from, "%m/%d/%y %H:%M") - 2.hours #.in_time_zone("Europe/Stockholm")
         start_to = DateTime.strptime(start_day + ' ' + start_time_to, "%m/%d/%y %H:%M") - 2.hours #.in_time_zone("Europe/Stockholm")
         external_id = row['StartDagCtr'].to_s.strip.to_i
-        race = Race.find_or_create_by( external_system: 'Starema-St', 
-                                       external_id: external_id, 
-                                       regatta_id: regatta.id, 
+        race = Race.find_or_create_by( external_system: 'Starema-St',
+                                       external_id: external_id,
+                                       regatta_id: regatta.id,
                                        period: period,
                                        start_from: start_from,
                                        start_to: start_to,
@@ -224,11 +241,11 @@ namespace :import do
 
 
     task :teams => :environment do
-      # File format: SeglingNr, SeglingRegistrerandeKrets, SeglingFNStart, SeglingStartDag, 
+      # File format: SeglingNr, SeglingRegistrerandeKrets, SeglingFNStart, SeglingStartDag,
       # SeglingStartTid, SeglingPeriod, SeglingFNBoatIndivid, SeglingBåtIndivid, SeglingBåtTyp,
-      # SeglingFNStartpunkt, SeglingStartnr, SeglingÖvertid, SeglingTotalDist, SeglingAvdrag, 
+      # SeglingFNStartpunkt, SeglingStartnr, SeglingÖvertid, SeglingTotalDist, SeglingAvdrag,
       # SeglingGodkDist, SeglingSxkTal, SeglingPlakatDist, SeglingEfteranmäld, SeglingEjStart,
-      # SeglingBrutit, SeglingFiktiv, SeglingÅr, SeglingVH, SeglingLåst, SeglingDeltarFest, 
+      # SeglingBrutit, SeglingFiktiv, SeglingÅr, SeglingVH, SeglingLåst, SeglingDeltarFest,
       # SeglingDeltarFestNotering, SeglingBetalt, SeglingBetaltBelopp, SeglingKorrDistans
 
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Seglingar.csv"), "r"), :headers => true) do |row|
@@ -237,12 +254,12 @@ namespace :import do
         if race.nil?
           puts row
           team.destroy!
-        else 
+        else
           team.race_id = race.id
           team.start_number = row['SeglingStartnr'].to_s.strip
           team.boat_name = row['SeglingBåtIndivid'].to_s.strip
-          team.boat_type_name = row['SeglingBåtTyp'].to_s.strip 
-          #team.boat_sail_number = 
+          team.boat_type_name = row['SeglingBåtTyp'].to_s.strip
+          #team.boat_sail_number =
           team.start_point = row['SeglingFNStartpunkt'].to_s.strip.to_i
           #team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
           team.plaque_distance = row['SeglingPlakatDist'].to_s.strip.to_f
@@ -254,26 +271,26 @@ namespace :import do
             boat.boat_type_name = team.boat_type_name
             boat.save!
             team.boat_id = boat.id
-            handicap = LegacyBoatType.find_or_create_by( name: team.boat_type_name, 
-                                                          handicap: row['SeglingSxkTal'].to_s.strip.to_f, 
+            handicap = LegacyBoatType.find_or_create_by( name: team.boat_type_name,
+                                                          handicap: row['SeglingSxkTal'].to_s.strip.to_f,
                                                           external_system: 'Starema-St',
                                                           source: 'Arkiv',
                                                           best_before: DateTime.parse('2017-12-31'))
             team.handicap = handicap
             team.handicap_type = 'LegacyBoatType'
 
-            if boat.sail_number == 0 || boat.sail_number.nil? 
+            if boat.sail_number == 0 || boat.sail_number.nil?
               team.boat_sail_number = nil
             else
               team.boat_sail_number = boat.sail_number
             end
           end
           if row['SeglingEjStart'].to_i == 1
-            team.did_not_start = true 
+            team.did_not_start = true
           else
             team.did_not_start = false
           end
-           
+
           if ( row['SeglingBrutit'].to_i == 1 )
             team.did_not_finish = true
           else
@@ -281,7 +298,7 @@ namespace :import do
           end
 
           if ( row['SeglingBetalt'].to_i == 1 )
-            team.paid_fee = true 
+            team.paid_fee = true
           else
             team.paid_fee = false
           end
@@ -293,8 +310,8 @@ namespace :import do
 
 
     task :crew_members => :environment do
-      # File format: 
-      # DeltariSeglingCtr, DeltariRegistrerandeKrets, DeltariFNDeltagare, 
+      # File format:
+      # DeltariSeglingCtr, DeltariRegistrerandeKrets, DeltariFNDeltagare,
       # DeltariFNSegling, DeltariSkipperGastqq, DeltariFNSkipperGast
 
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-DeltariSeling.csv"), "r"), :headers => true) do |row|
@@ -306,7 +323,7 @@ namespace :import do
           #puts "crew_member.person #{crew_member.person_id} crew_member.team #{crew_member.team_id}"
           #puts "--------"
           if(row['DeltariFNSkipperGast'].to_i == 2)
-            crew_member.skipper = true 
+            crew_member.skipper = true
           else
             crew_member.skipper = false
           end
@@ -323,7 +340,7 @@ namespace :import do
     task :boats => :environment do
       boat_type_name = Hash.new
       boat_handicap = Hash.new
-      # File format: 
+      # File format:
       # BoatNr,BoatTyp,BoatSxkTal
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatType.csv"), "r"), :headers => true) do |row|
         i = row['BoatNr'].to_i
@@ -331,7 +348,7 @@ namespace :import do
         boat_handicap[i] = row['BoatSxkTal']
       end
 
-      # File format: 
+      # File format:
       # BoatIndNr, BoatIndFNBoattyp, BoatIndNamn, BoatIndParmNr, BoatIndVHF, BoatIndMobil
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-BoatIndivid.csv"), "r"), :headers => true) do |row|
         boat = Boat.find_or_create_by(external_id: row['BoatIndNr'].to_s.strip.to_i, external_system: 'Starema-St')
@@ -359,7 +376,7 @@ namespace :import do
 
 
   end
-end 
+end
 
 namespace :batch do
   namespace :pod do
@@ -404,7 +421,7 @@ namespace :batch do
         end
       end
     end
-  end  
+  end
 
 
   task :race_names => :environment do
@@ -412,18 +429,18 @@ namespace :batch do
       race.name = nil
       race.save!
     end
-  end  
+  end
 
   task :regatta_names => :environment do
     for regatta in Organizer.find_by( name: 'Svenska Kryssarklubbens Stockholmskrets' ).regattas
       regatta.name = regatta.name.gsub(/\ i\ Stockholm/, '')
       regatta.save!
     end
-  end  
+  end
 
   task :activate_teams => :environment do
     r = Regatta.find_by name: 'Höstregattan 2017'
-    for team in Team.from_regatta r.id 
+    for team in Team.from_regatta r.id
       team.active = true
       team.save
     end
@@ -443,48 +460,48 @@ namespace :mess do
       #person.first_name = ''
       #person.last_name = ''
       person.street = Faker::Address.street_name + ' ' + (rand(150)+1).to_s
-      person.external_system = 'obfuscated' 
+      person.external_system = 'obfuscated'
       person.save!
     end
-  end  
+  end
 end
 
 namespace :destroy do
 
   task :regattas => :environment do
     Regatta.destroy_all
-  end  
+  end
 
   task :races => :environment do
     Race.destroy_all
-  end  
+  end
 
   task :people => :environment do
     Person.destroy_all
-  end  
+  end
 
   task :users => :environment do
     User.destroy_all
-  end  
+  end
 
   task :teams => :environment do
     Team.destroy_all
-  end  
+  end
 
   task :crew_members => :environment do
     CrewMember.destroy_all
-  end  
+  end
 
   task :boats => :environment do
     Boat.destroy_all
-  end  
+  end
 
   task :handicaps => :environment do
     Handicap.destroy_all
-  end  
+  end
 
   task :organizers => :environment do
     Organizer.destroy_all
-  end  
+  end
 
 end
