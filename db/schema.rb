@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20180309132226) do
 
   create_table "handicaps", force: :cascade do |t|
     t.string   "name"
-    t.float    "sxk"
+    t.float    "handicap"
     t.datetime "best_before"
     t.string   "source"
     t.float    "srs"
