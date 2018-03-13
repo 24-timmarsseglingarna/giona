@@ -103,12 +103,6 @@ namespace :import do
       doc1 = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/api/xmlapi2.php?points"), nil, 'ISO-8859-1'  )
       doc1.xpath("//punkter//punkt//nummer").each do |number|
         point_number =  number.content.to_s.strip.to_i
-        points = Point.where("number = ?", point_number)
-        if points.nil?
-          last_version = 0
-        else
-          last_version = points.maximum("version")
-        end
         doc2 = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?point=#{url_encode(point_number)}"), nil, 'ISO-8859-1')
         name = doc2.xpath("//PoD//punkt//namn").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
         definition = doc2.xpath("//PoD//punkt//definition").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
@@ -122,9 +116,15 @@ namespace :import do
                                               definition: definition,
                                               latitude: latitude,
                                               longitude: longitude)
-
+        puts "version: #{point.version} #{point.number} #{point.name}"
         if point.new_record?
-          point.version = last_version + 1
+          points = Point.where("number = ?", point_number)
+          if points.blank?
+            version = 1
+          else
+            version = points.maximum("version") + 1
+          end
+          point.version = version
           point.save!
           puts "version: #{point.version} #{point.number} #{point.name}"
         end
