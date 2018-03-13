@@ -100,11 +100,15 @@ namespace :import do
     end
 
     task :points => :environment do
-      version = Point.maximum("version").to_i + 1
-
       doc1 = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/api/xmlapi2.php?points"), nil, 'ISO-8859-1'  )
       doc1.xpath("//punkter//punkt//nummer").each do |number|
         point_number =  number.content.to_s.strip.to_i
+        points = Point.where("number = ?", point_number)
+        if points.nil?
+          last_version = 0
+        else
+          last_version = points.maximum("version")
+        end
         doc2 = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?point=#{url_encode(point_number)}"), nil, 'ISO-8859-1')
         name = doc2.xpath("//PoD//punkt//namn").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
         definition = doc2.xpath("//PoD//punkt//definition").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
@@ -112,14 +116,18 @@ namespace :import do
         long = doc2.xpath("//PoD//punkt//long").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
         longitude = (long.split[0].to_d + long.split[1].gsub(/,/, ".").to_d/60).to_f
         latitude = (lat.split[0].to_d + lat.split[1].gsub(/,/, ".").to_d/60).to_f
-        point = Point.find_or_create_by(  version: version,
-                                          number: point_number,
-                                          name: name,
-                                          definition: definition,
-                                          latitude: latitude,
-                                          longitude: longitude)
-        point.save!
-        puts "version: #{version} #{point_number} #{name}"
+
+        point = Point.find_or_initialize_by(  number: point_number,
+                                              name: name,
+                                              definition: definition,
+                                              latitude: latitude,
+                                              longitude: longitude)
+
+        if point.new_record?
+          point.version = last_version + 1
+          point.save!
+          puts "version: #{point.version} #{point.number} #{point.name}"
+        end
       end
     end
   end
