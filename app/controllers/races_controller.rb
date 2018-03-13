@@ -27,11 +27,11 @@ class RacesController < ApplicationController
   def new
     if params[:regatta_id].blank?
       redirect_to regattas_path, alert: 'Seglingar kan bara skapas från regattasidor.'
-    else   
+    else
       @race = Race.new
-      @race.period = params[:period] 
+      @race.period = params[:period]
       regatta = Regatta.find params[:regatta_id]
-      @race.regatta_id = regatta.id 
+      @race.regatta_id = regatta.id
     end
   end
 
@@ -60,7 +60,7 @@ class RacesController < ApplicationController
   def update
     respond_to do |format|
       if @race.update(race_params)
-        format.html { redirect_to @race, notice: 'Uppgifterna om seglingen är uppdateraee.' }
+        format.html { redirect_to @race, notice: 'Uppgifterna om seglingen är uppdaterade.' }
         format.json { render :show, status: :ok, location: @race }
       else
         format.html { render :edit }
@@ -91,10 +91,10 @@ class RacesController < ApplicationController
     end
 
     def authorized?
-      if ! has_organizer_rights? 
+      if ! has_organizer_rights?
         flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
         redirect_to :back
-      end  
+      end
     end
 
 end
