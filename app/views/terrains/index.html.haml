@@ -1,0 +1,25 @@
+%h1 Listing terrains
+
+%table
+  %thead
+    %tr
+      %th Version id
+      %th Published
+      %th Version Name
+      %th
+      %th
+      %th
+
+  %tbody
+    - @terrains.each do |terrain|
+      %tr
+        %td= terrain.id
+        %td= terrain.published
+        %td= terrain.version_name
+        %td= link_to 'Show', terrain
+        %td= link_to 'Edit', edit_terrain_path(terrain)
+        %td= link_to 'Destroy', terrain, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Terrain', new_terrain_path

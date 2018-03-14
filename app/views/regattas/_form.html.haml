@@ -1,13 +1,14 @@
 = semantic_form_for @regatta do |f|
   = f.inputs do
     = f.input :name
-    = f.input :organizer, input_html: { disabled: true } 
+    = f.input :organizer, input_html: { disabled: true }
     = f.input :organizer_id, :as => :hidden
     = f.input :email_from
     = f.input :name_from
     = f.input :email_to
     = f.input :confirmation
     = f.input :active, :as => :boolean
+    = f.input :terrain
 
   = f.actions do
     = f.action :submit, :as => :input

@@ -1,0 +1,8 @@
+= semantic_form_for @terrain do |f|
+  = f.inputs do
+    = f.input :id, input_html: { disabled: true }
+    = f.input :published
+    = f.input :version_name
+
+  = f.actions do
+    = f.action :submit, :as => :input

@@ -8,7 +8,7 @@ class RegattasController < ApplicationController
   before_action :authorized?, :except => [:show, :index]
 
   before_action :set_regatta, only: [:show, :edit, :update, :destroy]
- 
+
   # GET /regattas
   # GET /regattas.json
   def index
@@ -25,7 +25,7 @@ class RegattasController < ApplicationController
   def new
     if params[:organizer_id].blank?
       redirect_to regattas_path, alert: 'Regattor kan bara skapas från arrangörssidor.'
-    else   
+    else
       @regatta = Regatta.new
       organizer = Organizer.find params[:organizer_id]
       @regatta.organizer_id = organizer.id
@@ -87,14 +87,14 @@ class RegattasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def regatta_params
-      params.require(:regatta).permit(:name, :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :external_id, :external_system)
+      params.require(:regatta).permit(:name, :terrain_id,  :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :external_id, :external_system)
     end
 
     def authorized?
-      if ! has_organizer_rights? 
+      if ! has_organizer_rights?
         flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
         redirect_to :back
-      end  
+      end
     end
 
 end

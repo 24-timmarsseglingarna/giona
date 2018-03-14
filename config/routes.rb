@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
+  resources :terrains
   resources :points
   resources :start_finishes
   resources :organizers
   #Sti::Application.routes.draw do
+  resources :terrains
   resources :start_finishes
   resources :handicaps
   #end

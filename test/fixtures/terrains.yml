@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  version: 1
+  published: false
+  name: MyString
+
+two:
+  version: 1
+  published: false
+  name: MyString
