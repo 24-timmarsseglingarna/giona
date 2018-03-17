@@ -100,6 +100,16 @@ namespace :import do
     end
 
     task :points => :environment do
+      # create new terrain
+      # import points
+      # import legs
+      # compare current terrain with previous, purge if needed
+      #
+      terrain = Terrain.new
+      terrain.version_name = "During import."
+      terrain.published = false
+      terrain.save!
+
       doc1 = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/api/xmlapi2.php?points"), nil, 'ISO-8859-1'  )
       doc1.xpath("//punkter//punkt//nummer").each do |number|
         point_number =  number.content.to_s.strip.to_i
@@ -108,25 +118,29 @@ namespace :import do
         definition = doc2.xpath("//PoD//punkt//definition").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
         lat = doc2.xpath("//PoD//punkt//lat").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
         long = doc2.xpath("//PoD//punkt//long").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
-        longitude = (long.split[0].to_d + long.split[1].gsub(/,/, ".").to_d/60).to_f
-        latitude = (lat.split[0].to_d + lat.split[1].gsub(/,/, ".").to_d/60).to_f
 
-        point = Point.find_or_initialize_by(  number: point_number,
-                                              name: name,
-                                              definition: definition,
-                                              latitude: latitude,
-                                              longitude: longitude)
-        puts "version: #{point.version} #{point.number} #{point.name}"
-        if point.new_record?
-          points = Point.where("number = ?", point_number)
-          if points.blank?
-            version = 1
-          else
-            version = points.maximum("version") + 1
+        unless point_number.blank? || name.blank? || definition.blank? || lat.blank? || long.blank?
+          longitude = (long.split[0].to_d + long.split[1].gsub(/,/, ".").to_d/60).to_f
+          latitude = (lat.split[0].to_d + lat.split[1].gsub(/,/, ".").to_d/60).to_f
+
+          point = Point.find_or_initialize_by(  number: point_number,
+                                                name: name,
+                                                definition: definition,
+                                                latitude: latitude,
+                                                longitude: longitude)
+          if point.new_record?
+            points = Point.where("number = ?", point_number)
+            if points.blank?
+              version = 1
+            else
+              version = points.maximum("version") + 1
+            end
+            point.version = version
+            point.save!
           end
-          point.version = version
-          point.save!
-          puts "version: #{point.version} #{point.number} #{point.name}"
+          terrain.points << point
+        else
+          puts "Skipping incomplete. number: #{point_number} name: #{name} defintion: #{definition} lat: #{lat} long: #{long}."
         end
       end
     end
@@ -499,6 +513,14 @@ namespace :mess do
 end
 
 namespace :destroy do
+
+  task :points => :environment do
+    Point.destroy_all
+  end
+
+  task :start_places => :environment do
+    StartPlace.destroy_all
+  end
 
   task :regattas => :environment do
     Regatta.destroy_all

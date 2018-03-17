@@ -7,6 +7,9 @@ Version 0.4.3.3
 
 =======
 
+Development environment:
+https://railsbox.io/boxes/8a394717f6ed
+
 createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona_development
 
 # Populate during developmentish conditions
