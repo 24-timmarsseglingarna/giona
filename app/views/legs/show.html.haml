@@ -1,0 +1,25 @@
+%p#notice= notice
+
+%p
+  %b Id:
+  = @leg.id
+
+%p
+  %b Point:
+  = link_to "#{@point.number} #{@point.name}", @point
+%p
+  %b To point:
+  = link_to "#{@to_point.number} #{@to_point.name}", @to_point
+%p
+  %b Distance:
+  = @leg.distance
+%p
+  %b Offshore:
+  = @leg.offshore
+%p
+  %b Version:
+  = @leg.version
+
+= link_to 'Edit', edit_leg_path(@leg)
+\|
+= link_to 'Back', legs_path

@@ -1,17 +1,17 @@
 class Terrain < ApplicationRecord
 
-  has_and_belongs_to_many :points
   default_scope { order(id: :asc) }
   validates_presence_of :version_name
   has_many :regattas
-
+  has_and_belongs_to_many :points
+  has_and_belongs_to_many :legs
 
   def self.select_terrain
     terrain_array  = {}
-    for terrain in Terrain.find(:all, :order => "name ASC")
+    for terrain in Terrain.where("published = true")
       terrain_array[terrain.name] = terrain.id
     end
-    municipality_array
+    terrain_array
   end
 
 def name

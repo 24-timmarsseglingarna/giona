@@ -7,6 +7,7 @@
       %th Name
       %th Definition
       %th Position
+      %th Version
       %th
       %th
       %th
@@ -18,6 +19,7 @@
         %td= point.name
         %td= point.definition
         %td= lat_long(point)
+        %td= point.version
         %td= link_to 'Show', point
         %td= link_to 'Edit', edit_point_path(point)
         %td= link_to 'Destroy', point, :method => :delete, :data => { :confirm => 'Are you sure?' }

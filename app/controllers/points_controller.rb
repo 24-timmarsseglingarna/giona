@@ -1,5 +1,7 @@
 class PointsController < ApplicationController
   before_action :set_point, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, :except => [:show, :index]
+  before_action :authorized?, :except => [:show, :index]
 
   # GET /points
   # GET /points.json
@@ -10,6 +12,7 @@ class PointsController < ApplicationController
   # GET /points/1
   # GET /points/1.json
   def show
+    @versioned_points = Point.where("number = ?", @point.number)
   end
 
   # GET /points/new
@@ -70,5 +73,12 @@ class PointsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def point_params
       params.require(:point).permit(:number, :name, :definition, :latitude, :longitude, :version)
+    end
+
+    def authorized?
+      if ! has_organizer_rights?
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end
     end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180317164039) do
+ActiveRecord::Schema.define(version: 20180325105055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,24 @@ ActiveRecord::Schema.define(version: 20180317164039) do
     t.datetime "updated_at",      null: false
   end
 
+  create_table "legs", force: :cascade do |t|
+    t.integer  "point_id"
+    t.integer  "to_point_id"
+    t.float    "distance"
+    t.boolean  "offshore",    default: false
+    t.integer  "version"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.index ["to_point_id"], name: "index_legs_on_to_point_id", using: :btree
+  end
+
+  create_table "legs_terrains", id: false, force: :cascade do |t|
+    t.integer "leg_id",     null: false
+    t.integer "terrain_id", null: false
+    t.index ["leg_id", "terrain_id"], name: "index_legs_terrains_on_leg_id_and_terrain_id", using: :btree
+    t.index ["terrain_id", "leg_id"], name: "index_legs_terrains_on_terrain_id_and_leg_id", using: :btree
+  end
+
   create_table "organizers", force: :cascade do |t|
     t.string   "name"
     t.string   "email_from"
@@ -95,11 +113,14 @@ ActiveRecord::Schema.define(version: 20180317164039) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "version"
+    t.index ["number"], name: "index_points_on_number", using: :btree
   end
 
   create_table "points_terrains", id: false, force: :cascade do |t|
     t.integer "point_id",   null: false
     t.integer "terrain_id", null: false
+    t.index ["point_id", "terrain_id"], name: "index_points_terrains_on_point_id_and_terrain_id", using: :btree
+    t.index ["terrain_id", "point_id"], name: "index_points_terrains_on_terrain_id_and_point_id", using: :btree
   end
 
   create_table "races", force: :cascade do |t|

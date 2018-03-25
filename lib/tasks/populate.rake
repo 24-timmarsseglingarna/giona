@@ -89,17 +89,22 @@ namespace :import do
     task :start_places => :environment do
       for organizer in Organizer.all
         unless organizer.external_id.blank?
+          organizer.reset_start_places
           doc = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?krets=#{url_encode(organizer.external_id.strip)}"), nil, 'ISO-8859-1')
           doc.xpath("//startpunkter//startpunkt//nummer").each do |number|
-            point = number.content.strip.to_i
-            start_place = StartFinish.find_or_create_by organizer: organizer, start: true, point_number: point
-            start_place.save!
+            point_number = number.content.strip.to_i
+            unless Point.where("number = ?", point_number).blank?
+              start_place = StartFinish.find_or_create_by organizer: organizer, start: true, point_number: point_number
+              start_place.save!
+            end
           end
         end
       end
     end
 
-    task :points => :environment do
+    task :terrain => :environment do
+      # environment variable MAX=integer to limit number of points for testing purposes.
+
       # create new terrain
       # import points
       # import legs
@@ -109,9 +114,16 @@ namespace :import do
       terrain.version_name = "During import."
       terrain.published = false
       terrain.save!
+      max_no = ENV['MAX'].to_i
 
       doc1 = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/api/xmlapi2.php?points"), nil, 'ISO-8859-1'  )
-      doc1.xpath("//punkter//punkt//nummer").each do |number|
+      if max_no == 0
+        numbers = doc1.xpath("//punkter//punkt//nummer")
+      else
+        numbers = doc1.xpath("//punkter//punkt//nummer").first(max_no)
+      end
+      puts "Read #{numbers.count} points."
+      numbers.each do |number|
         point_number =  number.content.to_s.strip.to_i
         doc2 = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?point=#{url_encode(point_number)}"), nil, 'ISO-8859-1')
         name = doc2.xpath("//PoD//punkt//namn").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
@@ -142,6 +154,49 @@ namespace :import do
         else
           puts "Skipping incomplete. number: #{point_number} name: #{name} defintion: #{definition} lat: #{lat} long: #{long}."
         end
+      end
+      terrain.points.each do |point|
+        doc = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?point=#{url_encode(point.number)}"), nil, 'ISO-8859-1')
+        doc.search("tillpunkter").search("punkt").each do |other_end|
+          o = Point.find_by number: other_end.search("nummer").first.content.strip.to_i
+          unless o.blank?
+            distance = other_end.search("distans").first.content.strip.to_f
+            offshore = false # TODO update when API includes
+            leg = Leg.find_or_initialize_by(  point_id:     point.id,
+                                              to_point_id:  o.id,
+                                              distance:     distance,
+                                              offshore:     offshore)
+            if leg.new_record?
+              legs = Leg.where("point_id = :point_id AND to_point_id = :to_point_id",
+                                {point_id: point.id, to_point_id: o.id})
+              version = legs.maximum("version").to_i + 1
+              leg.version = version
+              leg.save!
+            end
+            terrain.legs << leg
+          end
+        end
+      end
+      puts "Read #{terrain.legs.count} legs."
+      # purge
+      to_be_destroyed = false
+      n = Terrain.all.count
+      for t in Terrain.all.first(n-1)
+        puts
+        puts "Comparing with terrain #{t.name}."
+        if terrain.points == t.points
+          puts "Same set of points."
+          if terrain.legs == t.legs
+            puts "Same legs."
+            to_be_destroyed = true
+          end
+        end
+      end
+      if to_be_destroyed
+        puts "Purging."
+        terrain.destroy!
+      else
+        puts "Keeping new version #{terrain.name}."
       end
     end
   end
@@ -514,12 +569,20 @@ end
 
 namespace :destroy do
 
+  task :terrains => :environment do
+    Terrain.destroy_all
+  end
+
   task :points => :environment do
     Point.destroy_all
   end
 
-  task :start_places => :environment do
-    StartPlace.destroy_all
+  task :legs => :environment do
+    Leg.destroy_all
+  end
+
+  task :start_finishes => :environment do
+    StartFinish.destroy_all
   end
 
   task :regattas => :environment do

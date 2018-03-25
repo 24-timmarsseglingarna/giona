@@ -1,5 +1,7 @@
 class TerrainsController < ApplicationController
   before_action :set_terrain, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, :except => [:show, :index]
+  before_action :authorized?, :except => [:show, :index]
 
   # GET /terrains
   # GET /terrains.json
@@ -70,5 +72,12 @@ class TerrainsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def terrain_params
       params.require(:terrain).permit(:published, :version_name)
+    end
+
+    def authorized?
+      if ! has_organizer_rights?
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end
     end
 end

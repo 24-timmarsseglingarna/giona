@@ -5,6 +5,7 @@
     %tr
       %th Version
       %th Number of points
+      %th Number of legs
       %th
       %th
       %th
@@ -14,6 +15,7 @@
       %tr
         %td= terrain.name
         %td= terrain.points.count
+        %td= terrain.legs.count
         %td= link_to 'Show', terrain
         %td= link_to 'Edit', edit_terrain_path(terrain)
         %td= link_to 'Destroy', terrain, method: :delete, data: { confirm: 'Are you sure?' }

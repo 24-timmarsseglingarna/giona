@@ -12,4 +12,9 @@ class Organizer < ApplicationRecord
 
   validates_presence_of :name
   validates_uniqueness_of :name, :external_id
+
+  def reset_start_places
+     self.start_places.delete_all
+  end
+
 end
