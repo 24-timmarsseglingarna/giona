@@ -1,4 +1,5 @@
 class TerrainsController < ApplicationController
+  include ApplicationHelper
   before_action :set_terrain, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, :except => [:show, :index]
   before_action :authorized?, :except => [:show, :index]

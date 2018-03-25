@@ -1,0 +1,23 @@
+%h1 Listing start_places
+
+%table
+  %thead
+    %tr
+      %th Organizer
+      %th Number
+      %th
+      %th
+      %th
+
+  %tbody
+    - @start_places.each do |start_place|
+      %tr
+        %td= start_place.organizer_id
+        %td= start_place.number
+        %td= link_to 'Show', start_place
+        %td= link_to 'Edit', edit_start_place_path(start_place)
+        %td= link_to 'Destroy', start_place, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Start place', new_start_place_path

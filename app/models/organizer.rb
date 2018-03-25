@@ -6,10 +6,8 @@ class Organizer < ApplicationRecord
 
   has_many :regattas, dependent: :destroy
   has_many :races, :through => :regattas
-  has_many :start_finishes, dependent: :destroy
-  has_many :start_places, -> { where(start: true) }, class_name: 'StartFinish'
-  has_many :finish_places, -> { where(start: false) }, class_name: 'StartFinish'
-
+  has_many :start_places, dependent: :destroy
+  
   validates_presence_of :name
   validates_uniqueness_of :name, :external_id
 

@@ -89,12 +89,12 @@ namespace :import do
     task :start_places => :environment do
       for organizer in Organizer.all
         unless organizer.external_id.blank?
-          organizer.reset_start_places
+          organizer.start_places.destroy_all
           doc = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?krets=#{url_encode(organizer.external_id.strip)}"), nil, 'ISO-8859-1')
           doc.xpath("//startpunkter//startpunkt//nummer").each do |number|
             point_number = number.content.strip.to_i
             unless Point.where("number = ?", point_number).blank?
-              start_place = StartFinish.find_or_create_by organizer: organizer, start: true, point_number: point_number
+              start_place = StartPlace.find_or_create_by organizer_id: organizer.id, number: point_number
               start_place.save!
             end
           end
@@ -581,8 +581,8 @@ namespace :destroy do
     Leg.destroy_all
   end
 
-  task :start_finishes => :environment do
-    StartFinish.destroy_all
+  task :start_places => :environment do
+    StartPlace.destroy_all
   end
 
   task :regattas => :environment do
