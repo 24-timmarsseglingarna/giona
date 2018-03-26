@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :default_starts
   resources :start_places
   resources :legs
   resources :terrains
@@ -6,7 +7,7 @@ Rails.application.routes.draw do
   resources :start_finishes
   resources :organizers
   #Sti::Application.routes.draw do
-  resources :start_places
+  resources :default_starts
   resources :legs
   resources :terrains
   resources :handicaps

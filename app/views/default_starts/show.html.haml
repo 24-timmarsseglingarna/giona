@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Organizer:
+  = @default_start.organizer_id
+%p
+  %b Number:
+  = @default_start.number
+
+= link_to 'Edit', edit_default_start_path(@default_start)
+\|
+= link_to 'Back', default_starts_path

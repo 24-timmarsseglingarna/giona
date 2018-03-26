@@ -1,0 +1,2 @@
+class DefaultStart < ApplicationRecord
+end

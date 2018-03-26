@@ -1,6 +1,6 @@
-class CreateStartPlaces < ActiveRecord::Migration[5.0]
+class CreateDefaultStarts < ActiveRecord::Migration[5.0]
   def change
-    create_table :start_places do |t|
+    create_table :default_starts do |t|
       t.integer :organizer_id
       t.integer :number
 
