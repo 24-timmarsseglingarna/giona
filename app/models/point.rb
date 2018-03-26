@@ -5,5 +5,6 @@ class Point < ApplicationRecord
 
   default_scope { order(number: :asc) }
   validates_presence_of :number, :name, :definition, :latitude, :longitude, :version
-  validates_numericality_of :number, :latitude, :longitude, :version
+  validates_numericality_of :latitude, :longitude, :version
+  validates_numericality_of :number, :greater_than => 0
 end

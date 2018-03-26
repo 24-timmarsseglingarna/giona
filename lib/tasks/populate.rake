@@ -333,8 +333,7 @@ namespace :import do
                                        period: period,
                                        start_from: start_from,
                                        start_to: start_to,
-                                       common_finish: false,
-                                       mandatory_common_finish: false
+                                       common_finish: nil,
                                        )
         race.save!
       end

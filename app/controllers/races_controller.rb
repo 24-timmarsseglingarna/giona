@@ -21,6 +21,12 @@ class RacesController < ApplicationController
   # GET /races/1
   # GET /races/1.json
   def show
+    if @race.common_finish.nil?
+      @finish = nil
+    else
+      finish_points = Point.where(number: @race.common_finish).to_a
+      @finish = @race.regatta.terrain.points.to_a && finish_points
+    end
   end
 
   # GET /races/new
@@ -87,7 +93,7 @@ class RacesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def race_params
-      params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :mandatory_common_finish, :external_system, :external_id, :regatta_id, :description)
+      params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :external_system, :external_id, :regatta_id, :description)
     end
 
     def authorized?

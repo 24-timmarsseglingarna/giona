@@ -1,6 +1,6 @@
 class Terrain < ApplicationRecord
 
-  default_scope { order(id: :asc) }
+  default_scope { order(id: :desc) }
   validates_presence_of :version_name
   has_many :regattas
   has_and_belongs_to_many :points

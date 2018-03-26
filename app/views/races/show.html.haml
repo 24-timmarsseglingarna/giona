@@ -2,38 +2,46 @@
   .panel-heading
     %i.fa.fa-bell(aria-hidden='true')
     Segling
-  .panel-body    
+  .panel-body
     .legend Arrangör:
-    %p  
+    %p
       %i.fa.fa-institution(aria-hidden='true')
       =link_to @race.regatta.organizer.name, @race.regatta.organizer
-    .legend Regatta  
-    %p  
+    .legend Regatta
+    %p
       %i.fa.fa-trophy(aria-hidden='true')
       = link_to( @race.regatta.name, @race.regatta ) unless @race.regatta.nil?
     - unless @race.description.blank?
       .legend Beskrivning:
-      %p  
-        %i.fa.fa-bell(aria-hidden='true')    
+      %p
+        %i.fa.fa-bell(aria-hidden='true')
         = @race.description
     .legend Starttid:
-    %p  
-      %i.fa.fa-clock-o(aria-hidden='true')    
+    %p
+      %i.fa.fa-clock-o(aria-hidden='true')
       = race_start(@race)
     .legend Seglingsperiod:
     %p
-      %i.fa.fa-hourglass-1(aria-hidden='true')    
+      %i.fa.fa-hourglass-1(aria-hidden='true')
       = @race.period
       timmar
+    .legend Målgång:
+    %p
+      %i.fa.fa-flag-checkered(aria-hidden='true')
+      - if @finish.blank?
+        Vid startplatsen
+      - else
+        = @finish.last.number
+        = @finish.last.name
 
-    - if has_organizer_rights?  
+    - if has_organizer_rights?
       %p
         %br
       =link_to 'Ändra', edit_race_path(@race), class: "btn btn-primary"
 
       %p
         %br
-      %p= link_to 'Radera', @race, :method => :delete, :data => { :confirm => "Vill du radera seglingen?" }    
+      %p= link_to 'Radera', @race, :method => :delete, :data => { :confirm => "Vill du radera seglingen?" }
 
 
 
@@ -62,4 +70,4 @@
 :javascript
   $(document).ready(function() {
   $('#giona-teams').DataTable();
-  } );    
+  } );

@@ -517,8 +517,7 @@ sv:
         start_from: Startperiodens början
         start_to: Startperiodens slut
         period: Seglingsperiod
-        common_finish: Gemensam målgång
-        mandatory_common_finish: Den gemensamma målgången är obligatorisk
+        common_finish: Gemensam målgång (punkt)
       regatta:
         name: Namn
         organizer: Arrangör
