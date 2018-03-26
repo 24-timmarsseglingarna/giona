@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   resources :default_starts
-  resources :start_places
   resources :legs
   resources :terrains
   resources :points

@@ -1,5 +1,10 @@
 class DefaultStartsController < ApplicationController
+  include ApplicationHelper
+
   before_action :set_default_start, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, :except => [:show, :index]
+  before_action :authorized?, :except => [:show, :index]
+
 
   # GET /default_starts
   # GET /default_starts.json
@@ -71,4 +76,12 @@ class DefaultStartsController < ApplicationController
     def default_start_params
       params.require(:default_start).permit(:organizer_id, :number)
     end
+
+    def authorized?
+      if ! has_organizer_rights?
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end
+    end
+
 end

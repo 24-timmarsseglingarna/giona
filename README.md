@@ -20,8 +20,8 @@ rake import:sxk:certificates
 rake scrape:srs:multihulls
 rake import:srs:dingies
 rake batch:pod:organizers
-rake import:pod:points
-rake import:pod:start_places
+rake import:pod:terrain
+rake import:pod:default_starts
 rake import:starema:people
 rake import:starema:regattas
 rake import:starema:boats

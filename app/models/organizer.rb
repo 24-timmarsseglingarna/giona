@@ -6,13 +6,13 @@ class Organizer < ApplicationRecord
 
   has_many :regattas, dependent: :destroy
   has_many :races, :through => :regattas
-  has_many :start_places, dependent: :destroy
-  
+  has_many :default_starts, dependent: :destroy
+
   validates_presence_of :name
   validates_uniqueness_of :name, :external_id
 
-  def reset_start_places
-     self.start_places.delete_all
+  def reset_default_start
+     self.defualt_start.delete_all
   end
 
 end
