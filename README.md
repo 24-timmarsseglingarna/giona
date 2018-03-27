@@ -7,6 +7,9 @@ Version 0.4.3.3
 
 =======
 
+Development environment:
+https://railsbox.io/boxes/8a394717f6ed
+
 createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona_development
 
 # Populate during developmentish conditions
@@ -17,6 +20,8 @@ rake import:sxk:certificates
 rake scrape:srs:multihulls
 rake import:srs:dingies
 rake batch:pod:organizers
+rake import:pod:terrain
+rake import:pod:default_starts
 rake import:starema:people
 rake import:starema:regattas
 rake import:starema:boats

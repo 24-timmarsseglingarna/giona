@@ -2,9 +2,9 @@
   .panel-heading
     %i.fa.fa-trophy(aria-hidden='true')
     = @regatta.name
-  .panel-body    
+  .panel-body
     .legend Arrangör:
-    %p  
+    %p
       %i.fa.fa-institution(aria-hidden='true')
       = link_to @regatta.organizer.name, @regatta.organizer
 
@@ -22,19 +22,22 @@
         ja
       - else
         %i.fa.fa-calendar-minus-o(aria-hidden='true')
-        nej  
+        nej
 
     .legend Kontaktperson:
     %p
-      %i.fa.fa-vcard-o(aria-hidden='true')    
+      %i.fa.fa-vcard-o(aria-hidden='true')
       = @regatta.name_from + ' <' + @regatta.email_from + '>'
 
 
     - if has_assistant_rights?
+      .legend Version av Punkt- & distanstabell:
+      %p
+        = @regatta.terrain.name
 
       .legend Informera dessa funktionärer:
       %p
-        %i.fa.fa-users(aria-hidden='true')    
+        %i.fa.fa-users(aria-hidden='true')
         = @regatta.email_to
       .legend Text i bekräftelsen på anmälan:
       %p
@@ -43,25 +46,25 @@
     - if has_organizer_rights?
 
       .legend Lägg till en segling:
-      %ul 
+      %ul
         %li
           %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 12", new_race_path(:regatta_id => @regatta.id, :period => '12')  
+          =link_to "Period: 12", new_race_path(:regatta_id => @regatta.id, :period => '12')
         %li
           %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 24", new_race_path(:regatta_id => @regatta.id, :period => '24')  
+          =link_to "Period: 24", new_race_path(:regatta_id => @regatta.id, :period => '24')
         %li
           %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 48", new_race_path(:regatta_id => @regatta.id, :period => '48')  
+          =link_to "Period: 48", new_race_path(:regatta_id => @regatta.id, :period => '48')
         %li
           %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 72", new_race_path(:regatta_id => @regatta.id, :period => '72')  
+          =link_to "Period: 72", new_race_path(:regatta_id => @regatta.id, :period => '72')
         %li
           %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 96", new_race_path(:regatta_id => @regatta.id, :period => '96')  
+          =link_to "Period: 96", new_race_path(:regatta_id => @regatta.id, :period => '96')
         %li
           %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 120", new_race_path(:regatta_id => @regatta.id, :period => '120')  
+          =link_to "Period: 120", new_race_path(:regatta_id => @regatta.id, :period => '120')
 
       %p
         %br
@@ -101,4 +104,4 @@
   $(document).ready(function() {
   $('#giona-races').DataTable();
   $('#giona-teams').DataTable();
-  } );    
+  } );

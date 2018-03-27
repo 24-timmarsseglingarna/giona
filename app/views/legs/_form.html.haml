@@ -1,0 +1,10 @@
+= semantic_form_for @leg do |f|
+  = f.inputs do
+    = f.input :point_id
+    = f.input :to_point_id
+    = f.input :distance
+    = f.input :offshore
+    = f.input :version
+
+  = f.actions do
+    = f.action :submit, :as => :input

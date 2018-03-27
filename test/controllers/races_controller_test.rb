@@ -17,7 +17,7 @@ class RacesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create race" do
     assert_difference('Race.count') do
-      post races_url, params: { race: { common_finish: @race.common_finish, external_id: @race.external_id, external_system: @race.external_system, mandatory_common_finish: @race.mandatory_common_finish, period: @race.period, regatta_id: @race.regatta_id, start_from: @race.start_from, start_to: @race.start_to } }
+      post races_url, params: { race: { common_finish: @race.common_finish, external_id: @race.external_id, external_system: @race.external_system, period: @race.period, regatta_id: @race.regatta_id, start_from: @race.start_from, start_to: @race.start_to } }
     end
 
     assert_redirected_to race_url(Race.last)
@@ -34,7 +34,7 @@ class RacesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update race" do
-    patch race_url(@race), params: { race: { common_finish: @race.common_finish, external_id: @race.external_id, external_system: @race.external_system, mandatory_common_finish: @race.mandatory_common_finish, period: @race.period, regatta_id: @race.regatta_id, start_from: @race.start_from, start_to: @race.start_to } }
+    patch race_url(@race), params: { race: { common_finish: @race.common_finish, external_id: @race.external_id, external_system: @race.external_system, period: @race.period, regatta_id: @race.regatta_id, start_from: @race.start_from, start_to: @race.start_to } }
     assert_redirected_to race_url(@race)
   end
 

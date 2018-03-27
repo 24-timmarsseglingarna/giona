@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180309073558) do
+ActiveRecord::Schema.define(version: 20180327083347) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,9 +38,16 @@ ActiveRecord::Schema.define(version: 20180309073558) do
     t.index ["team_id"], name: "index_crew_members_on_team_id", using: :btree
   end
 
+  create_table "default_starts", force: :cascade do |t|
+    t.integer  "organizer_id"
+    t.integer  "number"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
   create_table "handicaps", force: :cascade do |t|
     t.string   "name"
-    t.float    "sxk"
+    t.float    "handicap"
     t.datetime "best_before"
     t.string   "source"
     t.float    "srs"
@@ -53,6 +60,24 @@ ActiveRecord::Schema.define(version: 20180309073558) do
     t.string   "type"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+  end
+
+  create_table "legs", force: :cascade do |t|
+    t.integer  "point_id"
+    t.integer  "to_point_id"
+    t.float    "distance"
+    t.boolean  "offshore",    default: false
+    t.integer  "version"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.index ["to_point_id"], name: "index_legs_on_to_point_id", using: :btree
+  end
+
+  create_table "legs_terrains", id: false, force: :cascade do |t|
+    t.integer "leg_id",     null: false
+    t.integer "terrain_id", null: false
+    t.index ["leg_id", "terrain_id"], name: "index_legs_terrains_on_leg_id_and_terrain_id", using: :btree
+    t.index ["terrain_id", "leg_id"], name: "index_legs_terrains_on_terrain_id_and_leg_id", using: :btree
   end
 
   create_table "organizers", force: :cascade do |t|
@@ -86,18 +111,37 @@ ActiveRecord::Schema.define(version: 20180309073558) do
     t.boolean  "review",          default: false
   end
 
+  create_table "points", force: :cascade do |t|
+    t.integer  "number"
+    t.string   "name"
+    t.string   "definition"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "version"
+    t.index ["number"], name: "index_points_on_number", using: :btree
+  end
+
+  create_table "points_terrains", id: false, force: :cascade do |t|
+    t.integer "point_id",   null: false
+    t.integer "terrain_id", null: false
+    t.index ["point_id", "terrain_id"], name: "index_points_terrains_on_point_id_and_terrain_id", using: :btree
+    t.index ["terrain_id", "point_id"], name: "index_points_terrains_on_terrain_id_and_point_id", using: :btree
+  end
+
   create_table "races", force: :cascade do |t|
     t.datetime "start_from"
     t.datetime "start_to"
     t.integer  "period"
-    t.boolean  "common_finish"
-    t.boolean  "mandatory_common_finish"
     t.string   "external_system"
     t.string   "external_id"
     t.integer  "regatta_id"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.string   "description"
+    t.integer  "common_finish"
+    t.text     "starts"
   end
 
   create_table "regattas", force: :cascade do |t|
@@ -112,14 +156,7 @@ ActiveRecord::Schema.define(version: 20180309073558) do
     t.integer  "organizer_id"
     t.string   "external_id"
     t.string   "external_system"
-  end
-
-  create_table "start_finishes", force: :cascade do |t|
-    t.integer  "point_number"
-    t.integer  "organizer_id"
-    t.boolean  "start"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.integer  "terrain_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -145,6 +182,13 @@ ActiveRecord::Schema.define(version: 20180309073558) do
     t.string   "vacancies"
     t.integer  "handicap_id"
     t.string   "handicap_type"
+  end
+
+  create_table "terrains", force: :cascade do |t|
+    t.boolean  "published",    default: false
+    t.string   "version_name"
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   create_table "users", force: :cascade do |t|

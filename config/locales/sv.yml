@@ -452,6 +452,7 @@ sv:
       default: "%a, %e %b %Y %H.%M:%S %z"
       long: "%A %e %B %Y kl. %H.%M"
       short: "%A %e %B kl. %H.%M"
+      medium: "%e %B %Y kl. %H.%M"
       clock: "%H.%M"
       day: "%Y-%m-%d"
 
@@ -497,7 +498,7 @@ sv:
         name_from: Avsändarnamn
         email_to: Informera om anmälan
         confirmation: Mejlbekräftelse
-        external_id: Arrangörsbeteckning i PoD  
+        external_id: Arrangörsbeteckning i PoD
       person:
         first_name: Förnamn
         last_name: Efternamn
@@ -516,8 +517,8 @@ sv:
         start_from: Startperiodens början
         start_to: Startperiodens slut
         period: Seglingsperiod
-        common_finish: Gemensam målgång
-        mandatory_common_finish: Den gemensamma målgången är obligatorisk
+        common_finish: Gemensam målgång (punkt)
+        starts: Startplatser
       regatta:
         name: Namn
         organizer: Arrangör
@@ -526,6 +527,7 @@ sv:
         email_to: Informera om anmälan
         confirmation: Mejlbekräftelse
         active: Aktiv
+        terrain: Punkt- & distanstabell
       team:
         race: Segling
         start_point: Startplats

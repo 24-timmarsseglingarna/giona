@@ -1,5 +1,5 @@
 
-namespace :testdata do 
+namespace :testdata do
   task :team => :environment do
     regatta = Regatta.find_by(name: 'Testregatta 2017')
     if regatta
@@ -20,8 +20,7 @@ namespace :testdata do
     race.start_from = DateTime.parse('2017-06-03 12:00+2')
     race.start_to = DateTime.parse('2017-06-03 12:00+2')
     race.period = 24
-    race.common_finish = false
-    race.mandatory_common_finish = false
+    race.common_finish = nil
     race.external_system = 'testdata'
     race.external_id = '1'
     race.save!
@@ -96,8 +95,7 @@ namespace :testdata do
     race.start_from = DateTime.parse('2017-06-17 07:00+2')
     race.start_to = DateTime.parse('2017-06-17 07:00+2')
     race.period = 12
-    race.common_finish = true
-    race.mandatory_common_finish = true
+    race.common_finish = 555
     race.external_system = 'testdata'
     race.external_id = '1'
     race.save!

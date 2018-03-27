@@ -4,8 +4,7 @@ one:
   start_from: 2016-12-01 15:27:39
   start_to: 2016-12-01 15:27:39
   period: 1
-  common_finish: false
-  mandatory_common_finish: false
+  common_finish: nil
   external_system: MyString
   external_id: MyString
   regatta_id: 1
@@ -14,8 +13,7 @@ two:
   start_from: 2016-12-01 15:27:39
   start_to: 2016-12-01 15:27:39
   period: 1
-  common_finish: false
-  mandatory_common_finish: false
+  common_finish: nil
   external_system: MyString
   external_id: MyString
   regatta_id: 1

@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b Version Id:
+  = @terrain.id
+%p
+  %b Published:
+  = @terrain.published
+%p
+  %b Version Name:
+  = @terrain.version_name
+
+= link_to 'Edit', edit_terrain_path(@terrain)
+\|
+= link_to 'Back', terrains_path

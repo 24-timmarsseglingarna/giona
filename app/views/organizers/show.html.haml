@@ -19,15 +19,12 @@
       .legend Text i bekräftelsen på anmälan:
       %p
         = @organizer.confirmation
-      .legend Standardstartplatser
+      .legend Standardstartplatser:
       %ul
-        - for start_place in @organizer.start_places
-          %li= start_place.point_number
-      .legend Gemensam målgång
-      %ul
-        - for finish_place in @organizer.finish_places
-          %li= finish_place.point_number
-      .legend Arrangörskod i PoD
+        - for default_start in @organizer.default_starts
+          - point = Point.find_by number: default_start.number
+          %li= name_number point
+      .legend Arrangörskod i PoD:
       %p
         =@organizer.external_id
 
@@ -69,5 +66,7 @@
 
 :javascript
   $(document).ready(function() {
-  $('#giona-regattas').DataTable();
+  $('#giona-regattas').DataTable(
+  "order": [[ 0, 'asc' ]]
+  );
   } );
