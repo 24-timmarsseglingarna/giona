@@ -518,6 +518,7 @@ sv:
         start_to: Startperiodens slut
         period: Seglingsperiod
         common_finish: Gemensam målgång (punkt)
+        starts: Startplatser
       regatta:
         name: Namn
         organizer: Arrangör

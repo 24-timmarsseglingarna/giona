@@ -27,6 +27,10 @@ class RacesController < ApplicationController
       finish_points = Point.where(number: @race.common_finish).to_a
       @finish = @race.regatta.terrain.points.to_a && finish_points
     end
+    #@starts = []
+    #for start in @race.starts do
+    #  #@starts << @race.regatta.terrain.points.where(number: start.number).last
+    #end
   end
 
   # GET /races/new
@@ -38,6 +42,10 @@ class RacesController < ApplicationController
       @race.period = params[:period]
       regatta = Regatta.find params[:regatta_id]
       @race.regatta_id = regatta.id
+      @race.starts = Array.new
+      for start in regatta.organizer.default_starts
+        @race.starts << start.number.to_s
+      end
     end
   end
 
@@ -93,7 +101,7 @@ class RacesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def race_params
-      params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :external_system, :external_id, :regatta_id, :description)
+      params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :external_system, :external_id, :regatta_id, :description, starts:[])
     end
 
     def authorized?

@@ -22,8 +22,17 @@ module PointsHelper
       end
   end
 
+  def name_by_number terrain, number
+    points = terrain.points.where(number: number)
+    unless points.blank?
+      points.last.name
+    else
+      'Punkt med detta nummer saknas i den version av PoD som används.'
+    end
+  end
+
   def name_number point
     "#{point.number} #{point.name}"
   end
-  
+
 end

@@ -1,7 +1,6 @@
 %p
   %b Arrangör:
   =@race.regatta.organizer.name unless @race.regatta.nil?
-
 = semantic_form_for @race do |f|
   = f.inputs do
     = f.input :regatta, input_html: { disabled: true }
@@ -9,12 +8,32 @@
     = f.input :start_from, :as => :string
     = f.input :start_to, :as => :string
     = f.input :period, :as => :radio, :collection => [12, 24, 48, 72, 96, 120]
-    = f.input :common_finish, :as => :select, :collection => @race.start_places, :include_blank => false, :label => 'Målgång'
+    -# f.input :starts, :as => :check_boxes, :collection => @race.start_places
+
+    .check_boxes.input.optional.form-group#race_starts_input
+      %span.form-label
+        %label.control-label
+          Startplatser
+      %span.form-wrapper
+        %input#race_starts_none{:type => "hidden", :name => "race[starts][]", :value => ""}
+        - for start in @race.regatta.organizer.default_starts
+          .checkbox
+            %label.choice{:for => "race_starts_#{start.number}"}
+              - if @race.starts.include? start.number.to_s
+                %input{:id => "race_starts_#{start.number}", :type => :checkbox, :checked => true, :name => 'race[starts][]', :value =>"#{start.number}"}
+              - else
+                %input{:id => "race_starts_#{start.number}", :type => :checkbox, :name => 'race[starts][]', :value =>"#{start.number}"}
+              = "#{start.number} #{name_by_number @race.regatta.terrain, start.number.to_i}"
+
+
+
+    = f.input :common_finish, :as => :select, :collection => @race.finish_places, :include_blank => false, :label => 'Målgång'
     = f.input :regatta_id, :as => :hidden
 
   = f.actions do
     = f.action :submit, :as => :button
     = f.action :cancel, :as => :link
+
 
 :javascript
   $(function () {

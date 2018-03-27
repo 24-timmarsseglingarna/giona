@@ -2,6 +2,7 @@ class Race < ApplicationRecord
   belongs_to :regatta
   has_many :teams, dependent: :destroy
   #default_scope { order(period: :asc, start_from: :asc) }
+  serialize :starts, Array
 
   scope :from_regatta, ->(r_id) { joins(:regatta).where("regattas.id = ?", r_id) }
   scope :regatta_is_active, -> { joins(:regatta).where("regattas.active = ?", true) }
@@ -26,7 +27,9 @@ class Race < ApplicationRecord
   end
 
   def check_start_period
-    errors.add(:base, "end date should be greater than start") if self.start_from > self.start_to
+    if self.start_from.present?
+      errors.add(:base, "end date should be greater than start") if self.start_from > self.start_to
+    end
   end
 
   def self.from_organizer o_id
@@ -41,21 +44,23 @@ class Race < ApplicationRecord
     #{self.period}
   end
 
-  def start_places
-    start_hash  = {"Vid startplatsen" => nil}
-    logger.info "#{start_hash.count}"
+  def finish_places
+    finish_hash  = {"Vid startplatsen" => nil}
     for point in regatta.terrain.points do
-      start_hash["#{point.number} #{point.name}"] = point.number
+      finish_hash["#{point.number} #{point.name}"] = point.number
     end
-    start_hash
+    finish_hash
   end
 
-  def self.select_terrain
-    terrain_array  = {}
-    for terrain in Terrain.where("published = true")
-      terrain_array[terrain.name] = terrain.id
+  def start_places
+    start_hash = Hash.new
+    for start in self.regatta.organizer.default_starts do
+      point = self.regatta.terrain.points.find_by number: start.number
+      unless point.blank?
+        start_hash["#{start.number} #{point.name}"] = start.number
+      end
     end
-    terrain_array
+    start_hash
   end
 
 end

@@ -3,14 +3,9 @@ Rails.application.routes.draw do
   resources :legs
   resources :terrains
   resources :points
-  resources :start_finishes
   resources :organizers
-  #Sti::Application.routes.draw do
-  resources :default_starts
-  resources :legs
-  resources :terrains
+  
   resources :handicaps
-  #end
   resources :srs_keelboats, controller: 'handicaps', type: 'SrsKeelboats'
   resources :srs_multihulls, controller: 'handicaps', type: 'SrsMultihulls'
   resources :srs_dingies, controller: 'handicaps', type: 'SrsDingies'

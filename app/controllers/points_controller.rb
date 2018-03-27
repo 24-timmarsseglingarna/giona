@@ -1,4 +1,5 @@
 class PointsController < ApplicationController
+  include ApplicationHelper
   before_action :set_point, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, :except => [:show, :index]
   before_action :authorized?, :except => [:show, :index]
@@ -76,7 +77,7 @@ class PointsController < ApplicationController
     end
 
     def authorized?
-      if ! has_organizer_rights?
+      if ! has_admin_rights?
         flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
         redirect_to :back
       end

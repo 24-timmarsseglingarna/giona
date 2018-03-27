@@ -25,6 +25,17 @@
       %i.fa.fa-hourglass-1(aria-hidden='true')
       = @race.period
       timmar
+    .legend Start:
+    %p
+      - unless @race.starts.blank?
+        %ul
+          - for start in @race.starts
+            - unless start.blank?
+              %li
+                %i.fa.fa-flag(aria-hidden='true')
+                = start
+                = name_by_number @race.regatta.terrain, start.to_i
+
     .legend Målgång:
     %p
       %i.fa.fa-flag-checkered(aria-hidden='true')
