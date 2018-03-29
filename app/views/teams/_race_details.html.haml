@@ -1,20 +1,19 @@
 .panel.panel-default
   .panel-heading
     Seglingen
-  .panel-body    
+  .panel-body
     .legend Regatta:
     %p
-      %i.fa.fa-trophy(aria-hidden='true')    
-      =link_to @team.race.regatta.name, @team.race.regatta  
+      %i.fa.fa-trophy(aria-hidden='true')
+      =link_to @team.race.regatta.name, @team.race.regatta
     .legend Segling:
-    %p  
+    %p
       %i.fa.fa-bell(aria-hidden='true')
-      = @team.race.name  
+      = @team.race.name
 
     = semantic_form_for @team do |f|
       = f.inputs do
-        = f.input :start_point, :as => :radio, :collection =>[540, 555, 562]
-        = f.input :finish_point, :as => :radio, :collection =>[552, 560]
+        = f.input :start_point, :as => :radio, :collection => @team.race.start_places
         = f.input :offshore, :as => :radio
 
       = f.actions do

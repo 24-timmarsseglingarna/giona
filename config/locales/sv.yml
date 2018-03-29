@@ -551,6 +551,7 @@ sv:
         active: Det går att anmäla sig och segla.
       team:
         vacancies: Berätta kort hur många gastar du behöver och vilka krav du ställer. Ta bort texten om du inte söker fler gastar.
+        offshore: Uppfyller båt och besättning reglernas krav för att segla havssträckor?
   role:
     admin: administratör
     organizer: arrangör

@@ -2,8 +2,8 @@
   .panel-heading
     %i.fa.fa-user-o(aria-hidden='true')
     =@person.name
-  .panel-body    
-    %p  
+  .panel-body
+    %p
       =@person.first_name
       =@person.last_name
     %p
@@ -17,24 +17,24 @@
           =@person.co
           %br
         =@person.street
-        %br  
+        %br
         =@person.zip
       =@person.city
       %br
       =@person.country
       %p
         -if authorized?
-          
+
           %p
             Födelsedatum:
             =@person.birthday
-          %p  
+          %p
           - if @person.user
             %p
               = (t("role.#{user_role @person}")).titleize + ':'
               = link_to @person.user.email, @person.user
-          
-          - if has_assistant_rights?    
+
+          - if has_assistant_rights?
             %p
               Finns i externt system
               %i= @person.external_system
@@ -54,36 +54,12 @@
 
       = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
     %p
-      %br      
+      %br
       = link_to 'Tillbaka', :back
-
--unless @person.teams.blank?
-  %h3 Mitt deltagande
-
-  %table#giona-teams.table.table-striped.table-bordered.table-hover{:width => "100%"}
-    %thead
-      %tr
-        %th Arrangör
-        %th Regatta
-        %th Segling
-        %th Båt
-        %th Båttyp
-        %th Plakettdistans
-        %th Öppen
-    %tbody
-      - @person.teams.order(active: :desc, created_at: :desc).each do |team|
-        %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
-          %td= team.race.regatta.organizer.name
-          %td= team.race.regatta.name
-          %td= team.race.period
-          %td= team.boat_name
-          %td= team.boat_type_name
-          %td= team.plaque_distance
-          %td= "ja" if team.active
 
 = link_to 'Anmäl båt och skeppare', races_path
 
 :javascript
   $(document).ready(function() {
   $('#giona-teams').DataTable();
-  } );  
+  } );
