@@ -1,0 +1,23 @@
+%h1 Listing default_starts
+
+%table
+  %thead
+    %tr
+      %th Organizer
+      %th Number
+      %th
+      %th
+      %th
+
+  %tbody
+    - @default_starts.each do |default_start|
+      %tr
+        %td= default_start.organizer_id
+        %td= default_start.number
+        %td= link_to 'Show', default_start
+        %td= link_to 'Edit', edit_default_start_path(default_start)
+        %td= link_to 'Destroy', default_start, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Default start', new_default_start_path

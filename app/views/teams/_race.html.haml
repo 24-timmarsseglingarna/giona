@@ -1,22 +1,25 @@
 .panel.panel-default
   .panel-heading
     Seglingen
-  .panel-body    
+  .panel-body
     .legend Regatta:
     %p
-      %i.fa.fa-trophy(aria-hidden='true')    
-      =link_to @team.race.regatta.name, @team.race.regatta  
+      %i.fa.fa-trophy(aria-hidden='true')
+      =link_to @team.race.regatta.name, @team.race.regatta
     .legend Arrangör:
-    %p  
+    %p
       %i.fa.fa-institution(aria-hidden='true')
       = @team.race.regatta.organizer.name
- 
+
     = semantic_form_for @team do |f|
       = f.inputs do
         = f.input :race, :as => :radio, :collection => @races
+
+      %p
+        Om du byter segling så kan det betyda att en del andra val i anmälan ändras. Det kan vara olika startplatser/målgång för olika seglingar. Så efter byte av segling bör du kolla igenom hela anmälan.
 
       = f.actions do
         = f.action :submit
 
     %br
-    = link_to 'Tillbaka', @team, :class => :get_back        
+    = link_to 'Tillbaka', @team, :class => :get_back

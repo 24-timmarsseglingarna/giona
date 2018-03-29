@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  point_id: 1
+  to_point_id: 1
+  distance: 1.5
+  offshore: false
+  version: 1
+
+two:
+  point_id: 1
+  to_point_id: 1
+  distance: 1.5
+  offshore: false
+  version: 1

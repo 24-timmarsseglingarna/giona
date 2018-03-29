@@ -21,17 +21,31 @@ class RacesController < ApplicationController
   # GET /races/1
   # GET /races/1.json
   def show
+    if @race.common_finish.nil?
+      @finish = nil
+    else
+      finish_points = Point.where(number: @race.common_finish).to_a
+      @finish = @race.regatta.terrain.points.to_a && finish_points
+    end
+    #@starts = []
+    #for start in @race.starts do
+    #  #@starts << @race.regatta.terrain.points.where(number: start.number).last
+    #end
   end
 
   # GET /races/new
   def new
     if params[:regatta_id].blank?
       redirect_to regattas_path, alert: 'Seglingar kan bara skapas från regattasidor.'
-    else   
+    else
       @race = Race.new
-      @race.period = params[:period] 
+      @race.period = params[:period]
       regatta = Regatta.find params[:regatta_id]
-      @race.regatta_id = regatta.id 
+      @race.regatta_id = regatta.id
+      @race.starts = Array.new
+      for start in regatta.organizer.default_starts
+        @race.starts << start.number.to_s
+      end
     end
   end
 
@@ -60,7 +74,7 @@ class RacesController < ApplicationController
   def update
     respond_to do |format|
       if @race.update(race_params)
-        format.html { redirect_to @race, notice: 'Uppgifterna om seglingen är uppdateraee.' }
+        format.html { redirect_to @race, notice: 'Uppgifterna om seglingen är uppdaterade.' }
         format.json { render :show, status: :ok, location: @race }
       else
         format.html { render :edit }
@@ -87,14 +101,14 @@ class RacesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def race_params
-      params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :mandatory_common_finish, :external_system, :external_id, :regatta_id, :description)
+      params.require(:race).permit(:start_from, :start_to, :period, :common_finish, :external_system, :external_id, :regatta_id, :description, starts:[])
     end
 
     def authorized?
-      if ! has_organizer_rights? 
+      if ! has_organizer_rights?
         flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
         redirect_to :back
-      end  
+      end
     end
 
 end

@@ -61,7 +61,7 @@ sv:
     - :year
   datetime:
     formats:
-      day: "%Y-%m-%d"    
+      day: "%Y-%m-%d"
     distance_in_words:
       about_x_hours:
         one: ungefär en timme
@@ -452,6 +452,7 @@ sv:
       default: "%a, %e %b %Y %H.%M:%S %z"
       long: "%A %e %B %Y kl. %H.%M"
       short: "%A %e %B kl. %H.%M"
+      medium: "%e %B %Y kl. %H.%M"
       clock: "%H.%M"
       day: "%Y-%m-%d"
 
@@ -496,7 +497,8 @@ sv:
         email_from: Mejlavsändare
         name_from: Avsändarnamn
         email_to: Informera om anmälan
-        confirmation: Mejlbekräftelse        
+        confirmation: Mejlbekräftelse
+        external_id: Arrangörsbeteckning i PoD
       person:
         first_name: Förnamn
         last_name: Efternamn
@@ -515,8 +517,8 @@ sv:
         start_from: Startperiodens början
         start_to: Startperiodens slut
         period: Seglingsperiod
-        common_finish: Gemensam målgång
-        mandatory_common_finish: Den gemensamma målgången är obligatorisk
+        common_finish: Gemensam målgång (punkt)
+        starts: Startplatser
       regatta:
         name: Namn
         organizer: Arrangör
@@ -525,6 +527,7 @@ sv:
         email_to: Informera om anmälan
         confirmation: Mejlbekräftelse
         active: Aktiv
+        terrain: Punkt- & distanstabell
       team:
         race: Segling
         start_point: Startplats
@@ -548,8 +551,9 @@ sv:
         active: Det går att anmäla sig och segla.
       team:
         vacancies: Berätta kort hur många gastar du behöver och vilka krav du ställer. Ta bort texten om du inte söker fler gastar.
+        offshore: Uppfyller båt och besättning reglernas krav för att segla havssträckor?
   role:
     admin: administratör
     organizer: arrangör
     assistant: assistent
-    user: användare        
+    user: användare

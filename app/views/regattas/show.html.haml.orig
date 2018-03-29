@@ -1,0 +1,111 @@
+.panel.panel-default
+  .panel-heading
+    %i.fa.fa-trophy(aria-hidden='true')
+    = @regatta.name
+  .panel-body
+    .legend Arrangör:
+    %p
+      %i.fa.fa-institution(aria-hidden='true')
+      = link_to @regatta.organizer.name, @regatta.organizer
+
+    .legend Seglingar:
+    %ul
+      - for race in @regatta.races.order :period
+        %li
+          %i.fa.fa-bell(aria-hidden='true')
+          = link_to race_brief(race), race
+
+    .legend Öppen för anmälningar och ändringar:
+    %p
+      -if @regatta.active
+        %i.fa.fa-calendar-check-o(aria-hidden='true')
+        ja
+      - else
+        %i.fa.fa-calendar-minus-o(aria-hidden='true')
+        nej
+
+    .legend Kontaktperson:
+    %p
+      %i.fa.fa-vcard-o(aria-hidden='true')
+      = @regatta.name_from + ' <' + @regatta.email_from + '>'
+
+
+    - if has_assistant_rights?
+      .legend Version av Punkt- & distanstabell:
+      %p
+        = @regatta.terrain.name
+
+      .legend Informera dessa funktionärer:
+      %p
+        %i.fa.fa-users(aria-hidden='true')
+        = @regatta.email_to
+      .legend Text i bekräftelsen på anmälan:
+      %p
+        = @regatta.confirmation
+
+    - if has_organizer_rights?
+
+      .legend Lägg till en segling:
+      %ul
+        %li
+          %i.fa.fa-bell(aria-hidden='true')
+          =link_to "Period: 12", new_race_path(:regatta_id => @regatta.id, :period => '12')
+        %li
+          %i.fa.fa-bell(aria-hidden='true')
+          =link_to "Period: 24", new_race_path(:regatta_id => @regatta.id, :period => '24')
+        %li
+          %i.fa.fa-bell(aria-hidden='true')
+          =link_to "Period: 48", new_race_path(:regatta_id => @regatta.id, :period => '48')
+        %li
+          %i.fa.fa-bell(aria-hidden='true')
+          =link_to "Period: 72", new_race_path(:regatta_id => @regatta.id, :period => '72')
+        %li
+          %i.fa.fa-bell(aria-hidden='true')
+          =link_to "Period: 96", new_race_path(:regatta_id => @regatta.id, :period => '96')
+        %li
+          %i.fa.fa-bell(aria-hidden='true')
+          =link_to "Period: 120", new_race_path(:regatta_id => @regatta.id, :period => '120')
+
+      %p
+        %br
+      =link_to 'Ändra', edit_regatta_path(@regatta), class: "btn btn-primary"
+
+      %p
+        %br
+      %p= link_to 'Radera', @regatta, :method => :delete, :data => { :confirm => "Vill du radera #{@regatta.name}?" }
+
+%h2 Anmälda
+
+%table#giona-teams.table.table-striped.table-bordered.table-hover{:width => "100%"}
+  %thead
+    %tr
+      %th Segling
+      %th Nr
+      %th Start
+      %th Båt
+      %th Typ
+      %th Segelnr
+      %th Handikapp
+      %th Skeppare
+  %tbody
+    - @regatta.teams.each do |team|
+      %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
+        %td= team.race.period
+        %td= team.start_number
+        %td= team.start_point
+        %td= team.boat_name
+        %td= team.boat_type_name
+        %td= team.boat_sail_number
+        %td= team.handicap.sxk unless team.handicap.nil?
+        %td= team.skipper.name unless team.skipper.nil?
+
+
+:javascript
+  $(document).ready(function() {
+  $('#giona-races').DataTable();
+  $('#giona-teams').DataTable();
+<<<<<<< HEAD
+  } );    
+=======
+  } );
+>>>>>>> release/0.5.0.0

@@ -1,0 +1,35 @@
+%p#notice= notice
+
+%p
+  %b Point:
+  = @point.number
+  = @point.name
+  = "(version #{@point.version})"
+%p
+  %b Definition:
+  = @point.definition
+%p
+  %b Lat/long:
+  = lat_long(@point)
+%p
+  %b Legs:
+  %ul
+    - for leg in @point.legs do
+      %li
+        - to_point = Point.find leg.to_point_id
+        = to_point.number
+        = to_point.name
+        = "(version #{to_point.version})"
+        = link_to "#{leg.distance} M. (version #{leg.version})", leg
+        = leg.offshore
+
+%p
+  %b All versions:
+  %ul
+    - for versioned_point in @versioned_points
+      %li
+        = link_to "#{versioned_point.number} #{versioned_point.name} (version #{versioned_point.version})", versioned_point        
+
+= link_to 'Edit', edit_point_path(@point)
+\|
+= link_to 'Back', points_path

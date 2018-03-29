@@ -3,7 +3,7 @@ class TeamsController < ApplicationController
   before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap]
   before_action :authenticate_user!, :except => [:show, :welcome]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create]
-  before_action :interims_authenticate!, :except => [:show, :welcome, :index]
+  #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
 
 
   def welcome
@@ -44,6 +44,7 @@ class TeamsController < ApplicationController
   # GET /teams/1/edit
   def edit
     @races = @team.race.regatta.races
+    @starts = @team.race.starts.reject(&:empty?)
     @boat = Boat.new
     @team.boat = @boat
     if current_user
@@ -65,6 +66,8 @@ class TeamsController < ApplicationController
   def create
     @team = Team.new(team_params)
     @team.skipper = current_user.person if current_user
+    @team.name = current_user.person.first_name
+    @team.active = true
     respond_to do |format|
       if @team.save
         format.html { redirect_to @team, notice: 'Deltagaranmälan skapad.' }
@@ -108,10 +111,10 @@ class TeamsController < ApplicationController
     person = Person.find params[:person_id]
     crew_member = CrewMember.find_by person_id: person.id, team_id: @team.id
     @team.set_skipper person
-    unless @team.boat.blank? 
+    unless @team.boat.blank?
       @team.name = @team.boat.name + '/' + @team.skipper.last_name
     else
-      @team.name =  '? /' + team.skipper.last_name
+      @team.name =  '? /' + @team.skipper.last_name
     end
     @team.save!
     redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
@@ -152,8 +155,8 @@ class TeamsController < ApplicationController
     @team.boat_name = boat.name
     @team.boat_type_name = boat.boat_type_name
     @team.boat_sail_number = boat.sail_number
-    
-    if @team.skipper 
+
+    if @team.skipper
       @team.name = boat.name + '/' + @team.skipper.last_name
     else
       @team.name = boat.name + '/ ?'
@@ -195,7 +198,7 @@ class TeamsController < ApplicationController
     def check_active!
       unless @team.active
         flash[:alert] = 'Anmälan/loggboken är arkiverad och kan inte ändras.'
-        redirect_to :back  
+        redirect_to :back
       end
     end
 
