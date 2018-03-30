@@ -16,20 +16,20 @@ createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona
 rake db:migrate
 rake scrape:srs:keelboats
 rake scrape:srs:certificates
-rake import:sxk:certificates
+rake import:sxk:certificates        # Push file first
 rake scrape:srs:multihulls
-rake import:srs:dingies
+rake import:srs:dingies             # First, manually copy from pdf and paste into spreadsheet.
 rake batch:pod:organizers
 rake import:pod:terrain
 rake import:pod:default_starts
-rake import:starema:people
-rake import:starema:regattas
-rake import:starema:boats
-rake import:starema:teams
-rake import:starema:crew_members
-rake batch:team_names
-rake mess:details # In development only
-rake testdata:team # In development/test only
+rake import:starema:people          # Process file manually and push
+rake import:starema:regattas        # Process file manually and push
+rake import:starema:boats           # Process file manually and push
+rake import:starema:teams           # Process file manually and push
+rake import:starema:crew_members    # Process file manually and push
+rake batch:team_names               # Only after import from external system
+rake mess:details                   # In development only
+rake testdata:team                  # In development/test only
 
 ======
 

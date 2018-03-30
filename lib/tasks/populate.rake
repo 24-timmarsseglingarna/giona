@@ -4,30 +4,30 @@ require 'open-uri'
 require 'nokogiri'
 require 'erb'
 include ERB::Util
+require 'cgi'
 
 
 namespace :scrape do
-
-
   namespace :srs do
     task :certificates => :environment do
-      SrsCertificate.destroy_all #TODO
       srs_table_url = "http://matbrev.svensksegling.se/Home/ApprovedList"
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
+      best_before = DateTime.now.in_time_zone.end_of_year
+      source = "SRS-mätbrev #{DateTime.now.year.to_s}"
       for entry in entries
         unless first_row
-          handicap = SrsCertificate.new
-          handicap.registry_id = entry.css('td')[0].text.strip
+          registry_id = CGI::parse((entry.css('td')[0].css('a').map { |link| link['href'] })[0])["rpt"][0].to_s
+          handicap = SrsCertificate.find_or_create_by   registry_id: registry_id,
+                                                        source: source,
+                                                        best_before: best_before
           handicap.owner_name = entry.css('td')[1].text.strip
           handicap.name = entry.css('td')[2].text.strip
           handicap.boat_name = entry.css('td')[3].text.strip
           handicap.sail_number = entry.css('td')[5].text.to_i
           handicap.srs = entry.css('td')[8].text.gsub(',', '.').to_f
-          handicap.sxk = (handicap.srs * 1.215).round(2)
-          handicap.source = 'SRS-mätbrev 2017'
-          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.sxk = (handicap.srs * 1.22).round(2)
           handicap.external_system = 'http://matbrev.svensksegling.se/Home/ApprovedList'
           handicap.save!
         else
@@ -40,19 +40,21 @@ namespace :scrape do
 
   namespace :srs do
     task :keelboats => :environment do
-      SrsKeelboat.destroy_all #TODO
       srs_table_url = "http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
+      source = "SRS kölbåtar #{DateTime.now.year.to_s}"
+      puts source
       for entry in entries
         unless first_row
-          handicap = SrsKeelboat.new
-          handicap.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          best_before = DateTime.now.in_time_zone.end_of_year
+          handicap = SrsKeelboat.find_or_create_by  name: name,
+                                                    best_before: best_before,
+                                                    source: source
           handicap.srs = entry.css('td')[6].text.gsub(',', '.').to_f
-          handicap.sxk = (handicap.srs * 1.215).round(2)
-          handicap.source = 'SRS kölbåtar 2017'
-          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.sxk = (handicap.srs * 1.22).round(2)
           handicap.external_system = 'http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter='
           handicap.save!
         else
@@ -62,19 +64,20 @@ namespace :scrape do
     end
 
     task :multihulls => :environment do
-      SrsMultihull.destroy_all #TODO
       srs_table_url = "http://matbrev.svensksegling.se/home/srsflerskrovlist"
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
+      source = "SRS flerskrov #{DateTime.now.year.to_s}"
+      best_before = DateTime.now.in_time_zone.end_of_year
       for entry in entries
         unless first_row
-          handicap = SrsMultihull.new
-          handicap.name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          handicap = SrsMultihull.find_or_create_by   name: name,
+                                                      best_before: best_before,
+                                                      source: source
           handicap.srs = entry.css('td')[1].text.gsub(',', '.').to_f
-          handicap.sxk = (handicap.srs * 1.215).round(2)
-          handicap.source = 'SRS flerskrov 2017'
-          handicap.best_before = DateTime.now.in_time_zone.end_of_year
+          handicap.sxk = (handicap.srs * 1.22).round(2)
           handicap.external_system = 'http://matbrev.svensksegling.se/home/srsflerskrovlist'
           handicap.save!
         else
@@ -204,14 +207,15 @@ namespace :import do
 
   namespace :srs do
     task :dingies => :environment do
-      SrsDingy.destroy_all
+      source = "SRS jolle #{DateTime.now.year.to_s}"
+      best_before = DateTime.now.in_time_zone.end_of_year
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle-2017.csv"), "r"), :headers => true) do |row|
-        handicap = SrsDingy.new
-        handicap.name = row['Typ'].to_s.strip
+        name = row['Typ'].to_s.strip
+        handicap = SrsDingy.find_or_create_by name: name,
+                                              source: source,
+                                              best_before: best_before
         handicap.srs = row['SRS'].to_f
-        handicap.sxk = (handicap.srs * 1.215).round(2)
-        handicap.source = 'SRS jolle 2017'
-        handicap.best_before = DateTime.now.in_time_zone.end_of_year
+        handicap.sxk = (handicap.srs * 1.22).round(2)
         handicap.external_system = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
         handicap.save!
       end
@@ -220,19 +224,20 @@ namespace :import do
 
   namespace :sxk do
     task :certificates => :environment do
-      SxkCertificate.destroy_all
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "sxk-tal-2016.csv"), "r"), :headers => true) do |row|
-        handicap = SxkCertificate.new
-        handicap.name = row['Boat'].to_s.strip
-        handicap.sxk = row['SXKtal'].to_f
-        handicap.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL'
-        handicap.owner_name = row['Owner'].to_s.strip unless row['Owner'].to_s.strip == 'NULL'
-        handicap.sail_number = row['Segelnr'].to_i
-        handicap.registry_id = row['Regnr'].to_s.strip
-        handicap.source = 'SXK-mätbrev'
-        handicap.best_before = nil #DateTime.now.in_time_zone.end_of_year
-        handicap.external_system = 'http://aws.24-timmars.nu/phpmyadmin'
-        handicap.save!
+        registry_id = row['Regnr'].to_s.strip
+        name = row['Boat'].to_s.strip
+        unless registry_id.blank? || name.blank?
+          handicap = SxkCertificate.find_or_create_by   registry_id:  registry_id,
+                                                        name:         name
+          handicap.sxk = row['SXKtal'].to_f
+          handicap.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL'
+          handicap.owner_name = row['Owner'].to_s.strip unless row['Owner'].to_s.strip == 'NULL'
+          handicap.sail_number = row['Segelnr'].to_i
+          handicap.source = 'SXK-mätbrev'
+          handicap.external_system = 'http://aws.24-timmars.nu/phpmyadmin'
+          handicap.save!
+        end
       end
     end
   end
