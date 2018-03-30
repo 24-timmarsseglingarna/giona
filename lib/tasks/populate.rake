@@ -508,6 +508,15 @@ namespace :batch do
     end
   end
 
+  task :regatta_terrain => :environment do
+    terrain = Terrain.where(published: true).last
+    for regatta in Regatta.all
+      if regatta.terrain.blank?
+        regatta.terrain = terrain
+        regatta.save!
+      end
+    end
+  end
 
   task :team_names => :environment do
     for team in Team.all
