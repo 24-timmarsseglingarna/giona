@@ -134,8 +134,6 @@ ActiveRecord::Schema.define(version: 20180327083347) do
     t.datetime "start_from"
     t.datetime "start_to"
     t.integer  "period"
-    t.boolean  "common_finish"
-    t.boolean  "mandatory_common_finish"
     t.string   "external_system"
     t.string   "external_id"
     t.integer  "regatta_id"
