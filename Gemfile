@@ -64,4 +64,5 @@ gem 'bootstrap3-datetimepicker-rails', '~> 4.17.43'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'faker'
 gem 'has_scope'
+gem "roo", "~> 2.7.0"
 #gem 'forty_facets'

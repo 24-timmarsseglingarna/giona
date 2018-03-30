@@ -2,11 +2,11 @@ module HandicapsHelper
 
   def handicap_table(type)
     handicap_array  = {}
-    handicap_array['Välj'] = nil 
+    handicap_array['Välj'] = nil
     for handicap in Handicap.where(type: type).active
-      handicap_array[handicap.description] = handicap.id 
+      handicap_array[handicap.description] = handicap.id
     end
-    handicap_array 
+    handicap_array
   end
 
   # Returns a dynamic path based on the provided parameters

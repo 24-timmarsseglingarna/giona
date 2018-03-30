@@ -1,33 +1,22 @@
 .panel.panel-default
   .panel-heading
     Seglingen
-  .panel-body    
+  .panel-body
     .legend Regatta:
     %p
-      %i.fa.fa-trophy(aria-hidden='true')    
-      =@team.race.regatta.name  
+      %i.fa.fa-trophy(aria-hidden='true')
+      =@team.race.regatta.name
     .legend Båt:
-    %p  
+    %p
       %i.fa.fa-ship(aria-hidden='true')
       #{@team.boat_name} | #{@team.boat_type_name} | Segelnummer: #{@team.boat_sail_number}
 
     = semantic_form_for @team do |f|
       = f.inputs do
-        = #f.input :handicap_type, :as => :radio, :collection => Handicap.types
-
-        =#@team.handicap_type
-        
-
         = f.input :handicap, :collection => handicap_table(@team.handicap_type), :include_blank => false, :label => Handicap.types[@team.handicap_type]
-        = #f.input :handicap, :collection => handicap_table('SrsMultihull'), :include_blank => false, :label => 'Flerskrovsbåt enligt SRS-tabellen'
-        = #f.input :handicap, :collection => handicap_table('SrsDingy'), :include_blank => false, :label => 'Jolle enligt SRS-tabellen'
-        = #f.input :handicap, :collection => handicap_table('SrsCertificate'), :include_blank => false, :label => 'SRS-mätbrev (för individuell båt)'
-        = #f.input :handicap, :collection => handicap_table('SxkCertificate'), :include_blank => false, :label => 'SXK-mätbrev (för individuell båt)'
-        = #f.input :handicap, :collection => handicap_table('LegacyBoatType'), :include_blank => false, :label => 'SXK-mätbrev (för individuell båt)'
 
       = f.actions do
         = f.action :submit, :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}
-
 
     %br
     = link_to 'Tillbaka', @team, :class => :get_back
