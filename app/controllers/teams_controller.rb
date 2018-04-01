@@ -2,7 +2,7 @@ class TeamsController < ApplicationController
   include ApplicationHelper
   before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap]
   before_action :authenticate_user!, :except => [:show, :index, :welcome]
-  before_action :authorize_me!, :except => [:show, :index, :welcome]
+  before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create]
   #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
 
@@ -197,12 +197,12 @@ class TeamsController < ApplicationController
     end
 
     def authorize_me!
-      if (@team.people.blank? && !has_assistant_rights?) || (current_user.person && !has_assistant_rights?)
-        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+      unless current_user
+        flash[:alert] = 'Du behöver logga in.'
         redirect_to :back
       else
-        unless ((@team.people.include? current_user.person) || has_assistant_rights?)
-          flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        unless (has_assistant_rights? || (@team.people.include? current_user.person))
+          flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter. Du behöver tillhöra besättningen eller administratörsbehörighet.'
           redirect_to :back
         end
       end
