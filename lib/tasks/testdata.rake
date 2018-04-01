@@ -5,13 +5,33 @@
 
 namespace :testdata do
   task :team => :environment do
-    regatta = Regatta.find_by(name: 'Testregatta 2017')
+    # first, clean up from previous runs
+    regatta = Regatta.find_by(name: 'Testregatta')
     if regatta
+      # deletes all races, teams, crewmembers automatically
+      regatta.destroy!
       regatta.destroy!
     end
+
+    # clean up test persons and users
+    Person.where(["email LIKE ?", "%@test.se"]).each do |person|
+      person.destroy!
+      person.destroy!
+    end
+    User.where(["email LIKE ?", "%@test.se"]).each do |user|
+      user.destroy!
+      user.destroy!
+    end
+
+    # clean up *all* logs
+    Log.all.each do |log|
+      log.destroy!
+      log.destroy!
+    end
+
     regatta = Regatta.new
     regatta.organizer = Organizer.find_by name: 'Svenska Kryssarklubbens Stockholmskrets'
-    regatta.name = 'Testregatta 2017'
+    regatta.name = 'Testregatta'
     regatta.email_from = 'stefan@24-timmars.nu'
     regatta.name_from = 'Stefan Pettersson'
     regatta.email_to = 'stefan@24-timmars.nu, arne@24-timmars.nu'
@@ -22,19 +42,23 @@ namespace :testdata do
 
     race = Race.new
     race.regatta = regatta
-    race.start_from = DateTime.parse('2017-06-03 12:00+2')
-    race.start_to = DateTime.parse('2017-06-03 12:00+2')
+    race.start_from = DateTime.parse('2018-04-01 12:00+2')
+    race.start_to = DateTime.parse('2018-04-01 12:00+2')
     race.period = 24
     race.common_finish = nil
     race.external_system = 'testdata'
     race.external_id = '1'
     race.save!
 
-    boat = Boat.new
-    boat.name = 'Alina'
-    boat.boat_type_name = 'Linjett 37'
-    boat.sail_number = 63
-    boat.save!
+    # special boat, not in data imported from Starema
+    boat = Boat.find_by(name: 'Alina')
+    if not boat
+      boat = Boat.new
+      boat.name = 'Alina'
+      boat.boat_type_name = 'Linjett 37'
+      boat.sail_number = 63
+      boat.save!
+    end
 
     ##
 
@@ -66,10 +90,17 @@ namespace :testdata do
     ##
 
     person = Person.new
-    person.email = 'stefan.pettersson@lumano.se'
+    person.email = 'stefan@test.se'
     person.first_name = 'Stefan'
     person.last_name = 'Petterson'
     person.save!
+
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
 
     boat = Boat.find_by(name: 'Vindil')
     skipper = person
@@ -104,6 +135,13 @@ namespace :testdata do
     person.last_name = 'Englund'
     person.save!
 
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
+
     boat = Boat.find_by(name: 'Abbe')
     skipper = person
 
@@ -136,6 +174,13 @@ namespace :testdata do
     person.first_name = 'Thomas'
     person.last_name = 'Bindzau'
     person.save!
+
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
 
     boat = Boat.find_by(name: 'Plasque')
     skipper = person
@@ -170,6 +215,13 @@ namespace :testdata do
     person.last_name = 'Forsgren'
     person.save!
 
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
+
     boat = Boat.find_by(name: 'Vindälva')
     skipper = person
 
@@ -202,6 +254,13 @@ namespace :testdata do
     person.first_name = 'Arne'
     person.last_name = 'Wallers'
     person.save!
+
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
 
     boat = Boat.find_by(name: 'Bon-Bon')
     skipper = person
@@ -236,6 +295,13 @@ namespace :testdata do
     person.last_name = 'Kramers'
     person.save!
 
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
+
     boat = Boat.find_by(name: 'Cirrus')
     skipper = person
 
@@ -269,6 +335,13 @@ namespace :testdata do
     person.last_name = 'Krantz'
     person.save!
 
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
+
     boat = Boat.find_by(name: 'Hafsorkestern')
     skipper = person
 
@@ -297,55 +370,17 @@ namespace :testdata do
     ##
 
     person = Person.new
-    person.email = 'cf@test.se'
-    person.first_name = 'Carl-Fredric'
-    person.last_name = 'Hunyadi'
-    person.save!
-
-    boat = Boat.find_by(name: 'Lea')
-    skipper = person
-
-    team = Team.new
-    team.name = 'Lea/Carl-Fredric'
-    team.race = race
-    team.boat = boat
-    team.boat_name = boat.name
-    team.boat_type_name = boat.boat_type_name
-    team.boat_sail_number = boat.sail_number
-    team.start_point = 540
-    team.finish_point = 540
-    team.start_number = 19
-    team.handicap = SrsKeelboat.find_by name: 'NF'
-    team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
-    team.active = true
-    team.save!
-
-    crew_member = CrewMember.new
-    crew_member.person = skipper
-    crew_member.team = team
-    crew_member.skipper = true
-    crew_member.save!
-
-    ###
-
-    race = Race.new
-    race.regatta = regatta
-    race.start_from = DateTime.parse('2017-06-02 12:00+2')
-    race.start_to = DateTime.parse('2017-06-02 20:00+2')
-    race.period = 48
-    race.common_finish = nil
-    race.external_system = 'testdata'
-    race.external_id = '1'
-    race.save!
-
-    ##
-
-    person = Person.new
     person.email = 'roger@test.se'
     person.first_name = 'Roger'
     person.last_name = 'Henriksson'
     person.save!
+
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
 
     boat = Boat.find_by(name: 'Far Out')
     skipper = person
@@ -372,6 +407,59 @@ namespace :testdata do
     crew_member.skipper = true
     crew_member.save!
 
+
+    ###
+
+    race = Race.new
+    race.regatta = regatta
+    race.start_from = DateTime.parse('2018-03-31 12:00+2')
+    race.start_to = DateTime.parse('2018-04-01 20:00+2')
+    race.period = 48
+    race.common_finish = nil
+    race.external_system = 'testdata'
+    race.external_id = '1'
+    race.save!
+
+    ##
+
+    person = Person.new
+    person.email = 'cf@test.se'
+    person.first_name = 'Carl-Fredric'
+    person.last_name = 'Hunyadi'
+    person.save!
+
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
+
+    boat = Boat.find_by(name: 'Lea')
+    skipper = person
+
+    team = Team.new
+    team.name = 'Lea/Carl-Fredric'
+    team.race = race
+    team.boat = boat
+    team.boat_name = boat.name
+    team.boat_type_name = boat.boat_type_name
+    team.boat_sail_number = boat.sail_number
+    team.start_point = 540
+    team.finish_point = 540
+    team.start_number = 19
+    team.handicap = SrsKeelboat.find_by name: 'NF'
+    team.handicap_type = 'SrsKeelboat'
+    team.paid_fee = true
+    team.active = true
+    team.save!
+
+    crew_member = CrewMember.new
+    crew_member.person = skipper
+    crew_member.team = team
+    crew_member.skipper = true
+    crew_member.save!
+
     ##
 
     person = Person.new
@@ -379,6 +467,13 @@ namespace :testdata do
     person.first_name = 'Mathias'
     person.last_name = 'Högberg'
     person.save!
+
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
 
     boat = Boat.find_by(name: 'Lady Gutte')
     skipper = person
@@ -409,8 +504,8 @@ namespace :testdata do
 
     race = Race.new
     race.regatta = regatta
-    race.start_from = DateTime.parse('2017-06-03 11:30+2')
-    race.start_to = DateTime.parse('2017-06-03 12:00+2')
+    race.start_from = DateTime.parse('2018-04-01 11:30+2')
+    race.start_to = DateTime.parse('2018-04-01 12:00+2')
     race.period = 24
     race.common_finish = 552
     race.external_system = 'testdata'
@@ -423,6 +518,13 @@ namespace :testdata do
     person.first_name = 'Jan'
     person.last_name = 'Wrangel'
     person.save!
+
+    user = User.new
+    user.email = person.email
+    user.password = "secret"
+    user.role = "user"
+    user.person = person
+    user.save!
 
     skipper = person
 
@@ -453,6 +555,7 @@ namespace :testdata do
 
     regatta = Regatta.find_by(name: 'Ensamseglingen test 2017')
     if regatta
+      regatta.destroy!
       regatta.destroy!
     end
     regatta = Regatta.new
@@ -501,8 +604,14 @@ namespace :testdata do
     crew_member.skipper = true
     crew_member.save!
 
+    person = Person.new
+    person.email = 'stefan.petterson@lumano.se'
+    person.first_name = 'Stefan'
+    person.last_name = 'Petterson'
+    person.save!
+
     boat = Boat.find_by(name: 'Vindil')
-    skipper = Person.find_by(email: 'stefan.pettersson@lumano.se')
+    skipper = person
 
     team = Team.new
     team.name = 'Vindil/Stefan'
