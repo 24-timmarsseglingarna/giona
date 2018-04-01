@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :terrains
   resources :points
   resources :organizers
-  
+
   resources :handicaps
   resources :srs_keelboats, controller: 'handicaps', type: 'SrsKeelboats'
   resources :srs_multihulls, controller: 'handicaps', type: 'SrsMultihulls'
@@ -26,7 +26,7 @@ Rails.application.routes.draw do
 
   resources :boats
   post 'teams/set_skipper'
-  get 'teams/add_seaman'
+  post 'teams/add_seaman'
   post 'teams/remove_seaman'
   post 'teams/remove_handicap'
   post 'teams/set_handicap_type'

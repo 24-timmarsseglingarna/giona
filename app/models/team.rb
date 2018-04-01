@@ -42,7 +42,19 @@ class Team < ApplicationRecord
     self.did_not_start  ||= false
     self.did_not_finish  ||= false
     self.paid_fee  ||= false
-    self.name ||= "#{self.boat_name} / #{boat_type_name}"
+    set_name
+  end
+
+  def set_name
+    if (self.name.blank? || self.name.include?('/'))
+      self.name = "#{self.skipper.try :last_name} / #{self.boat_name}"
+    end
+  end
+
+  def set_boat boat
+    self.boat_name = boat.try :name
+    self.boat_type_name = boat.try :boat_type_name
+    self.boat_sail_number = boat.try :sail_number
   end
 
   def set_skipper person

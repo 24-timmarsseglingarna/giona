@@ -1,0 +1,19 @@
+.panel.panel-default
+  .panel-heading
+    Söker gastar
+  .panel-body
+    .legend Regatta:
+    %p
+      %i.fa.fa-trophy(aria-hidden='true')
+      =link_to @team.race.regatta.name, @team.race.regatta
+    .legend Arrangör:
+    %p
+      %i.fa.fa-institution(aria-hidden='true')
+      = @team.race.regatta.organizer.name
+
+    = semantic_form_for @team do |f|
+      = f.inputs do
+        = f.input :vacancies
+
+      = f.actions do
+        = f.action :submit, :as => :input

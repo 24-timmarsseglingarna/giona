@@ -1,6 +1,6 @@
 class TeamsController < ApplicationController
   include ApplicationHelper
-  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap]
+  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap]
   before_action :authenticate_user!, :except => [:show, :welcome]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create]
   #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
@@ -47,8 +47,12 @@ class TeamsController < ApplicationController
     @starts = @team.race.starts.reject(&:empty?)
     @boat = Boat.new
     @team.boat = @boat
+    @people = Person.all
+    @known_people = Array.new
     if current_user
-      @known_people = current_user.person.friends
+      for person in current_user.person.friends
+        @known_people << person unless @team.people.include? person
+      end
       @known_boats = current_user.person.boats
     else
       @known_people = Person.all
@@ -66,7 +70,7 @@ class TeamsController < ApplicationController
   def create
     @team = Team.new(team_params)
     @team.skipper = current_user.person if current_user
-    @team.name = current_user.person.first_name
+    @team.set_name
     @team.active = true
     respond_to do |format|
       if @team.save
@@ -82,8 +86,14 @@ class TeamsController < ApplicationController
   # PATCH/PUT /teams/1
   # PATCH/PUT /teams/1.json
   def update
+    old_boat = @team.boat
     respond_to do |format|
       if @team.update(team_params)
+        if @team.boat != old_boat
+          @team.set_boat @team.boat
+          @team.set_name
+          @team.save!
+        end
         format.html { redirect_to @team, notice: 'Deltagaranmälan uppdaterad.' }
         format.json { render :show, status: :ok, location: @team }
       else
@@ -93,6 +103,15 @@ class TeamsController < ApplicationController
     end
   end
 
+  def add_seaman
+    person = Person.find params[:person_id]
+    if CrewMember.find_by( person_id: person.id, team_id: @team.id).blank?
+      crew_member = CrewMember.create person_id: person.id, team_id: @team.id
+      redirect_to @team, notice: "Gasten #{person.name} tillagd besättningslistan."
+    else
+      redirect_to @team, notice: "Gasten #{person.name} fanns redan i besättningslistan."
+    end
+  end
 
   def remove_seaman
     person_id = params[:person_id]
@@ -111,11 +130,7 @@ class TeamsController < ApplicationController
     person = Person.find params[:person_id]
     crew_member = CrewMember.find_by person_id: person.id, team_id: @team.id
     @team.set_skipper person
-    unless @team.boat.blank?
-      @team.name = @team.boat.name + '/' + @team.skipper.last_name
-    else
-      @team.name =  '? /' + @team.skipper.last_name
-    end
+    @team.set_name
     @team.save!
     redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
   end
@@ -152,16 +167,8 @@ class TeamsController < ApplicationController
   def set_boat
     boat = Boat.find params[:boat_id]
     @team.boat = boat
-    @team.boat_name = boat.name
-    @team.boat_type_name = boat.boat_type_name
-    @team.boat_sail_number = boat.sail_number
-
-    if @team.skipper
-      @team.name = boat.name + '/' + @team.skipper.last_name
-    else
-      @team.name = boat.name + '/ ?'
-    end
-
+    @team.set_boat boat
+    @team.set_name
     @team.save!
     redirect_to @team, notice: "Båten #{@team.boat.name unless @team.boat.blank?} är nu vald."
   end

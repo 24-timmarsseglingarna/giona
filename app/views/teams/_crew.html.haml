@@ -1,21 +1,50 @@
 .panel.panel-default
   .panel-heading
-    Besättningen
-  .panel-body    
+    Lägg till besättningsmedlemmar
+  .panel-body
     .legend Regatta:
     %p
-      %i.fa.fa-trophy(aria-hidden='true')    
-      =@team.race.regatta.name  
+      %i.fa.fa-trophy(aria-hidden='true')
+      =@team.race.regatta.name
     .legend Segling:
-    %p  
+    %p
       %i.fa.fa-bell(aria-hidden='true')
-      = @team.race.name  
+      = @team.race.name
 
-    = semantic_form_for @team do |f|
-      = f.inputs do
-        = f.input :people, :as => :check_boxes, :collection => @known_people
-        = f.input :vacancies
-      = f.actions do
-        = f.action :submit, :as => :input
+      %br
+    %p Lägg till besättningsmedlemmar som redan finns i systemet. Använd sökfältet för att leta.
+
+    %table#giona-people.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th
+          %th Förnamn
+          %th Efternamn
+          %th Postort
+          %th Seglat med
+          %th Startat vid
+          %th Anmäld med mig
+      %tbody
+        - @people.each do |person|
+          - unless @team.people.include? person
+            %tr{:class => cycle('even', 'odd')}
+              %td= link_to 'Välj', teams_add_seaman_path(:id => @team.id, :person_id => person.id), method: :post
+              %td= person.first_name
+              %td= person.last_name
+              %td= person.city
+              %td= my_boats(person)
+              %td= my_starts(person)
+              %td
+                - if current_user.person.friends.include?(person)
+                  &#10003;
+
+    %br
     %br
     = link_to 'Tillbaka', @team, :class => :get_back
+
+:javascript
+  $(document).ready(function() {
+  $('#giona-people').DataTable({
+  "order": [[ 6, 'desc' ], [ 1, 'asc' ]]}
+  );
+  } );

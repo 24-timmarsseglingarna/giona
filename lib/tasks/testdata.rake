@@ -12,6 +12,7 @@ namespace :testdata do
     regatta.name_from = 'Stefan Pettersson'
     regatta.email_to = 'stefan@24-timmars.nu, arne@24-timmars.nu'
     regatta.confirmation = 'Hej och välkommen. Jättekul. Lång text om hur det funkar. Ska skickas via mejl.'
+    regatta.terrain = Terrain.where(published: true).last
     regatta.active = true
     regatta.save!
 
@@ -25,7 +26,7 @@ namespace :testdata do
     race.external_id = '1'
     race.save!
 
-    boat = Boat.find_by(name: 'Gumman 100')
+    boat = Boat.find_or_create_by(name: 'Gumman 100', boat_type_name: 'Linjett 33')
     skipper = Person.find_by(email: 'mbj4668@gmail.com')
 
     team = Team.new
@@ -50,7 +51,7 @@ namespace :testdata do
     crew_member.skipper = true
     crew_member.save!
 
-    boat = Boat.find_by(name: 'Vindil')
+    boat = Boat.find_or_create_by(name: 'Vindil', boat_type_name: 'Scampi')
     skipper = Person.find_by(email: 'stefan.pettersson@lumano.se')
 
     team = Team.new
@@ -87,6 +88,7 @@ namespace :testdata do
     regatta.name_from = 'Stefan Pettersson'
     regatta.email_to = 'stefan@24-timmars.nu, arne@24-timmars.nu'
     regatta.confirmation = 'Hej och välkommen. Jättekul. Lång text om hur det funkar. Ska skickas via mejl.'
+    regatta.terrain = Terrain.where(published: true).first
     regatta.active = true
     regatta.save!
 

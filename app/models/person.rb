@@ -21,7 +21,7 @@ class Person < ApplicationRecord
   validates_presence_of :country
   #validates_length_of :fax, in: 7..32, allow_nil: true
   #validates_length_of :fax, in: 7..32, allow_nil: true
-  #validates_length_of :fax, in: 7..32, allow_nil: true		
+  #validates_length_of :fax, in: 7..32, allow_nil: true
   #validates_length_of :fax, in: 7..32, allow_nil: true
 
   after_initialize :set_defaults, unless: :persisted?
@@ -36,7 +36,9 @@ class Person < ApplicationRecord
   end
 
   def name
-    "#{self.first_name} #{self.last_name}, #{self.city unless self.city.blank?} "
+    out = "#{self.first_name} #{self.last_name}"
+    out += ", #{self.city}" unless self.city.blank?
+    out
   end
 
 

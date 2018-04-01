@@ -4,11 +4,13 @@
 - elsif params[:section] == 'race_details'
   = render 'race_details'
 - elsif params[:section] == 'crew'
-  = render 'crew'  
+  = render 'crew'
 - elsif params[:section] == 'boat'
-  = render 'boat'    
+  = render 'boat'
 - elsif params[:section] == 'handicap'
-  = render 'handicap'      
+  = render 'handicap'
+-elsif params[:section] == 'vacancies'
+  = render 'vacancies'   
 - else
 
   %h1 Nu blev det fel.

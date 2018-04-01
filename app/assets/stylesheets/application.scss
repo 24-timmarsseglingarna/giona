@@ -12,10 +12,9 @@
  *
  *= require_tree .
  *= require_self
- *= require font-awesome
  *= require bootstrap_sb_admin_base_v2
  *= require formtastic-bootstrap
- *= require bootstrap-datetimepicker 
+ *= require bootstrap-datetimepicker
  */
 
 .alert {
@@ -28,20 +27,20 @@
 }
 
 .panel {
-  
+
   margin-top: 2em;
 
   p, ul {
   	font-size: 1em;
 	  line-height: 1.25em;
   }
-  
+
   ul, li {
     list-style-type: none;
     margin-left: 0;
     padding-left: 0;
   }
-  
+
   .legend {
     font-style: italic;
   }
@@ -70,4 +69,8 @@ a.btn:visited {
 
 .list-group.race-select {
   max-width: 400px;
+}
+
+td {
+	font-size: inherit;
 }
