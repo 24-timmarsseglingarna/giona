@@ -1,7 +1,8 @@
 class TeamsController < ApplicationController
   include ApplicationHelper
   before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap]
-  before_action :authenticate_user!, :except => [:show, :welcome]
+  before_action :authenticate_user!, :except => [:show, :index, :welcome]
+  before_action :authorize_me!, :except => [:show, :index, :welcome]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create]
   #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
 
@@ -107,7 +108,7 @@ class TeamsController < ApplicationController
     person = Person.find params[:person_id]
     if CrewMember.find_by( person_id: person.id, team_id: @team.id).blank?
       crew_member = CrewMember.create person_id: person.id, team_id: @team.id
-      redirect_to @team, notice: "Gasten #{person.name} tillagd besättningslistan."
+      redirect_to @team, notice: "Gasten #{person.name} tillagd i besättningslistan."
     else
       redirect_to @team, notice: "Gasten #{person.name} fanns redan i besättningslistan."
     end
@@ -193,6 +194,18 @@ class TeamsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
       params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_type_name, :boat_sail_number, :start_point, :finish_point, :start_number, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :handicap_id, :handicap_type, :boat_id, boat_attributes: [:id, :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi], person_ids: [])
+    end
+
+    def authorize_me!
+      if (@team.people.blank? && !has_assistant_rights?) || (current_user.person && !has_assistant_rights?)
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      else
+        unless ((@team.people.include? current_user.person) || has_assistant_rights?)
+          flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+          redirect_to :back
+        end
+      end
     end
 
     def interims_authenticate!

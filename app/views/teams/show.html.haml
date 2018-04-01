@@ -15,7 +15,7 @@
       .legend Status:
       %p
         %i.fa.fa-file(aria-hidden='true')
-        -if @team.active
+        -if @team.active?
           Aktiv
         -else
           Arkiverad
@@ -59,7 +59,7 @@
       %i.far.fa-hourglass(aria-hidden='true')
       = @team.race.period
       timmar
-    - if @team.active?
+    - if i_may_see_links_to @team
       =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-primary"
 
 .panel.panel-default
@@ -91,7 +91,7 @@
         Hav
       - else
         Kust
-    - if @team.active?
+    - if i_may_see_links_to @team
       =link_to 'Ändra', edit_team_path(@team, :section=>:race_details), class: "btn btn-primary"
 
 
@@ -130,7 +130,7 @@
             %td
               %i.far.fa-user-circle(aria-hidden='true')
               = link_to person.name, person
-            - if @team.active?
+            - if i_may_see_links_to @team
               %td
                 %span.crew_action
                   %i.fas.fa-user-times(aria-hidden='true')
@@ -140,22 +140,22 @@
                   %i.fa.fa-chevron-circle-up(aria-hidden='true')
                   =link_to 'utse till ny skeppare', teams_set_skipper_path(:id => @team.id, :person_id => person.id), method: :post, :data => { :confirm => "Är du säker på att du vill utse #{person.name} till ny skeppare?" }
 
-    - if @team.active?
+    - if i_may_see_links_to @team
       %br
       %i.fas.fa-user-plus(aria-hidden='true')
       =link_to 'lägg till gast', edit_team_path(@team, :section=>:crew)
-      %p
 
-      .legend Söker gastar:
-      %p
-        %i.fa.fa-user-secret(aria-hidden='true')
-        -unless @team.vacancies.blank?
-          = @team.vacancies
-        -else
-          Nej.
-        - if @team.active?
-          %i.fas.fa-pencil-alt(aria-hidden='true')
-          = link_to 'Ändra', edit_team_path(@team, :section=>:vacancies)
+    %p
+    .legend Söker gastar:
+    %p
+      %i.fa.fa-user-secret(aria-hidden='true')
+      -unless @team.vacancies.blank?
+        = @team.vacancies
+      -else
+        Nej.
+      - if i_may_see_links_to @team
+        %i.fas.fa-pencil-alt(aria-hidden='true')
+        = link_to 'Ändra', edit_team_path(@team, :section=>:vacancies)
 
 .panel.panel-default
   .panel-heading
@@ -164,22 +164,22 @@
     %p
       %i.fa.fa-ship(aria-hidden='true')
       - if @team.boat.nil?
-        -if @team.active?
+        -if i_may_see_links_to @team
           %i.fa.fa-plus(aria-hidden='true')
           =link_to 'lägg till båt', edit_team_path(@team, :section=>:boat)
       -else
         = link_to "#{@team.boat.name} | #{@team.boat.boat_type_name} | Segelnummer: #{@team.boat.sail_number}", @team.boat
-        - if @team.active?
+        - if i_may_see_links_to @team
           %i.fas.fa-minus(aria-hidden='true')
           =link_to 'ta bort båten', teams_remove_boat_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort båten #{@team.boat.name} från deltagaranmälan?"}
 
     .legend Handikapp:
     %p
       %i.fa.fa-calculator(aria-hidden='true')
-      -if @team.boat.nil? && @team.active?
+      -if @team.boat.nil? && i_may_see_links_to(@team)
         Välj först båt, sedan handikapp.
       -else
-        - if @team.handicap_type.blank? && @team.active?
+        - if @team.handicap_type.blank? && i_may_see_links_to(@team)
           Välj en sorts handikapp
           %ul
             - Handicap.types.each do |key, value|
@@ -198,7 +198,7 @@
           - else
             - if @team.handicap.nil?
               =Handicap.types[@team.handicap_type]
-              - if @team.active?
+              - if i_may_see_links_to(@team)
                 %i.fa.fa-plus(aria-hidden='true')
                 =link_to 'ange handikapp', edit_team_path(:id => @team.id, :section => :handicap)
                 %i.fas.fa-minus(aria-hidden='true')
@@ -214,6 +214,6 @@
               = @team.handicap.name
               enligt
               = @team.handicap.source
-              - if @team.active?
+              - if i_may_see_links_to(@team)
                 %i.fas.fa-minus(aria-hidden='true')
                 =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}
