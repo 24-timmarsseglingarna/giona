@@ -2,26 +2,26 @@
   %ul#side-menu.nav
     %li
       %a{:href => races_path}
-        %i.fa.fa-file-o.fa-fw(aria-hidden='true')
+        %i.fas.fa-edit(aria-hidden='true')
         Anmäl båt och skeppare
     %li
       %a{:href => teams_path}
-        %i.fa.fa-files-o.fa-fw(aria-hidden='true')
-        Mina deltagaranmälningar och tidigare deltagande        
+        %i.fa.far.fa-copy(aria-hidden='true')
+        Mina deltagaranmälningar och tidigare deltagande
     - if current_user
       - if current_user.person
         %li
           %a{:href => person_path(current_user.person)}
-            %i.fa.fa-user-o.fa-fw(aria-hidden='true')
-            Mina person- och kontaktuppgifter        
+            %i.far.fa-user.fa-fw(aria-hidden='true')
+            Mina person- och kontaktuppgifter
     %li
       %a{:href => organizers_path}
-        %i.fa.fa-institution(aria-hidden='true')
-        Arrangörer    
+        %i.fa.fa-university(aria-hidden='true')
+        Arrangörer
     %li
       %a{:href => regattas_path(:is_active => true)}
         %i.fa.fa-font.fa-trophy.fa-fw(aria-hidden='true')
-        Regattor    
+        Regattor
     %li
       %a{:href => boats_path}
         %i.fa.fa-ship.fa-fw(aria-hidden='true')
@@ -48,6 +48,6 @@
       %li
         %a{:href => inactive_users_path}
           %i.fa.fa-user-times.fa-fw(aria-hidden='true')
-          Raderade användare               
+          Raderade användare
 / /.sidebar-collapse
 / /.navbar-static-side

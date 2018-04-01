@@ -16,7 +16,8 @@
         = f.input :race, :as => :radio, :collection => @races
 
       %p
-        Om du byter segling så kan det betyda att en del andra val i anmälan ändras. Det kan vara olika startplatser/målgång för olika seglingar. Så efter byte av segling bör du kolla igenom hela anmälan.
+        - if @races.count > 1
+          Om du byter segling så kan det betyda att en del andra val i anmälan ändras. Det kan vara olika startplatser/målgång för olika seglingar. Så efter byte av segling bör du kolla igenom hela anmälan.
 
       = f.actions do
         = f.action :submit
