@@ -5,9 +5,17 @@ class TeamsController < ApplicationController
   before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create]
   #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
+  has_scope :from_regatta, :from_race, :from_boat, :has_person
+  has_scope :is_active, :type => :boolean, allow_blank: true
 
 
   def welcome
+    @races = apply_scopes(Race).all.order(regatta_id: :asc, period: :asc)
+    if params[:organizer_id].present?
+      @organizers = Organizer.where("id = ?", params[:organizer_id])
+    else
+      @organizers = Organizer.is_active(true).distinct
+    end
     render 'welcome'
   end
 
@@ -17,7 +25,10 @@ class TeamsController < ApplicationController
     @teams = nil
     if current_user
       if current_user.person
-        @teams = current_user.person.teams.order active: :desc, created_at: :desc
+        if current_user.person.teams.present?
+          @teams = current_user.person.teams.is_active(true).order created_at: :desc
+          #@teams = apply_scopes(Team).all.order active: :desc, created_at: :desc
+        end
       end
     end
   end
@@ -25,6 +36,7 @@ class TeamsController < ApplicationController
   # GET /teams/1
   # GET /teams/1.json
   def show
+    @status = @team.review
   end
 
   # GET /teams/new
@@ -32,11 +44,17 @@ class TeamsController < ApplicationController
     @team = Team.new
     if params[:race_id].present?
       @race = Race.is_active(true).find params[:race_id]
-
       redirect_to races_path, alert: "Börja med att välja regatta eller segling." if @race.blank?
-
       @team.race = @race
-      @team.skipper = current_user.person if current_user
+      if current_user
+        if current_user.person.present?
+          @team.skipper = current_user.person
+          if @race.regatta.people.include? current_user.person
+            @teams = current_user.person.teams.is_active(true).from_regatta(@race.regatta.id).order created_at: :desc
+            flash[:notice] = 'Du är redan anmäld till den här regattan.'
+          end
+        end
+      end
     else
       redirect_to races_path, alert: "Börja med att välja regatta eller segling."
     end

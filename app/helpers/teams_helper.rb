@@ -41,4 +41,12 @@ module TeamsHelper
      end
    end
 
+   def panel_context status
+     if status.blank?
+       "panel-success"
+     else
+       "panel-danger"
+     end
+   end
+
 end

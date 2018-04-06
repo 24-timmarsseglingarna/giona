@@ -1,6 +1,7 @@
 class Regatta < ApplicationRecord
   has_many :races, dependent: :destroy
   has_many :teams, :through => :races
+  has_many :people, :through => :teams
   belongs_to :organizer
   belongs_to :terrain
 

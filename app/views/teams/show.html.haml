@@ -1,6 +1,6 @@
 %h1= @team.name
 
-.panel.panel-default
+.panel{:class => "#{panel_context(@status['regatta'])}"}
   .panel-heading
     Regatta
   .panel-body
@@ -38,7 +38,7 @@
         Fullföljde inte.
 
 
-.panel.panel-default
+.panel{:class => "#{panel_context(@status['race'])}"}
   .panel-heading
     Seglingen
   .panel-body
@@ -62,10 +62,14 @@
     - if i_may_see_links_to @team
       =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-primary"
 
-.panel.panel-default
+.panel{:class => "#{panel_context(@status['race_details'])}"}
   .panel-heading
     Seglingsdetaljer
   .panel-body
+    - unless @status['race_details'].blank?
+      %p
+        %i.fas.fa-exclamation-circle(aria-hidden='true')
+        = @status['race_details']
     .legend Startplats:
     %p
       %i.fa.fa-flag(aria-hidden='true')
@@ -74,31 +78,37 @@
     .legend Mål:
     %p
       %i.fa.fa-flag-checkered(aria-hidden='true')
-      - if @team.race.common_finish.blank?
-        = @team.start_point
-        - unless @team.start_point.blank?
-          = name_by_number @team.race.regatta.terrain, @team.start_point
-          (samma som startplatsen)
-      - else
+      - if @team.race.common_finish.present?
         = @team.race.common_finish
         = name_by_number @team.race.regatta.terrain, @team.race.common_finish
         (gemensam målgång)
-
-    .legend Havs-/kustsegling:
-    %p
-      %i.fas.fa-exchange-alt(aria-hidden='true')
-      - if @team.offshore
-        Hav
       - else
-        Kust
-    - if i_may_see_links_to @team
-      =link_to 'Ändra', edit_team_path(@team, :section=>:race_details), class: "btn btn-primary"
+        - unless @team.start_point.blank?
+          = @team.start_point
+          = name_by_number @team.race.regatta.terrain, @team.start_point
+        (samma som startplatsen)
 
 
-.panel.panel-default
+      .legend Havs-/kustsegling:
+      %p
+        %i.fas.fa-exchange-alt(aria-hidden='true')
+        - unless @team.offshore.nil?
+          - if @team.offshore
+            Hav
+          - else
+            Kust
+      - if i_may_see_links_to @team
+        =link_to 'Ändra', edit_team_path(@team, :section=>:race_details), class: "btn btn-primary"
+
+.panel{:class => "#{panel_context(@status['crew'])}"}
   .panel-heading
     Besättningen
   .panel-body
+    - unless @status['crew'].blank?
+      %p
+        %i.fas.fa-exclamation-circle(aria-hidden='true')
+        = @status['crew']
+
     .legend Skeppare:
     %p
       %i.fa.fa-user-circle(aria-hidden='true')
@@ -157,20 +167,24 @@
         %i.fas.fa-pencil-alt(aria-hidden='true')
         = link_to 'Ändra', edit_team_path(@team, :section=>:vacancies)
 
-.panel.panel-default
+.panel{:class => "#{panel_context(@status['boat'])}"}
   .panel-heading
     Båten
   .panel-body
+    - unless @status['boat'].blank?
+      %p
+        %i.fas.fa-exclamation-circle(aria-hidden='true')
+        = @status['boat']
     %p
       %i.fa.fa-ship(aria-hidden='true')
       - if @team.boat.nil?
         -if i_may_see_links_to @team
-          %i.fa.fa-plus(aria-hidden='true')
+          %i.fa.fa-plus-circle(aria-hidden='true')
           =link_to 'lägg till båt', edit_team_path(@team, :section=>:boat)
       -else
         = link_to "#{@team.boat.name} | #{@team.boat.boat_type_name} | Segelnummer: #{@team.boat.sail_number}", @team.boat
         - if i_may_see_links_to @team
-          %i.fas.fa-minus(aria-hidden='true')
+          %i.fas.fa-times-circle(aria-hidden='true')
           =link_to 'ta bort båten', teams_remove_boat_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort båten #{@team.boat.name} från deltagaranmälan?"}
 
     .legend Handikapp:
@@ -184,24 +198,24 @@
           %ul
             - Handicap.types.each do |key, value|
               %li
-                %i.fa.fa-plus(aria-hidden='true')
+                %i.fa.fa-plus-circle(aria-hidden='true')
                 =link_to value, teams_set_handicap_type_path(:id => @team.id, :handicap_type => key ), method: :post
         - else
           - if @team.handicap_type == 'SoonSrsCertificate'
             Ska återkomma med SRS-mätbrev.
-            %i.fas.fa-minus(aria-hidden='true')
+            %i.fas.fa-times-circle(aria-hidden='true')
             =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post
           - elsif @team.handicap_type == 'SoonSxkCertificate'
             Ska återkomma med SXK-mätbrev.
-            %i.fas.fa-minus(aria-hidden='true')
+            %i.fas.fa-times-circle(aria-hidden='true')
             =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post
           - else
             - if @team.handicap.nil?
               =Handicap.types[@team.handicap_type]
               - if i_may_see_links_to(@team)
-                %i.fa.fa-plus(aria-hidden='true')
+                %i.fa.fa-plus-circle(aria-hidden='true')
                 =link_to 'ange handikapp', edit_team_path(:id => @team.id, :section => :handicap)
-                %i.fas.fa-minus(aria-hidden='true')
+                %i.fas.fa-times-circle(aria-hidden='true')
                 =link_to 'nollställ', teams_remove_handicap_path(:id => @team.id), method: :post
             - else
               - if @team.race.start_from > @team.handicap.best_before
@@ -215,5 +229,5 @@
               enligt
               = @team.handicap.source
               - if i_may_see_links_to(@team)
-                %i.fas.fa-minus(aria-hidden='true')
+                %i.fas.fa-times-circle(aria-hidden='true')
                 =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}
