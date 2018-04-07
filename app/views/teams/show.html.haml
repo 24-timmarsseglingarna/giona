@@ -67,7 +67,7 @@
     Seglingsdetaljer
   .panel-body
     - unless @status['race_details'].blank?
-      %p
+      %p.status
         %i.fas.fa-exclamation-circle(aria-hidden='true')
         = @status['race_details']
     .legend Startplats:
@@ -105,7 +105,7 @@
     Besättningen
   .panel-body
     - unless @status['crew'].blank?
-      %p
+      %p.status
         %i.fas.fa-exclamation-circle(aria-hidden='true')
         = @status['crew']
 
@@ -172,7 +172,7 @@
     Båten
   .panel-body
     - unless @status['boat'].blank?
-      %p
+      %p.status
         %i.fas.fa-exclamation-circle(aria-hidden='true')
         = @status['boat']
     %p
