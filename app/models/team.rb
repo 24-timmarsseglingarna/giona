@@ -69,7 +69,7 @@ class Team < ApplicationRecord
   end
 
   def review
-    status = Hash.new
+    review_status = Hash.new
 
     # race_details
     str = ''
@@ -79,31 +79,31 @@ class Team < ApplicationRecord
     if self.offshore.nil?
       str += 'Seglar du havssträckor eller bara kuststräckor? '
     end
-    status['race_details'] = str
+    review_status['race_details'] = str
 
     #crew
     if self.people.blank?
-      status['crew'] = 'Lägg till minst en i besättning.'
+      review_status['crew'] = 'Lägg till minst en i besättning.'
     else
       if self.skipper.blank?
-        status['crew'] = 'Vem ska vara skeppare?'
+        review_status['crew'] = 'Vem ska vara skeppare?'
       end
     end
 
     #boat
     if self.boat.blank?
-      status['boat'] = 'Vilken båt ska du segla med?'
+      review_status['boat'] = 'Vilken båt ska du segla med?'
     else
       if self.handicap_type.blank?
-        status['boat'] = 'Vilken sorts handikapp ska du använda?'
+        review_status['boat'] = 'Vilken sorts handikapp ska du använda?'
       else
         if self.handicap.blank?
-          status['boat'] = 'Vilket handikapp ska du använda?'
+          review_status['boat'] = 'Vilket handikapp ska du använda?'
         end
       end
     end
 
-    status
+    review_status
   end
 
   def offshore_name
