@@ -10,13 +10,13 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     insert_token_headers
-    if current_user.person.nil? 
+    if current_user.person.nil?
       people = Person.where(["email = ?", current_user.email])
       if people.count == 1 # Associate user with person.
         flash[:notice] = "Välkommen! Kolla att vi har rätt uppgifter om dig och spara."
         edit_person_path(people.first)
       elsif people.count > 1 # We found email address multiple times. Mark user and persons to be reviewed.
-        current_user.review! 
+        current_user.review!
         for person in people
           person.review!
         end

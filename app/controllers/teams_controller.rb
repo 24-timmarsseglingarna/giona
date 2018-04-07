@@ -37,6 +37,11 @@ class TeamsController < ApplicationController
   # GET /teams/1.json
   def show
     @status = @team.review
+    if params[:notes].present?
+      @notes = @team.notes.reverse
+    else
+      @notes = @team.notes.last(5).reverse
+    end
   end
 
   # GET /teams/new
@@ -93,6 +98,8 @@ class TeamsController < ApplicationController
     @team.active = true
     respond_to do |format|
       if @team.save
+        logger.info "@team.id: #{@team.id }"
+        Note.create(team_id: @team.id, user: current_user, description: "Anmälan skapad av #{current_user.to_s}.")
         format.html { redirect_to @team, notice: 'Deltagaranmälan skapad.' }
         format.json { render :show, status: :created, location: @team }
       else
@@ -106,12 +113,41 @@ class TeamsController < ApplicationController
   # PATCH/PUT /teams/1.json
   def update
     old_boat = @team.boat
+    old_vacancies = @team.vacancies
+    old_handicap = @team.handicap
+    old_start_point = @team.start_point
+    old_offshore = @team.offshore
+    old_race = @team.race
+    description = ''
     respond_to do |format|
       if @team.update(team_params)
+        if @team.race != old_race
+          description += "Segling ändrad till #{@team.race.name} (#{@team.race.id}) av #{current_user.to_s}."
+          unless @team.race.starts.include? @team.start_point.to_s
+            @team.start_point = nil
+            @team.save!
+            flash[:alert] = 'Startplatsen du tidigare valt kan inte användas vid den här seglingen. Välj en ny.'
+          end
+        end
+        if @team.vacancies != old_vacancies
+          description += "Gastefterlysning ändrad av #{current_user.to_s}."
+        end
+        if (@team.handicap != old_handicap) && @team.handicap.present?
+          description += "Handikapp satt till #{@team.handicap.description} (#{@team.handicap.id}) av #{current_user.to_s}."
+        end
+        if @team.start_point != old_start_point
+          description += "Startplats satt till #{@team.start_point} av #{current_user.to_s}."
+        end
+        if @team.offshore != old_offshore
+          description += "Havs-/kustsegling satt till #{@team.offshore_name} av #{current_user.to_s}."
+        end
         if @team.boat != old_boat
           @team.set_boat @team.boat
           @team.set_name
           @team.save!
+        end
+        if description.present?
+          Note.create(team_id: @team.id, user: current_user, description: description)
         end
         format.html { redirect_to @team, notice: 'Deltagaranmälan uppdaterad.' }
         format.json { render :show, status: :ok, location: @team }
@@ -126,6 +162,7 @@ class TeamsController < ApplicationController
     person = Person.find params[:person_id]
     if CrewMember.find_by( person_id: person.id, team_id: @team.id).blank?
       crew_member = CrewMember.create person_id: person.id, team_id: @team.id
+      Note.create(team_id: @team.id, user: current_user, description: "Gast #{person.name} (#{person.id}) tillagd av #{current_user.to_s}.")
       redirect_to @team, notice: "Gasten #{person.name} tillagd i besättningslistan."
     else
       redirect_to @team, notice: "Gasten #{person.name} fanns redan i besättningslistan."
@@ -138,6 +175,7 @@ class TeamsController < ApplicationController
     unless crew_member.skipper
       name = crew_member.person.name
       crew_member.destroy!
+      Note.create(team_id: @team.id, user: current_user, description: "Gast #{name} (#{person_id}) borttagen av #{current_user.to_s}.")
       redirect_to @team, notice: "Gasten #{name} struken från besättningslistan."
     else
       redirect_to @team, alert: 'Det går inte att stryka skepparen, välj först en ny skeppare.'
@@ -151,6 +189,7 @@ class TeamsController < ApplicationController
     @team.set_skipper person
     @team.set_name
     @team.save!
+    Note.create(team_id: @team.id, user: current_user, description: "#{person.name} (#{person.id}) utsedd till skeppare av #{current_user.to_s}.")
     redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
   end
 
@@ -158,12 +197,14 @@ class TeamsController < ApplicationController
     @team.handicap = nil
     @team.handicap_type = nil
     @team.save!
+    Note.create(team_id: @team.id, user: current_user, description: "Handikapp borttaget av #{current_user.to_s}.")
     redirect_to @team, notice: "Du behöver välja handikapp för att kunna delta."
   end
 
   def set_handicap_type
     @team.handicap_type = params[:handicap_type].to_s
     @team.save!
+    Note.create(team_id: @team.id, user: current_user, description: "Handikapptyp #{Team.types[@team.handicap_type]} satt av #{current_user.to_s}.")
     if ['SrsKeelboat', 'SrsMultihull', 'SrsDingy', 'SrsCertificate', 'SxkCertificate'].include? @team.handicap_type
       redirect_to edit_team_path(:id => @team.id, :section => :handicap)
     else
@@ -173,6 +214,7 @@ class TeamsController < ApplicationController
 
   def remove_boat
     boat_name = @team.boat.name
+    boat_id = @team.boat.id
     @team.boat = nil
     @team.handicap = nil
     @team.handicap_type = nil
@@ -180,6 +222,7 @@ class TeamsController < ApplicationController
     @team.boat_type_name = nil
     @team.boat_sail_number = nil
     @team.save!
+    Note.create(team_id: @team.id, user: current_user, description: "Båt #{boat_name} (#{boat_id}) bortvald av #{current_user.to_s}.")
     redirect_to @team, notice: "Båten #{boatname unless @boatname.blank?} är nu bortplockad. Välj en annan båt."
   end
 
@@ -189,6 +232,7 @@ class TeamsController < ApplicationController
     @team.set_boat boat
     @team.set_name
     @team.save!
+    Note.create(team_id: @team.id, user: current_user, description: "Båt #{boat.name} (#{boat.id}) vald av #{current_user.to_s}.")
     redirect_to @team, notice: "Båten #{@team.boat.name unless @team.boat.blank?} är nu vald."
   end
 

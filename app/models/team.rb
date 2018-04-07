@@ -8,6 +8,7 @@ class Team < ApplicationRecord
   has_one :skipper_crew_member, -> { where(skipper: true) }, class_name: 'CrewMember'
   has_one :skipper, :through => :skipper_crew_member, :source => :person
   belongs_to :handicap
+  has_many :notes
 
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
@@ -20,7 +21,6 @@ class Team < ApplicationRecord
   accepts_nested_attributes_for :boat
 
   after_initialize :set_defaults, unless: :persisted?
-  # The set_defaults will only work if the object is new
 
   def sxk
     self.handicap.sxk
@@ -105,5 +105,19 @@ class Team < ApplicationRecord
 
     status
   end
+
+  def offshore_name
+    unless self.offshore.nil?
+      if self.offshore
+        'Hav'
+      else
+        'Kust'
+      end
+    else
+      ''
+    end
+  end
+
+private
 
 end

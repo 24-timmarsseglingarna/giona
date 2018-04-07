@@ -62,6 +62,7 @@ sv:
   datetime:
     formats:
       day: "%Y-%m-%d"
+      normal: "%Y-%m-%d %H.%M"
     distance_in_words:
       about_x_hours:
         one: ungefär en timme
@@ -455,6 +456,7 @@ sv:
       medium: "%e %B %Y kl. %H.%M"
       clock: "%H.%M"
       day: "%Y-%m-%d"
+      normal: "%Y-%m-%d %H.%M"
 
     pm: ''
 
@@ -550,7 +552,7 @@ sv:
         email_to: En rad mejladresser, separerade med kommatecken.
         active: Det går att anmäla sig och segla.
       team:
-        vacancies: Berätta kort hur många gastar du behöver och vilka krav du ställer. Ta bort texten om du inte söker fler gastar.
+        vacancies: Berätta kort hur många gastar du behöver och vilka krav du ställer. Intresserade kan se dina anmälningsuppgifter om båt, startplats och kontaktuppgifter, så det behöver du inte skriva. Ta bort texten om du inte söker fler gastar.
         offshore: Uppfyller båt och besättning reglernas krav för att segla havssträckor?
   role:
     admin: administratör

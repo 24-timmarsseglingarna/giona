@@ -92,11 +92,7 @@
       .legend Havs-/kustsegling:
       %p
         %i.fas.fa-exchange-alt(aria-hidden='true')
-        - unless @team.offshore.nil?
-          - if @team.offshore
-            Hav
-          - else
-            Kust
+        = @team.offshore_name
       - if i_may_see_links_to @team
         =link_to 'Ändra', edit_team_path(@team, :section=>:race_details), class: "btn btn-primary"
 
@@ -231,3 +227,13 @@
               - if i_may_see_links_to(@team)
                 %i.fas.fa-times-circle(aria-hidden='true')
                 =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}
+
+- if current_user && i_may_see_links_to(@team)
+  %h5 Ändringar:
+  %ol.notes
+    - for note in @notes
+      %li
+        = "#{I18n.l note.created_at, format: :normal}:"
+        = note.description
+  - if (@team.notes.count > 5) && !params[:notes].present?
+    %p= link_to 'Visa alla', :notes => true
