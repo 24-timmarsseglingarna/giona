@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180327083347) do
+ActiveRecord::Schema.define(version: 20180406152235) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -178,7 +178,7 @@ ActiveRecord::Schema.define(version: 20180327083347) do
     t.integer  "boat_id"
     t.boolean  "active",           default: false
     t.integer  "finish_point"
-    t.boolean  "offshore",         default: false
+    t.boolean  "offshore"
     t.string   "vacancies"
     t.integer  "handicap_id"
     t.string   "handicap_type"

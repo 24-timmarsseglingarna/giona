@@ -63,6 +63,14 @@
 
 }
 
+p.status {
+	color: red;
+}
+
+a.list-group-item, button.list-group-item {
+	max-width: 400px;
+}
+
 a.btn:visited {
 	color: #ffffff;
 }

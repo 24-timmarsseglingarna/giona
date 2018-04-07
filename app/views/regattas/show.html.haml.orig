@@ -5,7 +5,7 @@
   .panel-body
     .legend Arrangör:
     %p
-      %i.fa.fa-institution(aria-hidden='true')
+      %i.fas.fa-university(aria-hidden='true')
       = link_to @regatta.organizer.name, @regatta.organizer
 
     .legend Seglingar:
