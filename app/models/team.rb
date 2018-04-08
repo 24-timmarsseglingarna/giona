@@ -14,6 +14,7 @@ class Team < ApplicationRecord
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
   scope :has_person, ->(p_id) {joins(:people).where("people.id = ?", p_id) }
   scope :is_active, ->(value = true) { where(active: value) }
+  scope :is_visible, ->() {where("state > ?", 1)}
   scope :did_not_start, ->(value = true) { where(did_not_start: value) }
   scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
   scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
@@ -21,6 +22,17 @@ class Team < ApplicationRecord
   accepts_nested_attributes_for :boat
 
   after_initialize :set_defaults, unless: :persisted?
+
+  enum state: [:draft, :submitted, :approved]
+  after_initialize :set_default_state, :if => :new_record?
+
+  def state_to_s
+    str = Hash.new
+    str['draft'] = 'utkast'
+    str['submitted'] = 'inskickad'
+    str['approved'] = 'godkänd'
+    str[self.state]
+  end
 
   def sxk
     self.handicap.sxk
@@ -72,14 +84,12 @@ class Team < ApplicationRecord
     review_status = Hash.new
 
     # race_details
-    str = ''
     if self.start_point.blank?
-      str += 'Var vill du starta? '
+      review_status['race_details'] = 'Var vill du starta? '
     end
     if self.offshore.nil?
-      str += 'Seglar du havssträckor eller bara kuststräckor? '
+      review_status['race_details'] = "#{review_status['race_details'].to_s} Seglar du havssträckor eller bara kuststräckor?"
     end
-    review_status['race_details'] = str
 
     #crew
     if self.people.blank?
@@ -98,7 +108,9 @@ class Team < ApplicationRecord
         review_status['boat'] = 'Vilken sorts handikapp ska du använda?'
       else
         if self.handicap.blank?
-          review_status['boat'] = 'Vilket handikapp ska du använda?'
+          unless (self.handicap_type = 'SxkCertificate') || (self.handicap_type = 'SxkCertificate')
+            review_status['boat'] = 'Vilket handikapp ska du använda?'
+          end
         end
       end
     end
@@ -119,5 +131,9 @@ class Team < ApplicationRecord
   end
 
 private
+
+  def set_default_state
+    self.state = :draft
+  end
 
 end

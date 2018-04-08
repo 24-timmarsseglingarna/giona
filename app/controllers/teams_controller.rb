@@ -1,7 +1,8 @@
 class TeamsController < ApplicationController
   include ApplicationHelper
-  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap]
+  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap, :submit, :draft, :approve]
   before_action :authenticate_user!, :except => [:show, :index, :welcome]
+  before_action :authorize_organizer!, only: [:approve]
   before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create]
   #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
@@ -198,13 +199,18 @@ class TeamsController < ApplicationController
     @team.handicap_type = nil
     @team.save!
     Note.create(team_id: @team.id, user: current_user, description: "Handikapp borttaget av #{current_user.to_s}.")
+    if @team.submitted?
+      @team.draft!
+      flash[:alert] = "Deltagaranmälan har nu status 'utkast'. Du behöver skicka in den igen."
+      Note.create(team_id: @team.id, user: current_user, description: "Anmälan drogs tillbaka eftersom handikappet togs bort av #{current_user.to_s}.")
+    end
     redirect_to @team, notice: "Du behöver välja handikapp för att kunna delta."
   end
 
   def set_handicap_type
     @team.handicap_type = params[:handicap_type].to_s
     @team.save!
-    Note.create(team_id: @team.id, user: current_user, description: "Handikapptyp #{Team.types[@team.handicap_type]} satt av #{current_user.to_s}.")
+    Note.create(team_id: @team.id, user: current_user, description: "Handikapptyp #{@team.handicap_type} satt av #{current_user.to_s}.")
     if ['SrsKeelboat', 'SrsMultihull', 'SrsDingy', 'SrsCertificate', 'SxkCertificate'].include? @team.handicap_type
       redirect_to edit_team_path(:id => @team.id, :section => :handicap)
     else
@@ -222,6 +228,11 @@ class TeamsController < ApplicationController
     @team.boat_type_name = nil
     @team.boat_sail_number = nil
     @team.save!
+    if @team.submitted?
+      @team.draft!
+      flash[:alert] = "Deltagaranmälan har nu status 'utkast'. Du behöver skicka in den igen."
+      Note.create(team_id: @team.id, user: current_user, description: "Anmälan drogs tillbaka eftersom båten togs bort av #{current_user.to_s}.")
+    end
     Note.create(team_id: @team.id, user: current_user, description: "Båt #{boat_name} (#{boat_id}) bortvald av #{current_user.to_s}.")
     redirect_to @team, notice: "Båten #{boatname unless @boatname.blank?} är nu bortplockad. Välj en annan båt."
   end
@@ -234,6 +245,43 @@ class TeamsController < ApplicationController
     @team.save!
     Note.create(team_id: @team.id, user: current_user, description: "Båt #{boat.name} (#{boat.id}) vald av #{current_user.to_s}.")
     redirect_to @team, notice: "Båten #{@team.boat.name unless @team.boat.blank?} är nu vald."
+  end
+
+  def submit
+    if @team.draft?
+      @team.start_number = @team.race.regatta.next_start_number if @team.start_number.nil?
+      @team.submitted!
+      Note.create(team_id: @team.id, user: current_user, description: "Deltagaranmälan inskickad av #{current_user.to_s}.")
+      redirect_to @team, notice: 'Toppen! Nu är anmälan inskickad till arrangören.'
+    else
+      redirect_to @team, alert: 'Det går bara att skicka in anmälan som är i status utkast.'
+    end
+  end
+
+  def draft
+    if @team.submitted?
+      @team.draft!
+      Note.create(team_id: @team.id, user: current_user, description: "Deltagaranmälan återdragen av #{current_user.to_s}.")
+      redirect_to @team, notice: 'Anmälan är återdragen. Du kan ändra i den. Skicka in den om du vill vara anmäld.'
+    else
+        if has_organizer_rights? && @team.approved?
+          @team.draft!
+          Note.create(team_id: @team.id, user: current_user, description: "Deltagaranmälan återdragen av #{current_user.to_s}.")
+          redirect_to @team, notice: 'Anmälan är återdragen. Den kan ändras och godkännas igen.'
+      else
+        redirect_to @team, alert: "Det går bara att skicka in anmälan som är i status 'inskickad'."
+      end
+    end
+  end
+
+  def approve
+    if @team.submitted?
+      @team.approved!
+      Note.create(team_id: @team.id, user: current_user, description: "Deltagaranmälan godkänd av #{current_user.to_s}.")
+      redirect_to @team, notice: 'Anmälan är godkänd och nu synlig i startlistan.'
+    else
+      redirect_to @team, alert: "Det går bara att godkänna en anmälan som är i status 'inskickad'."
+    end
   end
 
 
@@ -255,7 +303,7 @@ class TeamsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def team_params
-      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_type_name, :boat_sail_number, :start_point, :finish_point, :start_number, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :handicap_id, :handicap_type, :boat_id, boat_attributes: [:id, :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi], person_ids: [])
+      params.require(:team).permit(:race_id, :boat_id, :external_id, :external_system, :name, :boat_name, :boat_type_name, :boat_sail_number, :start_point, :finish_point, :start_number, :plaque_distance, :did_not_start, :did_not_finish, :paid_fee, :active, :offshore, :vacancies, :person_id, :handicap_id, :handicap_type, :state, :boat_id, boat_attributes: [:id, :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi], person_ids: [])
     end
 
     def authorize_me!
@@ -264,7 +312,19 @@ class TeamsController < ApplicationController
         redirect_to :back
       else
         unless (has_assistant_rights? || (@team.people.include? current_user.person))
-          flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter. Du behöver tillhöra besättningen eller administratörsbehörighet.'
+          flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter. Du behöver tillhöra besättningen eller ha särskild behörighet.'
+          redirect_to :back
+        end
+      end
+    end
+
+    def authorize_organizer!
+      unless current_user
+        flash[:alert] = 'Du behöver logga in.'
+        redirect_to :back
+      else
+        unless has_organizer_rights?
+          flash[:alert] = 'Du behöver ha arrangörsbehörighet.'
           redirect_to :back
         end
       end
