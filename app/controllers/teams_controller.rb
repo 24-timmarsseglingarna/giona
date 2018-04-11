@@ -96,7 +96,6 @@ class TeamsController < ApplicationController
     @team = Team.new(team_params)
     @team.skipper = current_user.person if current_user
     @team.set_name
-    @team.active = true
     respond_to do |format|
       if @team.save
         logger.info "@team.id: #{@team.id }"
@@ -338,7 +337,7 @@ class TeamsController < ApplicationController
     end
 
     def check_active!
-      unless @team.active
+      unless @team.archived?
         flash[:alert] = 'Anmälan/loggboken är arkiverad och kan inte ändras.'
         redirect_to :back
       end

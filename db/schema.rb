@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180407121016) do
+ActiveRecord::Schema.define(version: 20180408140956) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -181,10 +181,9 @@ ActiveRecord::Schema.define(version: 20180407121016) do
     t.boolean  "did_not_start"
     t.boolean  "did_not_finish"
     t.boolean  "paid_fee"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
     t.integer  "boat_id"
-    t.boolean  "active",           default: false
     t.integer  "finish_point"
     t.boolean  "offshore"
     t.string   "vacancies"

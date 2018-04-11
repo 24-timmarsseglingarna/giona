@@ -42,7 +42,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Linjett 33'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -67,7 +67,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Scampi'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -118,7 +118,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Linjett 33'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -143,7 +143,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Scampi'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new

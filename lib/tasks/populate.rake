@@ -271,7 +271,7 @@ namespace :import do
         handicap.save!
 
         t = Team.find_or_create_by race: race, boat: boat
-        t.active = true
+        t.state = 'approved'
         t.offshore = true
         t.finish_point = 553
         t.name = boat.name + ' / ' + person.last_name
@@ -551,14 +551,6 @@ namespace :batch do
     for regatta in Organizer.find_by( name: 'Svenska Kryssarklubbens Stockholmskrets' ).regattas
       regatta.name = regatta.name.gsub(/\ i\ Stockholm/, '')
       regatta.save!
-    end
-  end
-
-  task :activate_teams => :environment do
-    r = Regatta.find_by name: 'Höstregattan 2017'
-    for team in Team.from_regatta r.id
-      team.active = true
-      team.save
     end
   end
 

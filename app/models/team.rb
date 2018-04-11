@@ -13,7 +13,7 @@ class Team < ApplicationRecord
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
   scope :has_person, ->(p_id) {joins(:people).where("people.id = ?", p_id) }
-  scope :is_active, ->(value = true) { where(active: value) }
+  scope :is_active, ->(value = true) { where('state < ?', 3) } #still possible to easily change for a participant
   scope :is_visible, ->() {where("state > ?", 1)}
   scope :did_not_start, ->(value = true) { where(did_not_start: value) }
   scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
@@ -23,7 +23,7 @@ class Team < ApplicationRecord
 
   after_initialize :set_defaults, unless: :persisted?
 
-  enum state: [:draft, :submitted, :approved]
+  enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived]
   after_initialize :set_default_state, :if => :new_record?
 
   def state_to_s
@@ -32,6 +32,18 @@ class Team < ApplicationRecord
     str['submitted'] = 'inskickad'
     str['approved'] = 'godkänd'
     str[self.state]
+  end
+
+  def active
+    self.visible?
+  end
+
+  def active?
+    self.visible?
+  end
+
+  def visible?
+    self.state > 0
   end
 
   def sxk
