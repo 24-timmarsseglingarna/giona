@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :agreements
   resources :default_starts
   resources :legs
   resources :terrains

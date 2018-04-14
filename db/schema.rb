@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180411135429) do
+ActiveRecord::Schema.define(version: 20180414121744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "agreements", force: :cascade do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "boats", force: :cascade do |t|
     t.string   "name"
@@ -25,6 +32,15 @@ ActiveRecord::Schema.define(version: 20180411135429) do
     t.string   "external_system"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+  end
+
+  create_table "consents", force: :cascade do |t|
+    t.integer  "agreement_id"
+    t.integer  "person_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["agreement_id"], name: "index_consents_on_agreement_id", using: :btree
+    t.index ["person_id"], name: "index_consents_on_person_id", using: :btree
   end
 
   create_table "crew_members", force: :cascade do |t|
