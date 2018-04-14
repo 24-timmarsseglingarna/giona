@@ -1,10 +1,9 @@
 class User < ApplicationRecord
-  
-  acts_as_token_authenticatable
 
+  acts_as_token_authenticatable
+  has_many :notes
   belongs_to :person
   scope :from_person, ->(p_id) { joins(:person).where("people.id = ?", p_id) }
-  
 
   enum role: [:user, :assistant, :organizer, :admin]
 
@@ -12,7 +11,7 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   #  :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable, 
+  devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
          # :confirmable
 
@@ -24,6 +23,10 @@ class User < ApplicationRecord
 
   def review!
   	self.update_attribute(:review, true)
+  end
+
+  def to_s
+    self.email
   end
 
 

@@ -271,7 +271,7 @@ namespace :import do
         handicap.save!
 
         t = Team.find_or_create_by race: race, boat: boat
-        t.active = true
+        t.state = 'approved'
         t.offshore = true
         t.finish_point = 553
         t.name = boat.name + ' / ' + person.last_name
@@ -485,6 +485,17 @@ namespace :import do
 end
 
 namespace :batch do
+  task :agreement => :environment do
+    a = Agreement.create name: 'Revision A - riksreglerna 2006',
+                         description: 'Start-, resultat- och maratonlistor med personnamn och båtnamn kan komma att publiceras bland annat på Internet vilket alla deltagare förutsättes godkänna i och med att de anmäler sig till seglingen.'
+    a.save!
+  end
+
+  task :admin => :environment do
+    User.first.admin!
+  end
+
+
   namespace :pod do
     task :organizers => :environment do
       Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Västkustkrets', external_system: 'PoD', external_id: 'Vk')
@@ -551,14 +562,6 @@ namespace :batch do
     for regatta in Organizer.find_by( name: 'Svenska Kryssarklubbens Stockholmskrets' ).regattas
       regatta.name = regatta.name.gsub(/\ i\ Stockholm/, '')
       regatta.save!
-    end
-  end
-
-  task :activate_teams => :environment do
-    r = Regatta.find_by name: 'Höstregattan 2017'
-    for team in Team.from_regatta r.id
-      team.active = true
-      team.save
     end
   end
 

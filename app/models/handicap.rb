@@ -12,7 +12,7 @@ class Handicap < ApplicationRecord
   default_scope { order 'name', 'sail_number' }
 
   def description
-        "#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}, #{self.source}"
+    "#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}, #{self.source}"
   end
 
   def self.types

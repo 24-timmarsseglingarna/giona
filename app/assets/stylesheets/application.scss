@@ -53,18 +53,29 @@
     padding-left: 2em;
   }
 
-  a:visited {
-    color: #337ab7;
-  }
-
-  a:hover {
-    background-color: #cccccc;
-  }
 
 }
 
-a.btn:visited {
-	color: #ffffff;
+.row a:hover {
+	//background-color: initial;
+}
+
+p.status {
+	color: red;
+}
+
+ol.notes, ol.notes li {
+	margin-left: 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+a.list-group-item, button.list-group-item {
+	max-width: 400px;
+}
+
+a.btn-primary {
+	color: #fff;
 }
 
 .list-group.race-select {

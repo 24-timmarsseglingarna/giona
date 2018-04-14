@@ -4,16 +4,16 @@
       %a{:href => races_path}
         %i.fas.fa-edit(aria-hidden='true')
         Anmäl båt och skeppare
-    %li
-      %a{:href => teams_path}
-        %i.fa.far.fa-copy(aria-hidden='true')
-        Mina deltagaranmälningar och tidigare deltagande
     - if current_user
       - if current_user.person
         %li
+          %a{:href => teams_path}
+            %i.fa.far.fa-copy(aria-hidden='true')
+            Dina aktuella deltagaranmälningar
+        %li
           %a{:href => person_path(current_user.person)}
             %i.far.fa-user.fa-fw(aria-hidden='true')
-            Mina person- och kontaktuppgifter
+            Dina person- och kontaktuppgifter
     %li
       %a{:href => organizers_path}
         %i.fa.fa-university(aria-hidden='true')
@@ -49,5 +49,8 @@
         %a{:href => inactive_users_path}
           %i.fa.fa-user-times.fa-fw(aria-hidden='true')
           Raderade användare
+    %li= link_to '24-timmars.nu', 'https://24-timmars.nu/'
+    %li= link_to 'sxk.se', 'https://sxk.se/'
+
 / /.sidebar-collapse
 / /.navbar-static-side

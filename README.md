@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.5.2.1
+Version 0.6
 
 =======
 
@@ -22,6 +22,7 @@ rake import:srs:dingies             # First, manually copy from pdf and paste in
 rake batch:pod:organizers
 rake import:pod:terrain
 rake import:pod:default_starts
+rake batch:agreement                # At least one end user agreement must exist.
 rake import:starema:people          # Process file manually and push
 rake import:starema:regattas        # Process file manually and push
 rake import:starema:boats           # Process file manually and push
@@ -30,6 +31,10 @@ rake import:starema:crew_members    # Process file manually and push
 rake batch:team_names               # Only after import from external system
 rake mess:details                   # In development only
 rake testdata:team                  # In development/test only
+
+# Create first user
+
+rake batch:admin                    # Set admin rights
 
 ======
 

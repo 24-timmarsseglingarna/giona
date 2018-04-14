@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :agreements
   resources :default_starts
   resources :legs
   resources :terrains
@@ -32,6 +33,9 @@ Rails.application.routes.draw do
   post 'teams/set_handicap_type'
   post 'teams/remove_boat'
   post 'teams/set_boat'
+  post 'teams/submit'
+  post 'teams/draft'
+  post 'teams/approve'
   get 'teams/edit_boat'
   get 'teams/welcome'
 
@@ -57,10 +61,13 @@ Rails.application.routes.draw do
     end
     member do
       get 'recover'
+      get 'agreement'
+      post 'consent'
     end
   end
 
-  root to: "regattas#index"
+
+  root to: "teams#welcome"
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

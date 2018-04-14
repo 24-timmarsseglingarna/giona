@@ -21,10 +21,9 @@
         =@person.zip
       =@person.city
       %br
-      =@person.country
+      = I18n.t("countries.#{@person.country}")
       %p
         -if authorized?
-
           %p
             Födelsedatum:
             =@person.birthday
@@ -34,32 +33,27 @@
               = (t("role.#{user_role @person}")).titleize + ':'
               = link_to @person.user.email, @person.user
 
-          - if has_assistant_rights?
-            %p
-              Finns i externt system
-              %i= @person.external_system
-              med id:
-              %i= @person.external_id
-            %p
-              Kvalitetsgranska:
-              - if @person.review
-                ja
-              -else
-                nej
 
     %p
-      - if authorized?
+      - if authorized? || has_assistant_rights?
         = link_to 'Redigera', edit_person_path(@person), class: "btn btn-primary"
     %p
 
       = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
-    %p
-      %br
-      = link_to 'Tillbaka', :back
+    %p Bekräftade användaravtal:
+    - for consent in @person.consents.reverse
+      %ol= link_to "#{consent.agreement.name}, godkänd #{I18n.l(consent.created_at, format: :normal)}", agreement_path(id: consent.agreement.id)
 
-= link_to 'Anmäl båt och skeppare', races_path
-
-:javascript
-  $(document).ready(function() {
-  $('#giona-teams').DataTable();
-  } );
+    - if current_user
+      - if has_assistant_rights?
+        %p
+          Finns i externt system
+          %i= @person.try :external_system
+          med id:
+          %i= @person.try :external_id
+        %p
+          Kvalitetsgranska:
+          - if @person.try :review
+            ja
+          -else
+            nej

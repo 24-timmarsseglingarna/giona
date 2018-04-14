@@ -1,29 +1,37 @@
-%h1 Mitt deltagande
+%h1 Dina aktuella deltagaranmälningar
 
-%table#giona-teams.table.table-striped.table-bordered.table-hover{:width => "100%"}
-  %thead
-    %tr
-      %th Arrangör
-      %th Regatta
-      %th Segling
-      %th Båt
-      %th Båttyp
-      %th Plakettdistans
-      %th Öppen
-  %tbody
+%p
+- if current_user
+  - if @teams.present?
+    .list-group
     - @teams.each do |team|
-      %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
-        %td= team.race.regatta.organizer.name
-        %td= team.race.regatta.name
-        %td= team.race.period
-        %td= team.boat_name
-        %td= team.boat_type_name
-        %td= team.plaque_distance
-        %td= "ja" if team.active
-
-= link_to 'Anmäl båt och skeppare', races_path
-
-:javascript
-  $(document).ready(function() {
-  $('#giona-teams').DataTable();
-  } );  
+      %a.list-group-item{:href => team_path(team)}
+        %h4.list-group-item-heading
+          =team.race.regatta.name
+        %p.list-group-item-text
+          = team.race.regatta.organizer.name
+          %br
+          = team.race.name
+          %br
+          Start:
+          = race_start(team.race)
+          -unless team.start_point.blank?
+            från
+            = team.start_point
+            = name_by_number(team.race.regatta.terrain, team.start_point)
+          %br
+          Skeppare:
+          = team.skipper.try :name
+          - unless team.boat.blank?
+            %br
+            = team.boat_type_name
+            = team.boat_sail_number
+            = team.boat_name
+          %br
+          Startnummer:
+          = team.start_number
+          %br
+          Status på anmälan:
+          = team.state_to_s
+  - else
+    Du har inte några deltagaranmälningar.

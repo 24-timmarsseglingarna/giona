@@ -8,11 +8,13 @@ class Team < ApplicationRecord
   has_one :skipper_crew_member, -> { where(skipper: true) }, class_name: 'CrewMember'
   has_one :skipper, :through => :skipper_crew_member, :source => :person
   belongs_to :handicap
+  has_many :notes
 
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
   scope :has_person, ->(p_id) {joins(:people).where("people.id = ?", p_id) }
-  scope :is_active, ->(value = true) { where(active: value) }
+  scope :is_active, ->(value = true) { where('state < ?', 3) } #still possible to easily change for a participant
+  scope :is_visible, ->() {where("state > ?", 1)}
   scope :did_not_start, ->(value = true) { where(did_not_start: value) }
   scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
   scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
@@ -20,7 +22,29 @@ class Team < ApplicationRecord
   accepts_nested_attributes_for :boat
 
   after_initialize :set_defaults, unless: :persisted?
-  # The set_defaults will only work if the object is new
+
+  enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived]
+  after_initialize :set_default_state, :if => :new_record?
+
+  def state_to_s
+    str = Hash.new
+    str['draft'] = 'utkast'
+    str['submitted'] = 'inskickad'
+    str['approved'] = 'godkänd'
+    str[self.state]
+  end
+
+  def active
+    self.visible?
+  end
+
+  def active?
+    self.visible?
+  end
+
+  def visible?
+    self.state > 0
+  end
 
   def sxk
     self.handicap.sxk
@@ -66,6 +90,66 @@ class Team < ApplicationRecord
     new_skipper = CrewMember.find_by team_id: self.id, person_id: person.id
     new_skipper.skipper = true
     new_skipper.save!
+  end
+
+  def review
+    review_status = Hash.new
+
+    # race_details
+    if self.start_point.blank?
+      review_status['race_details'] = 'Var vill du starta? '
+    end
+    if self.offshore.nil?
+      review_status['race_details'] = "#{review_status['race_details'].to_s} Seglar du havssträckor eller bara kuststräckor?"
+    end
+
+    #crew
+    if self.people.blank?
+      review_status['crew'] = 'Lägg till minst en i besättning.'
+    else
+      if self.skipper.blank?
+        review_status['crew'] = 'Vem ska vara skeppare?'
+      else
+        if ! self.skipper.valid?
+          review_status['crew'] = 'Skepparens kontaktuppgifter behöver kompletteras.'
+        end
+      end
+    end
+
+    #boat
+    if self.boat.blank?
+      review_status['boat'] = 'Vilken båt ska du segla med?'
+    else
+      if self.handicap_type.blank?
+        review_status['boat'] = 'Vilken sorts handikapp ska du använda?'
+      else
+        if self.handicap.blank?
+          unless (self.handicap_type = 'SxkCertificate') || (self.handicap_type = 'SxkCertificate')
+            review_status['boat'] = 'Vilket handikapp ska du använda?'
+          end
+        end
+      end
+    end
+
+    review_status
+  end
+
+  def offshore_name
+    unless self.offshore.nil?
+      if self.offshore
+        'Hav'
+      else
+        'Kust'
+      end
+    else
+      ''
+    end
+  end
+
+private
+
+  def set_default_state
+    self.state = :draft
   end
 
 end

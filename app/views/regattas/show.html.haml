@@ -5,7 +5,7 @@
   .panel-body
     .legend Arrangör:
     %p
-      %i.fa.fa-institution(aria-hidden='true')
+      %i.fas.fa-university(aria-hidden='true')
       = link_to @regatta.organizer.name, @regatta.organizer
 
     .legend Seglingar:
@@ -80,28 +80,54 @@
   %thead
     %tr
       %th Segling
-      %th Nr
-      %th Start
-      %th Båt
-      %th Typ
-      %th Segelnr
-      %th Handikapp
+      %th Starttid
+      %th Startnr
+      %th Startplats
       %th Skeppare
+      %th Båt
+      %th Båttyp
+      %th Söker gast
+      - if has_assistant_rights?
+        %th Status
   %tbody
-    - @regatta.teams.each do |team|
+    - @teams.each do |team|
       %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
-        %td= team.race.period
+        %td= team.race.name
+        %td= race_start(team.race)
         %td= team.start_number
         %td= team.start_point
+        %td= team.skipper.name unless team.skipper.nil?
         %td= team.boat_name
         %td= team.boat_type_name
-        %td= team.boat_sail_number
-        %td= team.handicap.sxk unless team.handicap.nil?
-        %td= team.skipper.name unless team.skipper.nil?
+        %td= "ja" unless team.vacancies.blank?
+        - if has_assistant_rights?
+          %td= team.state_to_s
 
 
 :javascript
   $(document).ready(function() {
-  $('#giona-races').DataTable();
-  $('#giona-teams').DataTable();
-  } );
+  $('#giona-teams').DataTable({
+  paging: false,
+  language: {
+          processing:     "Jobbar ...",
+          search:         "Sök:",
+          lengthMenu:     "Visa _MENU_ rader",
+          info:           "Visar rad _START_ till _END_ av _TOTAL_",
+          infoPostFix:    "",
+          loadingRecords: "Laddar urval ...",
+          zeroRecords:    "Det finns inget som passar urvalet.",
+          emptyTable:     "Tabellen är tom.",
+          paginate: {
+              first:      "Första",
+              previous:   "Förra",
+              next:       "Nästa",
+              last:       "Sista"
+          },
+          aria: {
+              sortAscending:  ": sortera på den här kolumnen",
+              sortDescending: ": omvänd sortering på den här kolumnen"
+          }
+      }
+
+  });
+  })

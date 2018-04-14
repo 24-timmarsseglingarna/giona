@@ -37,12 +37,16 @@ class Race < ApplicationRecord
   end
 
   def name
-    if self.common_finish
-      finish = ', gemensam målgång'
-    else
-      finish = ', målgång vid startplatsen'
+    str = self.period.to_s + ' tim, '
+    unless self.description.blank?
+      str += self.description + ', '
     end
-    "#{self.description} #{self.period} timmar#{finish}"
+    if self.common_finish
+      str += ' gemensamt mål'
+    else
+      str += ' mål vid start'
+    end
+    str
   end
 
   def to_s

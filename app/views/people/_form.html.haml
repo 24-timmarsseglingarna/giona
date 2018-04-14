@@ -3,7 +3,12 @@
   = f.inputs do
     = f.input :first_name
     = f.input :last_name
-    = f.input :email
+    - if current_user
+      - if current_user.person == @person
+        = f.input :email, :input_html => { :readonly => true }
+      - else
+        = f.input :email
+
     = f.input :phone
     = f.input :birthday, :start_year => Date.today.year-100, :end_year => Date.today.year
     = f.input :co
@@ -12,8 +17,12 @@
     = f.input :city
     = f.input :country, :priority_countries => ["Sweden", "Denmark", "Finland", "Luxembourg", "Norway", "Poland", "Germany" ]
 
+    Jag godkänner användaravtalet.
+    %p= @agreement.name
+    %p= @agreement.description
+    %p Publicerad
+    %p= I18n.l(@agreement.created_at, :normal)
   = f.actions do
     = f.action :submit, :as => :button
-    = f.action :cancel, :as => :link
 
 = hidden_field_tag :add_me

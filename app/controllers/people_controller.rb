@@ -4,7 +4,7 @@ class PeopleController < ApplicationController
 
   before_action :authenticate_user!
   before_action :authorize_assistant!, only: [:inactive, :recover, :destroy]
-  before_action :set_person, only: [:show, :edit, :update, :destroy]
+  before_action :set_person, only: [:show, :edit, :update, :destroy, :agreement, :consent]
   before_action :insert_token_headers
 
   acts_as_token_authentication_handler_for User
@@ -45,6 +45,7 @@ class PeopleController < ApplicationController
   # GET /people/new
   def new
     @person = Person.new
+    @agreement = Agreement.last
     if params[:add_me] == 'true' && current_user
       @person.email = current_user.email
     end
@@ -58,9 +59,9 @@ class PeopleController < ApplicationController
   # POST /people.json
   def create
     @person = Person.new(person_params)
-
     respond_to do |format|
       if @person.save
+        @person.agreements << Agreement.last
         if current_user
           if current_user.user?
             current_user.person_id = @person.id
@@ -106,6 +107,21 @@ class PeopleController < ApplicationController
     end
   end
 
+  def agreement
+    @consents = @person.consents.reverse
+    render 'agreement'
+  end
+
+  def consent
+    if @person.agreements.include? Agreement.last
+      redirect_to @person, notice: 'Du har redan godkänt användaravtalet.'
+    else
+      @person.agreements << Agreement.last
+      flash.discard
+      redirect_to @person, notice: 'Tack för att du godkände användaravtalet.'
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_person
@@ -119,9 +135,9 @@ class PeopleController < ApplicationController
     end
 
     def authorize_assistant!
-      if ! has_assistant_rights? 
+      if ! has_assistant_rights?
         flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
         redirect_to :back
-      end  
+      end
     end
 end

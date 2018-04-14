@@ -19,6 +19,11 @@ class RegattasController < ApplicationController
   # GET /regattas/1.json
   def show
     @races = @regatta.races
+    if has_organizer_rights?
+      @teams = @regatta.teams
+    else
+      @teams = @regatta.teams.where("state > ?", 0)
+    end
   end
 
   # GET /regattas/new

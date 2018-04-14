@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180327083347) do
+ActiveRecord::Schema.define(version: 20180414121744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "agreements", force: :cascade do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "boats", force: :cascade do |t|
     t.string   "name"
@@ -25,6 +32,15 @@ ActiveRecord::Schema.define(version: 20180327083347) do
     t.string   "external_system"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+  end
+
+  create_table "consents", force: :cascade do |t|
+    t.integer  "agreement_id"
+    t.integer  "person_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["agreement_id"], name: "index_consents_on_agreement_id", using: :btree
+    t.index ["person_id"], name: "index_consents_on_person_id", using: :btree
   end
 
   create_table "crew_members", force: :cascade do |t|
@@ -80,6 +96,14 @@ ActiveRecord::Schema.define(version: 20180327083347) do
     t.index ["terrain_id", "leg_id"], name: "index_legs_terrains_on_terrain_id_and_leg_id", using: :btree
   end
 
+  create_table "notes", force: :cascade do |t|
+    t.string   "description"
+    t.integer  "user_id"
+    t.integer  "team_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "organizers", force: :cascade do |t|
     t.string   "name"
     t.string   "email_from"
@@ -109,6 +133,7 @@ ActiveRecord::Schema.define(version: 20180327083347) do
     t.string   "country"
     t.time     "deleted_at"
     t.boolean  "review",          default: false
+    t.boolean  "skip_validation", default: true
   end
 
   create_table "points", force: :cascade do |t|
@@ -173,15 +198,15 @@ ActiveRecord::Schema.define(version: 20180327083347) do
     t.boolean  "did_not_start"
     t.boolean  "did_not_finish"
     t.boolean  "paid_fee"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
     t.integer  "boat_id"
-    t.boolean  "active",           default: false
     t.integer  "finish_point"
-    t.boolean  "offshore",         default: false
+    t.boolean  "offshore"
     t.string   "vacancies"
     t.integer  "handicap_id"
     t.string   "handicap_type"
+    t.integer  "state"
   end
 
   create_table "terrains", force: :cascade do |t|
