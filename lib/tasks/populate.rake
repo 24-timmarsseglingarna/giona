@@ -485,6 +485,12 @@ namespace :import do
 end
 
 namespace :batch do
+  task :agreement => :environment do
+    a = Agreement.create name: 'Revision A - riksreglerna 2006',
+                         description: 'Start-, resultat- och maratonlistor med personnamn och båtnamn kan komma att publiceras bland annat på Internet vilket alla deltagare förutsättes godkänna i och med att de anmäler sig till seglingen.'
+    a.save!
+  end
+
   namespace :pod do
     task :organizers => :environment do
       Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Västkustkrets', external_system: 'PoD', external_id: 'Vk')

@@ -61,8 +61,11 @@ Rails.application.routes.draw do
     end
     member do
       get 'recover'
+      get 'agreement'
+      post 'consent'
     end
   end
+
 
   root to: "teams#welcome"
 

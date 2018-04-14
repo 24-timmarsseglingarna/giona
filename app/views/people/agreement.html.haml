@@ -1,0 +1,28 @@
+%h1 Användaravtal
+
+- if @person.consents.present?
+  - if @person.agreements.include? Agreement.last
+    %p Du har godkänt det senaste användaravtalet.
+    - agreement = Agreement.last
+    %h3= agreement.name
+    %p=  "Publicerad: #{I18n.l(agreement.created_at, format: :normal)}"
+    %p= agreement.description
+  - else
+    %p Du har inte godkänt senaste användaravtalet. Det kan du göra nu.
+    - agreement = Agreement.last
+    %h3= agreement.name
+    %p=  "Publicerad: #{I18n.l(agreement.created_at, format: :normal)}"
+    %p= agreement.description
+    =link_to 'Jag godkänner användaravtalet', consent_person_path, method: :post, class: 'btn btn-primary btn-default'
+
+  %h3 Användaravtal som du godkänt
+  - for consent in @person.consents.reverse
+    %ol= link_to "#{consent.agreement.name}, godkänd #{I18n.l(consent.created_at, format: :normal)}", agreement_path(id: consent.agreement.id)
+
+- else
+  %p Du har inte godkänt senaste användaravtalet. Det kan du göra nu.
+  - agreement = Agreement.last
+  %h3= agreement.name
+  %p=  "Publicerad: #{I18n.l(agreement.created_at, format: :normal)}"
+  %p= agreement.description
+  =link_to 'Jag godkänner användaravtalet', consent_person_path, method: :post, class: 'btn btn-primary btn-default'

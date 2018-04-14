@@ -59,6 +59,13 @@ class ApplicationController < ActionController::Base
         if !current_user.person.valid? && current_user.person.teams.present?
           flash[:notice] = "Hej! Du behöver #{view_context.link_to 'komplettera dina kontaktuppgiter', edit_person_url(current_user.person) }.".html_safe
         end
+        if current_user.person.agreements.blank?
+          flash[:alert] = "Hej! Du behöver #{view_context.link_to 'godkänna användaravtalet', agreement_person_path(current_user.person) }.".html_safe
+        else
+          if !current_user.person.agreements.include? Agreement.last
+            flash[:alert] = "Hej! Du behöver #{view_context.link_to 'godkänna det nya användaravtalet', agreement_person_path(current_user.person) }.".html_safe
+          end
+        end
       end
     end
   end

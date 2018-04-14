@@ -1,12 +1,9 @@
+%h1 Användaravtal
 %p#notice= notice
 
+%h3= @agreement.name
 %p
-  %b Name:
-  = @agreement.name
-%p
-  %b Description:
   = @agreement.description
-
-= link_to 'Edit', edit_agreement_path(@agreement)
-\|
-= link_to 'Back', agreements_path
+%p
+  Publicerad:
+  = I18n.l(@agreement.created_at, format: :normal)

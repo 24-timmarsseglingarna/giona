@@ -1,5 +1,9 @@
 class AgreementsController < ApplicationController
+  include ApplicationHelper
   before_action :set_agreement, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, :except => [:show, :index]
+  before_action :authorized?, :except => [:show, :index]
+
 
   # GET /agreements
   # GET /agreements.json
@@ -70,5 +74,12 @@ class AgreementsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def agreement_params
       params.require(:agreement).permit(:name, :description)
+    end
+
+    def authorized?
+      if ! has_admin_rights?
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end
     end
 end
