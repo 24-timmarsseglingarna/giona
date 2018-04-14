@@ -491,6 +491,11 @@ namespace :batch do
     a.save!
   end
 
+  task :admin => :environment do
+    User.first.admin!
+  end
+
+
   namespace :pod do
     task :organizers => :environment do
       Organizer.find_or_create_by(name: 'Svenska Kryssarklubbens Västkustkrets', external_system: 'PoD', external_id: 'Vk')
