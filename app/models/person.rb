@@ -3,8 +3,11 @@ class Person < ApplicationRecord
   has_one :user
   has_many :crew_members, dependent: :destroy
   has_many :teams, through: :crew_members
+  has_many :consents
+  has_many :agreements, through: :consents
   has_many :friends, -> { distinct }, :through => :teams, :source => :people
   has_many :boats, -> { distinct }, :through => :teams
+
 
   default_scope { order 'last_name, first_name' }
 

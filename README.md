@@ -22,6 +22,7 @@ rake import:srs:dingies             # First, manually copy from pdf and paste in
 rake batch:pod:organizers
 rake import:pod:terrain
 rake import:pod:default_starts
+rake batch:agreement                # At least one end user agreement must exist.
 rake import:starema:people          # Process file manually and push
 rake import:starema:regattas        # Process file manually and push
 rake import:starema:boats           # Process file manually and push

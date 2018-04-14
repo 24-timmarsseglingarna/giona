@@ -17,9 +17,12 @@
     = f.input :city
     = f.input :country, :priority_countries => ["Sweden", "Denmark", "Finland", "Luxembourg", "Norway", "Poland", "Germany" ]
 
+    Jag godkänner användaravtalet.
+    %p= @agreement.name
+    %p= @agreement.description
+    %p Publicerad
+    %p= I18n.l(@agreement.created_at, :normal)
   = f.actions do
     = f.action :submit, :as => :button
-
-- link_to 'Tillbaka', :back
 
 = hidden_field_tag :add_me

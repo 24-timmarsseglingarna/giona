@@ -26,7 +26,9 @@ module PeopleHelper
       if current_user.person.id == @person.id
       	true
       else
-      	false
+      	if has_assistant_rights?
+          true
+        end
       end
     else
       false

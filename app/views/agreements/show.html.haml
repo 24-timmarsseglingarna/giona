@@ -1,0 +1,9 @@
+%h1 Användaravtal
+%p#notice= notice
+
+%h3= @agreement.name
+%p
+  = @agreement.description
+%p
+  Publicerad:
+  = I18n.l(@agreement.created_at, format: :normal)

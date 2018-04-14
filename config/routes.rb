@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :agreements
   resources :default_starts
   resources :legs
   resources :terrains
@@ -60,8 +61,11 @@ Rails.application.routes.draw do
     end
     member do
       get 'recover'
+      get 'agreement'
+      post 'consent'
     end
   end
+
 
   root to: "teams#welcome"
 
