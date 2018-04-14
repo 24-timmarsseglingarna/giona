@@ -32,6 +32,10 @@ rake batch:team_names               # Only after import from external system
 rake mess:details                   # In development only
 rake testdata:team                  # In development/test only
 
+# Create first user
+
+rake batch:admin                    # Set admin rights
+
 ======
 
 Mail setup in development environment:
