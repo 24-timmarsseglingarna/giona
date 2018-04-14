@@ -12,13 +12,6 @@
     %p
       %i.fas.fa-university(aria-hidden='true')
       = @team.race.regatta.organizer.name
-      .legend Status:
-      %p
-        %i.fa.fa-file(aria-hidden='true')
-        -if @team.active?
-          Aktiv
-        -else
-          Arkiverad
       .legend Startnummer:
       %p
         %i.far.fa-file-alt(aria-hidden='true')
@@ -36,7 +29,43 @@
         Startade inte.
       - if @team.did_not_finish
         Fullföljde inte.
+      .legend Status:
+      %p
+        %i.fas.fa-file(aria-hidden='true')
+        - if @team.draft?
+          Utkast (syns inte i startlistan)
+          -if @status.blank? && i_may_see_links_to( @team ) && current_user
+            %p
+              Nu är din anmälan tillräckligt ifylld för att skickas in till arrangören.
+              Den blir då synlig i startlistan. Du kan gå tillbaka och ändra uppgifter och lägga till besättningsmedlemmar.
 
+            =link_to 'Skicka in anmälan', teams_submit_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
+        - elsif @team.submitted?
+          Inskickad (syns i startlistan)
+          - if @status.blank? && i_may_see_links_to( @team ) && current_user
+            %p
+              Din anmälan är inskickad till arrangören som kommer att granska och godkänna den. Normalt sker det innan start men om du anmäler dig sent kan det ske efter seglingen.
+              Du kan ändra alla uppgifter i anmälan men om du byter skeppare, båt eller handikapp så behöver du uttryckligen skicka in den igen.
+            %p
+              Du kan dra tillbaka anmälan. Då försvinner båten från startlistan. Anmälan finns kvar med status 'utkast' så du kan återanmäla dig.
+          - if has_organizer_rights?
+            = link_to 'Godkänn anmälan', teams_approve_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
+        - elsif @team.approved?
+          Godkänd (av arrangören)
+          %p Du kan ändra alla uppgifter i anmälan men om du byter skeppare, båt eller handikapp så behöver du uttryckligen skicka in den igen.
+          %p Om du får förhinder och inte startar eller avbryter seglingen så ska du anmäla det till arrangören.
+
+        - if i_may_see_links_to( @team )
+          %br
+          %p
+          - if @team.draft?
+            = link_to 'Radera anmälan helt.', @team, :method => :delete, :data => {:confirm => "Är du säker på att du vill radera deltagaransökan? Om du ångrar dig måste du fylla i den igen."}
+          - elsif @team.submitted?
+            = link_to 'Dra tillbaka anmälan, gör den till ett utkast.', teams_draft_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill dra tillbaka deltagaranmälan? Båten kommer att försvinna från startlistan men finnas kvar med status 'utkast'. Du kan skicka in anmälan igen."}
+          - elsif @team.approved?
+            - if has_organizer_rights?
+              %p Arrangör: Om något är fel i anmälan kan du ta bort godkännandet och skicka tilbaka den till status 'utkast'. Anmälan försvinner då från startlistan. Du måste själv kommunicera med deltagaren vad hen ska göra för att få den godkänd igen.
+              = link_to 'Ta bort godkännande. Åter till utkast.', teams_draft_path(:id => @team.id), method: :post, :class => 'btn btn-danger', :data => {:confirm => "Är du säker på att du vill dra tillbaka deltagaranmälan? Båten kommer att försvinna från startlistan men finnas kvar med status 'utkast'. Deltagaren kan skicka in anmälan igen."}
 
 .panel{:class => "#{panel_context(@status['race'])}"}
   .panel-heading
@@ -60,7 +89,7 @@
       = @team.race.period
       timmar
     - if i_may_see_links_to @team
-      =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-primary"
+      =link_to 'Ändra', edit_team_path(@team, :section=>:race), class: "btn btn-default"
 
 .panel{:class => "#{panel_context(@status['race_details'])}"}
   .panel-heading
@@ -94,7 +123,10 @@
         %i.fas.fa-exchange-alt(aria-hidden='true')
         = @team.offshore_name
       - if i_may_see_links_to @team
-        =link_to 'Ändra', edit_team_path(@team, :section=>:race_details), class: "btn btn-primary"
+        - if @status['race_details'].blank?
+          =link_to 'Ändra', edit_team_path(@team, :section=>:race_details), class: "btn btn-default"
+        - else
+          =link_to 'Ändra', edit_team_path(@team, :section=>:race_details), class: "btn btn-primary"
 
 .panel{:class => "#{panel_context(@status['crew'])}"}
   .panel-heading

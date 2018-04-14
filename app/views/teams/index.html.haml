@@ -22,9 +22,16 @@
           %br
           Skeppare:
           = team.skipper.try :name
+          - unless team.boat.blank?
+            %br
+            = team.boat_type_name
+            = team.boat_sail_number
+            = team.boat_name
           %br
-          = team.boat_type_name
-          = team.boat_sail_number
-          = team.boat_name
+          Startnummer:
+          = team.start_number
+          %br
+          Status på anmälan:
+          = team.state_to_s
   - else
     Du har inte några deltagaranmälningar.

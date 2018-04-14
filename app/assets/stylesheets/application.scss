@@ -53,14 +53,11 @@
     padding-left: 2em;
   }
 
-  a:visited {
-    color: #337ab7;
-  }
 
-  a:hover {
-    background-color: #cccccc;
-  }
+}
 
+.row a:hover {
+	//background-color: initial;
 }
 
 p.status {
@@ -77,8 +74,8 @@ a.list-group-item, button.list-group-item {
 	max-width: 400px;
 }
 
-a.btn:visited {
-	color: #ffffff;
+a.btn-primary {
+	color: #fff;
 }
 
 .list-group.race-select {

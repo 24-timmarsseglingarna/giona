@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180407063733) do
+ActiveRecord::Schema.define(version: 20180411135429) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 20180407063733) do
     t.string   "country"
     t.time     "deleted_at"
     t.boolean  "review",          default: false
+    t.boolean  "skip_validation", default: true
   end
 
   create_table "points", force: :cascade do |t|
@@ -181,15 +182,15 @@ ActiveRecord::Schema.define(version: 20180407063733) do
     t.boolean  "did_not_start"
     t.boolean  "did_not_finish"
     t.boolean  "paid_fee"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
     t.integer  "boat_id"
-    t.boolean  "active",           default: false
     t.integer  "finish_point"
     t.boolean  "offshore"
     t.string   "vacancies"
     t.integer  "handicap_id"
     t.string   "handicap_type"
+    t.integer  "state"
   end
 
   create_table "terrains", force: :cascade do |t|

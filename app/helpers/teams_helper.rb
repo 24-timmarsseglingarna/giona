@@ -11,7 +11,7 @@ module TeamsHelper
 
    def i_may_see_links_to team
      if team.present?
-       if team.active?
+       if !team.archived?
          if current_user
            if has_assistant_rights?
              true # is some kind of admin
@@ -33,7 +33,7 @@ module TeamsHelper
          else # current_user
            true # is not logged in (but shall see the link)
          end
-       else # active?
+       else # archived?
          false
        end
      else # team.present?
