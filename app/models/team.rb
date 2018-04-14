@@ -109,6 +109,10 @@ class Team < ApplicationRecord
     else
       if self.skipper.blank?
         review_status['crew'] = 'Vem ska vara skeppare?'
+      else
+        if ! self.skipper.valid?
+          review_status['crew'] = 'Skepparens kontaktuppgifter behöver kompletteras.'
+        end
       end
     end
 

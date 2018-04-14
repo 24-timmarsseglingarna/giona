@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery #with: :exception
 
+  before_action :check_if_my_details_are_valid
   before_action :insert_token_headers
   before_action :store_current_location, :unless => :devise_controller?
   respond_to :html, :json
@@ -50,6 +51,16 @@ class ApplicationController < ActionController::Base
 
   def store_current_location
     store_location_for(:user, request.url)
+  end
+
+  def check_if_my_details_are_valid
+    if current_user
+      if current_user.person.present?
+        if !current_user.person.valid? && current_user.person.teams.present?
+          flash[:notice] = "Hej! Du behöver #{view_context.link_to 'komplettera dina kontaktuppgiter', edit_person_url(current_user.person) }.".html_safe
+        end
+      end
+    end
   end
 
 end

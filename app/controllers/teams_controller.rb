@@ -163,6 +163,7 @@ class TeamsController < ApplicationController
     if CrewMember.find_by( person_id: person.id, team_id: @team.id).blank?
       crew_member = CrewMember.create person_id: person.id, team_id: @team.id
       Note.create(team_id: @team.id, user: current_user, description: "Gast #{person.name} (#{person.id}) tillagd av #{current_user.to_s}.")
+      person.update_attribute 'skip_validation', false
       redirect_to @team, notice: "Gasten #{person.name} tillagd i besättningslistan."
     else
       redirect_to @team, notice: "Gasten #{person.name} fanns redan i besättningslistan."
@@ -190,6 +191,7 @@ class TeamsController < ApplicationController
     @team.set_name
     @team.save!
     Note.create(team_id: @team.id, user: current_user, description: "#{person.name} (#{person.id}) utsedd till skeppare av #{current_user.to_s}.")
+    @team.skipper.update_attribute 'skip_validation', false
     redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
   end
 
@@ -337,7 +339,7 @@ class TeamsController < ApplicationController
     end
 
     def check_active!
-      unless @team.archived?
+      if @team.archived?
         flash[:alert] = 'Anmälan/loggboken är arkiverad och kan inte ändras.'
         redirect_to :back
       end

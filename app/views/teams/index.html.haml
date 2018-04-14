@@ -2,7 +2,7 @@
 
 %p
 - if current_user
-  - if @teams.count > 0
+  - if @teams.present?
     .list-group
     - @teams.each do |team|
       %a.list-group-item{:href => team_path(team)}

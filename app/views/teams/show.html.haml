@@ -157,6 +157,10 @@
           %br
         -unless (@team.skipper.country == 'SE') || (@team.skipper.country == 'Sverige') || @team.skipper.country.blank?
           =I18n.t(@team.skipper.country, :scope => :countries)
+        - if !@team.skipper.valid? && current_user
+          - if current_user.person == @team.skipper
+            %p
+              = link_to 'Komplettera kontaktuppgifter', edit_person_url(@team.skipper), class: 'btn btn-primary'
       - else
         Saknas. Utse någon av gastarna till skeppare.
 
@@ -177,6 +181,12 @@
                 %span.crew_action
                   %i.fa.fa-chevron-circle-up(aria-hidden='true')
                   =link_to 'utse till ny skeppare', teams_set_skipper_path(:id => @team.id, :person_id => person.id), method: :post, :data => { :confirm => "Är du säker på att du vill utse #{person.name} till ny skeppare?" }
+              %td
+                - if ! person.valid?
+                  %span.crew_action
+                    %i.fas.fa-exclamation-circle(aria-hidden='true')
+                    behöver komplettera kontaktuppgifter
+
 
     - if i_may_see_links_to @team
       %br

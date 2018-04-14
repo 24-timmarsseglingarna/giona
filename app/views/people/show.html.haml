@@ -24,7 +24,6 @@
       = I18n.t("countries.#{@person.country}")
       %p
         -if authorized?
-
           %p
             Födelsedatum:
             =@person.birthday
@@ -48,16 +47,12 @@
                 nej
 
     %p
-      - if authorized?
+      - if authorized? || has_assistant_rights?
         = link_to 'Redigera', edit_person_path(@person), class: "btn btn-primary"
     %p
 
       = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
-    %p
-      %br
-      = link_to 'Tillbaka', :back
 
-= link_to 'Anmäl båt och skeppare', races_path
 
 :javascript
   $(document).ready(function() {

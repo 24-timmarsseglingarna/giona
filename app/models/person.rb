@@ -22,7 +22,7 @@ class Person < ApplicationRecord
                         :zip,
                         :city, unless: Proc.new { |a| a.skip_validation? }
 
-  validates :phone, telephone_number: {country: proc{|record| record.country}}
+  validates :phone, telephone_number: {country: proc{|record| record.country}}, unless: Proc.new { |a| a.skip_validation? }
 
   after_initialize :set_defaults, unless: :persisted?
   # The set_defaults will only work if the object is new
