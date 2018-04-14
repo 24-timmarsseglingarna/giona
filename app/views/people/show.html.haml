@@ -21,7 +21,7 @@
         =@person.zip
       =@person.city
       %br
-      =@person.country
+      = I18n.t("countries.#{@person.country}")
       %p
         -if authorized?
 
