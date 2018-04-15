@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(version: 20180422084858) do
     t.integer "terrain_id", null: false
     t.index ["leg_id", "terrain_id"], name: "index_legs_terrains_on_leg_id_and_terrain_id", using: :btree
     t.index ["terrain_id", "leg_id"], name: "index_legs_terrains_on_terrain_id_and_leg_id", using: :btree
+  end
 
   create_table "logs", force: :cascade do |t|
     t.integer  "team_id"
