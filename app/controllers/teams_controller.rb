@@ -98,8 +98,8 @@ class TeamsController < ApplicationController
     @team.set_name
     respond_to do |format|
       if @team.save
-        logger.info "@team.id: #{@team.id }"
         Note.create(team_id: @team.id, user: current_user, description: "Anmälan skapad av #{current_user.to_s}.")
+        @team.skipper.update_attribute 'skip_validation', false
         format.html { redirect_to @team, notice: 'Deltagaranmälan skapad.' }
         format.json { render :show, status: :created, location: @team }
       else

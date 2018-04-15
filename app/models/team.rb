@@ -47,7 +47,15 @@ class Team < ApplicationRecord
   end
 
   def sxk
-    self.handicap.sxk
+    if self.handicap.present?
+      if self.handicap.sxk.present?
+        self.handicap.sxk
+      else
+        2.0
+      end
+    else
+      2.0
+    end
   end
 
   def regatta_id

@@ -11,8 +11,12 @@ class Regatta < ApplicationRecord
   validates_presence_of :organizer, :name, :terrain
 
   def next_start_number
-    start_number = self.teams.where("start_number is not null").pluck(:start_number).sort.last + 1
-    start_number = 1 if start_number.nil?
+    start_number = self.teams.where("start_number is not null").pluck(:start_number).sort.last
+    unless start_number.nil?
+      start_number = start_number + 1
+    else
+      start_number = 1
+    end
     start_number
   end
 
