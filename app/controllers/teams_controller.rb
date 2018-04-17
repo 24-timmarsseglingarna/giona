@@ -27,7 +27,7 @@ class TeamsController < ApplicationController
     if current_user
       if current_user.person
         if current_user.person.teams.present?
-          @teams = current_user.person.teams.is_active(true).order created_at: :desc
+          @teams = current_user.person.teams.is_active(true).order created_at: :desc  ## TODO: life cycle state 
           #@teams = apply_scopes(Team).all.order active: :desc, created_at: :desc
         end
       end
@@ -56,7 +56,7 @@ class TeamsController < ApplicationController
         if current_user.person.present?
           @team.skipper = current_user.person
           if @race.regatta.people.include? current_user.person
-            @teams = current_user.person.teams.is_active(true).from_regatta(@race.regatta.id).order created_at: :desc
+            @teams = current_user.person.teams.is_active(true).from_regatta(@race.regatta.id).order created_at: :desc # TODO refactor to life cycle state
             flash[:notice] = 'Du är redan anmäld till den här regattan.'
           end
         end
