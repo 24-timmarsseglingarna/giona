@@ -464,6 +464,7 @@ sv:
     passwords:
       user:
         send_instructions: Vi har mejlat dig hur du sätter ett nytt lösenord. Om mejlet inte kommer fram, kolla din spamlåda också.
+        updated: Tack, nu gäller ditt nya lösenord.
     registrations:
       user:
         destroyed: Användarkontot är nu raderat. Hej då!
