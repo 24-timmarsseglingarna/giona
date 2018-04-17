@@ -1,4 +1,20 @@
-%h1 Ny regatta
+%h1 Lägg upp en ny regatta
+%p När du lägger upp en ny regatta så hämtas standardvärden för din arrangör. Gå till din arrangörssida för att ändra sådana standardvärden. I nästa steg kommer du att lägga till seglingar, dvs de enskilda starterna/seglingsperioderna.
 
-= render 'form'
+= hidden_field_tag :organizer_id
 
+- if params[:organizer_id].blank? && @regatta.organizer_id.blank?
+  .panel.panel-default
+    .panel-heading
+      Skapa en ny regatta
+    .panel-body
+      Vilken arrangör?
+      %ol
+      - for organizer in Organizer.all
+        %li
+          %i.fas.fa-university(aria-hidden='true')
+          = link_to organizer.name, new_regatta_path(:organizer_id => organizer.id)
+      %br
+      = link_to 'Tillbaka', :back
+- else
+  = render 'form'

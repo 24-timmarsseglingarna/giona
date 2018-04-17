@@ -9,6 +9,7 @@ class Regatta < ApplicationRecord
   scope :has_race, ->(r_id) { joins(:races).where("races.id = ?", r_id) }
   scope :from_organizer, ->(o_id) { joins(:organizer).where("organizers.id = ?", o_id)}
   validates_presence_of :organizer, :name, :terrain
+  validates_uniqueness_of :name
 
   def next_start_number
     start_number = self.teams.where("start_number is not null").pluck(:start_number).sort.last

@@ -550,8 +550,13 @@ sv:
       boat:
         sail_number: Ange endast siffrorna i segelnumret, inte nationsbeteckningen.
       regatta:
-        email_to: En rad mejladresser, separerade med kommatecken.
+        name: Namnet på regattan behöver vara unikt, så att deltagaren förstår vad hen anmäler sig till. Seglingsområde och årtal kan ingå, t.ex. Vårregattan 2018 i Blekinge.
+        email_to: Vilka funktionärer ska informeras om inskickade anmälningar? En rad mejladresser, separerade med kommatecken.
+        email_from: Avsändarmejladress för mejl som skickas till deltagare.
+        name_from: Namn på avsändaren för mejl som skickas till deltagare.
         active: Det går att anmäla sig och segla.
+        confirmation: Texten i det mejl som skickas som bekräftelse till deltagaren som anmält sig.
+        terrain: Vilken version av punkt- och distanstabellen ska användas? En administratör kan ladda all data från PoD-databasen till det här systemet och frysa den versionen. Om du byter version av PoD på en regatta kan du manuellt behöva kontrollera om någon startplats tillkommit eller försvunit.       
       team:
         vacancies: Berätta kort hur många gastar du behöver och vilka krav du ställer. Intresserade kan se dina anmälningsuppgifter om båt, startplats och kontaktuppgifter, så det behöver du inte skriva. Ta bort texten om du inte söker fler gastar.
         offshore: Uppfyller båt och besättning reglernas krav för att segla havssträckor?
