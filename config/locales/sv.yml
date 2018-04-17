@@ -488,6 +488,9 @@ sv:
     cancel: Ångra
     submit: Skicka
     required: Obligatorisk
+    actions:
+      person:
+        create: Lägg in kontaktuppgifter
     labels:
       boat:
         name: Namn
@@ -556,7 +559,7 @@ sv:
         name_from: Namn på avsändaren för mejl som skickas till deltagare.
         active: Det går att anmäla sig och segla.
         confirmation: Texten i det mejl som skickas som bekräftelse till deltagaren som anmält sig.
-        terrain: Vilken version av punkt- och distanstabellen ska användas? En administratör kan ladda all data från PoD-databasen till det här systemet och frysa den versionen. Om du byter version av PoD på en regatta kan du manuellt behöva kontrollera om någon startplats tillkommit eller försvunit.       
+        terrain: Vilken version av punkt- och distanstabellen ska användas? En administratör kan ladda all data från PoD-databasen till det här systemet och frysa den versionen. Om du byter version av PoD på en regatta kan du manuellt behöva kontrollera om någon startplats tillkommit eller försvunit.
       team:
         vacancies: Berätta kort hur många gastar du behöver och vilka krav du ställer. Intresserade kan se dina anmälningsuppgifter om båt, startplats och kontaktuppgifter, så det behöver du inte skriva. Ta bort texten om du inte söker fler gastar.
         offshore: Uppfyller båt och besättning reglernas krav för att segla havssträckor?

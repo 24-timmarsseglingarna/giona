@@ -48,6 +48,7 @@ class PeopleController < ApplicationController
     @agreement = Agreement.last
     if params[:add_me] == 'true' && current_user
       @person.email = current_user.email
+      @person.skip_validation = false
     end
   end
 
