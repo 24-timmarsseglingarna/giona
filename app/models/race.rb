@@ -26,12 +26,6 @@ class Race < ApplicationRecord
     self.regatta.organizer.id
   end
 
-  def check_start_period
-    if self.start_from.present?
-      errors.add(:base, "end date should be greater than start") if self.start_from > self.start_to
-    end
-  end
-
   def self.from_organizer o_id
     Organizer.find(o_id).races
   end
@@ -70,6 +64,16 @@ class Race < ApplicationRecord
       end
     end
     start_hash
+  end
+
+  private
+
+  def check_start_period
+    if self.start_from.present?
+      if self.start_from > self.start_to
+        errors.add(:start_to, "slutet på startperioden kan inte vara före början")
+      end
+    end
   end
 
 end
