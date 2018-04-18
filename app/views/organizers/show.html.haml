@@ -3,6 +3,12 @@
     %i.fas.fa-university(aria-hidden='true')
     = @organizer.name
   .panel-body
+
+    .legend Arrangörens webbsida:
+    %p
+      %i.fas.fa-globe(aria-hidden='true')
+      =link_to( @organizer.web_page, @organizer.web_page ) unless @organizer.web_page.blank?
+
     .legend Kontaktperson:
     %p
       %i.fas.fa-address-card(aria-hidden='true')

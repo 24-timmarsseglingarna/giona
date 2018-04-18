@@ -10,6 +10,7 @@ class Organizer < ApplicationRecord
 
   validates_presence_of :name
   validates_uniqueness_of :name, :external_id
+  validates :web_page, url: { allow_nil: true }
 
   def reset_default_start
      self.defualt_start.delete_all

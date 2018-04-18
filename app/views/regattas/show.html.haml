@@ -24,6 +24,12 @@
         %i.fa.fa-calendar-minus-o(aria-hidden='true')
         nej
 
+    .legend Regattans webbsida:
+    %p
+      %i.fas.fa-globe(aria-hidden='true')
+      =link_to( @regatta.web_page, @regatta.web_page ) unless @regatta.web_page.blank?
+
+
     .legend Kontaktperson:
     %p
       %i.fas.fa-address-card(aria-hidden='true')
