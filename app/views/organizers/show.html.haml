@@ -52,16 +52,14 @@
     %tr
       %th Regatta
       %th Perioder
-      %th En starttid
+      %th Startdag(ar)
       %th Öppen
   %tbody
     - @organizer.regattas.each do |regatta|
       %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
         %td= regatta.name
-        %td
-          - for race in regatta.races
-            = race.period
-        %td= l(regatta.races.first.start_from, format: :long)
+        %td= regatta.races.pluck(:period).sort.join(', ') 
+        %td= race_starts regatta
         %td= "ja" if regatta.active
 
 :javascript

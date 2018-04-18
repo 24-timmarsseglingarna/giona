@@ -27,7 +27,7 @@ class TeamsController < ApplicationController
     if current_user
       if current_user.person
         if current_user.person.teams.present?
-          @teams = current_user.person.teams.is_active(true).order created_at: :desc
+          @teams = current_user.person.teams.is_active(true).order created_at: :desc  ## TODO: life cycle state
           #@teams = apply_scopes(Team).all.order active: :desc, created_at: :desc
         end
       end
@@ -56,7 +56,7 @@ class TeamsController < ApplicationController
         if current_user.person.present?
           @team.skipper = current_user.person
           if @race.regatta.people.include? current_user.person
-            @teams = current_user.person.teams.is_active(true).from_regatta(@race.regatta.id).order created_at: :desc
+            @teams = current_user.person.teams.is_active(true).from_regatta(@race.regatta.id).order created_at: :desc # TODO refactor to life cycle state
             flash[:notice] = 'Du är redan anmäld till den här regattan.'
           end
         end
@@ -94,17 +94,23 @@ class TeamsController < ApplicationController
   # POST /teams.json
   def create
     @team = Team.new(team_params)
-    @team.skipper = current_user.person if current_user
-    @team.set_name
-    respond_to do |format|
-      if @team.save
-        Note.create(team_id: @team.id, user: current_user, description: "Anmälan skapad av #{current_user.to_s}.")
-        @team.skipper.update_attribute 'skip_validation', false
-        format.html { redirect_to @team, notice: 'Deltagaranmälan skapad.' }
-        format.json { render :show, status: :created, location: @team }
+    if current_user
+      if current_user.person.present?
+        @team.skipper = current_user.person
+        @team.set_name
+        respond_to do |format|
+          if @team.save
+            Note.create(team_id: @team.id, user: current_user, description: "Anmälan skapad av #{current_user.to_s}.")
+            @team.skipper.update_attribute 'skip_validation', false
+            format.html { redirect_to @team, notice: 'Deltagaranmälan skapad.' }
+            format.json { render :show, status: :created, location: @team }
+          else
+            format.html { render :new }
+            format.json { render json: @team.errors, status: :unprocessable_entity }
+          end
+        end
       else
-        format.html { render :new }
-        format.json { render json: @team.errors, status: :unprocessable_entity }
+        redirect_to new_person_path(:add_me => true), notice: "Först behöver vi dina kontaktuppgiter."
       end
     end
   end

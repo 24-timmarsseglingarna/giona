@@ -1,6 +1,11 @@
 %h1 Deltagare
 %p
-  = link_to( 'Ny deltagare', new_person_path ) if user_signed_in?
+  - if current_user
+    - if has_assistant_rights?
+      = link_to new_person_path, class: 'btn btn-primary' do
+        %i.fa.fa-user-plus.fa-fw(aria-hidden='true')
+        Lägg till deltagare
+
 
 %table#giona-people.table.table-striped.table-bordered.table-hover{:width => "100%"}
   - if has_assistant_rights?
@@ -16,7 +21,7 @@
           %td= person.last_name
           %td= person.first_name
           %td
-            = person.zip 
+            = person.zip
             = person.city
           %td= person.birthday
   - else
@@ -34,4 +39,4 @@
   :javascript
     $(document).ready(function() {
     $('#giona-people').DataTable();
-    } );  
+    } );
