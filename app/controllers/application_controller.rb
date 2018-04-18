@@ -66,6 +66,8 @@ class ApplicationController < ActionController::Base
             flash[:alert] = "Hej! Du behöver #{view_context.link_to 'godkänna det nya användaravtalet', agreement_person_path(current_user.person) }.".html_safe
           end
         end
+      else
+        # No person
       end
     end
   end

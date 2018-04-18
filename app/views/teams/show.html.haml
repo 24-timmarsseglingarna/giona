@@ -34,6 +34,9 @@
         %i.fas.fa-file(aria-hidden='true')
         - if @team.draft?
           Utkast (syns inte i startlistan)
+          -if ! @status.blank? && i_may_see_links_to( @team ) && current_user
+            %p
+              Du behöver komplettera deltagaranmälan för att kunna skicka in den.
           -if @status.blank? && i_may_see_links_to( @team ) && current_user
             %p
               Nu är din anmälan tillräckligt ifylld för att skickas in till arrangören.

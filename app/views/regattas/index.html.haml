@@ -3,13 +3,11 @@
 %h1 Regattor
 %p
   - if has_organizer_rights?
-    %p Hej admin! Du skapar nya regattor från arrangörens sida.
-    %p= link_to 'Gå till arrangörer.', organizers_path
-
-%p 
+    = link_to 'Skapa ny regatta', new_regatta_path, class: 'btn btn-primary'
+%p
   - if params[:is_active] == 'true'
-    Visar regattor som är öppna.
-    =link_to 'Visa arkiverade regattor.', regattas_path(:is_active => false)
+    Visar regattor som är öppna för anmälan och ändringar.
+    %p= link_to 'Visa arkiverade regattor.', regattas_path(:is_active => false)
   - elsif params[:is_active] == 'false'
     Visar regattor som är arkiverade.
     =link_to 'Visa öppna regattor.', regattas_path(:is_active => true)
@@ -30,16 +28,16 @@
     - @regattas.each do |regatta|
       %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
         %td= regatta.organizer.name
-        %td= regatta.name 
+        %td= regatta.name
         %td
           - for race in regatta.races
             = race.period
         %td
           - if regatta.races.count > 0
-            = l(regatta.races.first.start_from, format: :long) 
+            = l(regatta.races.first.start_from, format: :long)
         %td= "ja" if regatta.active
 
 :javascript
   $(document).ready(function() {
   $('#giona-regattas').DataTable();
-  } );  
+  } );

@@ -28,10 +28,8 @@ class RegattasController < ApplicationController
 
   # GET /regattas/new
   def new
-    if params[:organizer_id].blank?
-      redirect_to regattas_path, alert: 'Regattor kan bara skapas från arrangörssidor.'
-    else
-      @regatta = Regatta.new
+    @regatta = Regatta.new
+    if params[:organizer_id].present? or @regatta.organizer_id.present?
       organizer = Organizer.find params[:organizer_id]
       @regatta.organizer_id = organizer.id
       @regatta.email_from = organizer.email_from

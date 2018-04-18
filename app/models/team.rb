@@ -13,11 +13,11 @@ class Team < ApplicationRecord
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
   scope :has_person, ->(p_id) {joins(:people).where("people.id = ?", p_id) }
-  scope :is_active, ->(value = true) { where('state < ?', 3) } #still possible to easily change for a participant
   scope :is_visible, ->() {where("state > ?", 1)}
   scope :did_not_start, ->(value = true) { where(did_not_start: value) }
   scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
   scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
+  # Team.is_active implemented as a scope
 
   accepts_nested_attributes_for :boat
 
@@ -25,6 +25,15 @@ class Team < ApplicationRecord
 
   enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived]
   after_initialize :set_default_state, :if => :new_record?
+
+  def self.is_active value = true
+    if value
+      where(:state => 1..4)
+    else
+      where.not(:state => 1..4)
+    end
+  end
+
 
   def state_to_s
     str = Hash.new

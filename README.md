@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.6.0.1
+Version 0.6.0.2
 
 =======
 
@@ -12,11 +12,11 @@ https://railsbox.io/boxes/8a394717f6ed
 
 createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona_development
 
-# Populate during developmentish conditions
+# Populate
 rake db:migrate
 rake scrape:srs:keelboats
 rake scrape:srs:certificates
-  rake import:sxk:certificates        # Push file first
+rake import:sxk:certificates        # Push file first
 rake scrape:srs:multihulls
 rake import:srs:dingies             # First, manually copy from pdf and paste into spreadsheet.
 rake batch:pod:organizers
