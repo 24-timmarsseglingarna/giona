@@ -490,7 +490,7 @@ sv:
     required: Obligatorisk
     actions:
       person:
-        create: Lägg in kontaktuppgifter
+        create: Lägg in kontaktuppgifter och godkänn användaravtalet
     labels:
       boat:
         name: Namn

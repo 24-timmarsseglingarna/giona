@@ -60,6 +60,7 @@ class PeopleController < ApplicationController
   # POST /people.json
   def create
     @person = Person.new(person_params)
+    @agreement = Agreement.last
     respond_to do |format|
       if @person.save
         @person.agreements << Agreement.last
