@@ -10,6 +10,8 @@ class Regatta < ApplicationRecord
   scope :from_organizer, ->(o_id) { joins(:organizer).where("organizers.id = ?", o_id)}
   validates_presence_of :organizer, :name, :terrain
   validates_uniqueness_of :name
+  validates :web_page, url: { allow_blank: true }
+
 
   def next_start_number
     start_number = self.teams.where("start_number is not null").pluck(:start_number).sort.last

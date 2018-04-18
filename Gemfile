@@ -67,3 +67,4 @@ gem 'has_scope'
 gem "roo", "~> 2.7.0"
 gem 'devise-i18n'
 gem 'telephone_number'
+gem 'validate_url'

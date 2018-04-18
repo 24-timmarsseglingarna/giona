@@ -48,5 +48,4 @@ module TeamsHelper
        "panel-danger"
      end
    end
-
 end

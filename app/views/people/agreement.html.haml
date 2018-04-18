@@ -12,7 +12,7 @@
     - agreement = Agreement.last
     %h3= agreement.name
     %p=  "Publicerad: #{I18n.l(agreement.created_at, format: :normal)}"
-    %p= agreement.description
+    %p= simple_format agreement.description
     =link_to 'Jag godkänner användaravtalet', consent_person_path, method: :post, class: 'btn btn-primary btn-default'
 
   %h3 Användaravtal som du godkänt

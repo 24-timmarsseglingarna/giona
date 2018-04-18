@@ -26,11 +26,22 @@ class Team < ApplicationRecord
   enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived]
   after_initialize :set_default_state, :if => :new_record?
 
+  delegate :minimal, to: :race
+  delegate :period, to: :race
+
   def self.is_active value = true
     if value
       where(:state => 1..4)
     else
       where.not(:state => 1..4)
+    end
+  end
+
+  def self.is_archived value = true
+    if value
+      where(:state => 5)
+    else
+      where.not(:state => 5)
     end
   end
 
@@ -160,6 +171,14 @@ class Team < ApplicationRecord
       end
     else
       ''
+    end
+  end
+
+  def skipper_id
+    if self.skipper.present?
+      self.skipper.id
+    else
+      nil
     end
   end
 
