@@ -46,9 +46,9 @@ class PeopleController < ApplicationController
   def new
     @person = Person.new
     @agreement = Agreement.last
+    @person.skip_validation = false
     if params[:add_me] == 'true' && current_user
       @person.email = current_user.email
-      @person.skip_validation = false
     end
   end
 
@@ -61,6 +61,7 @@ class PeopleController < ApplicationController
   def create
     @person = Person.new(person_params)
     @agreement = Agreement.last
+    @person.skip_validation = false
     respond_to do |format|
       if @person.save
         @person.agreements << Agreement.last
