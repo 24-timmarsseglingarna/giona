@@ -61,24 +61,10 @@
 
       .legend Lägg till en segling:
       %ul
-        %li
-          %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 12", new_race_path(:regatta_id => @regatta.id, :period => '12')
-        %li
-          %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 24", new_race_path(:regatta_id => @regatta.id, :period => '24')
-        %li
-          %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 48", new_race_path(:regatta_id => @regatta.id, :period => '48')
-        %li
-          %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 72", new_race_path(:regatta_id => @regatta.id, :period => '72')
-        %li
-          %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 96", new_race_path(:regatta_id => @regatta.id, :period => '96')
-        %li
-          %i.fa.fa-bell(aria-hidden='true')
-          =link_to "Period: 120", new_race_path(:regatta_id => @regatta.id, :period => '120')
+        - for period in Race.periods
+          %li
+            %i.fa.fa-bell(aria-hidden='true')
+            = link_to "Period: #{period}", new_race_path(:regatta_id => @regatta.id, :period => period)
 
 
 %h2 Anmälda
