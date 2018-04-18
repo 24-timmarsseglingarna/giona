@@ -3,7 +3,7 @@
 
 %h3= @agreement.name
 %p
-  = @agreement.description
+  =simple_format @agreement.description
 %p
   Publicerad:
   = I18n.l(@agreement.created_at, format: :normal)

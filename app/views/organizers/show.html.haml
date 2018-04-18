@@ -5,11 +5,8 @@
   .panel-body
     .legend Kontaktperson:
     %p
-      %i.fa.fa-vcard-o(aria-hidden='true')
-      =@organizer.name_from
-      <
-      =@organizer.email_from
-      >
+      %i.fas.fa-address-card(aria-hidden='true')
+      #{@organizer.name_from} #{'<'}#{@organizer.email_from}#{'>'}
 
     - if has_assistant_rights?
       .legend Informera dessa funktionärer:
@@ -18,7 +15,7 @@
         = @organizer.email_to
       .legend Text i bekräftelsen på anmälan:
       %p
-        = @organizer.confirmation
+        = simple_format @organizer.confirmation
       .legend Standardstartplatser:
       %ul
         - for default_start in @organizer.default_starts
@@ -58,7 +55,7 @@
     - @organizer.regattas.each do |regatta|
       %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
         %td= regatta.name
-        %td= regatta.races.pluck(:period).sort.join(', ') 
+        %td= regatta.races.pluck(:period).sort.join(', ')
         %td= race_starts regatta
         %td= "ja" if regatta.active
 
