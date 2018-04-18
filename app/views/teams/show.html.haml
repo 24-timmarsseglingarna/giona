@@ -39,16 +39,20 @@
               Du behöver komplettera deltagaranmälan för att kunna skicka in den.
           -if @status.blank? && i_may_see_links_to( @team ) && current_user
             %p
-              Nu är din anmälan tillräckligt ifylld för att skickas in till arrangören.
+              Din anmälan tillräckligt ifylld för att skickas in till arrangören.
               Den blir då synlig i startlistan. Du kan gå tillbaka och ändra uppgifter och lägga till besättningsmedlemmar.
-
+            %p
+              Genom att skicka in anmälan intygar du att uppgifterna är korrekta och att båt och besättning uppfyller reglernas krav. Reglerna finns på arrangörens webbsida.
             =link_to 'Skicka in anmälan', teams_submit_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
         - elsif @team.submitted?
           Inskickad (syns i startlistan)
           - if @status.blank? && i_may_see_links_to( @team ) && current_user
             %p
               Din anmälan är inskickad till arrangören som kommer att granska och godkänna den. Normalt sker det innan start men om du anmäler dig sent kan det ske efter seglingen.
+            %p
               Du kan ändra alla uppgifter i anmälan men om du byter skeppare, båt eller handikapp så behöver du uttryckligen skicka in den igen.
+            %p
+              För att din anmälan ska vara giltig ska du betala in startavgiften. Se arrangörens webbsida och seglingshandlingar hur du betalar den.
             %p
               Du kan dra tillbaka anmälan. Då försvinner båten från startlistan. Anmälan finns kvar med status 'utkast' så du kan återanmäla dig.
           - if has_organizer_rights?
@@ -56,6 +60,7 @@
         - elsif @team.approved?
           Godkänd (av arrangören)
           %p Du kan ändra alla uppgifter i anmälan men om du byter skeppare, båt eller handikapp så behöver du uttryckligen skicka in den igen.
+          %p För att din anmälan ska vara giltig ska du betala in startavgiften. Se arrangörens webbsida och seglingshandlingar hur du betalar den.
           %p Om du får förhinder och inte startar eller avbryter seglingen så ska du anmäla det till arrangören.
 
         - if i_may_see_links_to( @team )
