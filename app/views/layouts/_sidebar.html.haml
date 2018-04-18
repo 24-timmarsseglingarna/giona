@@ -4,6 +4,11 @@
       %a{:href => races_path}
         %i.fas.fa-edit(aria-hidden='true')
         Anmäl båt och skeppare
+    %li
+      %a{:href => teams_crew_path}
+        %i.fas.fa-edit(aria-hidden='true')
+        Anmäl gast
+
     - if current_user
       - if current_user.person
         %li

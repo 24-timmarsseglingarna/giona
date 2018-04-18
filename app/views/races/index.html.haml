@@ -1,8 +1,8 @@
-%h1 Deltagaranmälan
+%h1 Deltagaranmälan för båt och skeppare
 
 - unless @organizers.blank?
   %p Hitta en segling att anmäla dig, båten och besättningen till.
-- else 
+- else
   %p Just nu finns det inte några seglingar att anmäla sig till för ditt urval.
 
 - for organizer in @organizers
@@ -10,14 +10,13 @@
     .panel-heading
       %i.fas.fa-university(aria-hidden='true')
       =organizer.name
-    .panel-body    
+    .panel-body
       %ul
       - for regatta in organizer.regattas.is_active(true)
-        %li 
+        %li
           %i.fa.fa-trophy(aria-hidden='true')
           = regatta.name
           %ul
             -for race in regatta.races.order(:period, :start_from)
               %li
                 = link_to race_brief(race), new_team_path(:race_id => race.id)
-
