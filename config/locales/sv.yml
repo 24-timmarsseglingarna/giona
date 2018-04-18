@@ -1,6 +1,16 @@
 sv:
   activerecord:
     errors:
+      models:
+        organizer:
+          attributes:
+            web_page:
+              url: är inte en korrekt webbadress
+        regatta:
+          attributes:
+            web_page:
+              url: är inte en korrekt webbadress
+
       messages:
         record_invalid: 'Ett fel uppstod: %{errors}'
         restrict_dependent_destroy:
@@ -501,6 +511,7 @@ sv:
       organizer:
         name: Namn
         email_from: Mejlavsändare
+        web_page: Länk till webbsida
         name_from: Avsändarnamn
         email_to: Informera om anmälan
         confirmation: Mejlbekräftelse
@@ -528,6 +539,7 @@ sv:
       regatta:
         name: Namn
         organizer: Arrangör
+        web_page: Länk till webbsida
         email_from: Mejlavsändare
         name_from: Avsändarnamn
         email_to: Informera om anmälan

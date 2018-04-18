@@ -2,7 +2,7 @@
 
 - if current_user.person.present?
   - if @race.regatta.people.include? current_user.person
-    %p Du är redan anmäld till den här regattan. Gå till deltagaranmälan:
+    %p Du är redan anmäld till den här regattan. Gå till den deltagaranmälan som redan finns:
     - @teams.each do |team|
       %a.list-group-item{:href => team_path(team)}
         %h4.list-group-item-heading

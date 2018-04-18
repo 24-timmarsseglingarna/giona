@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   post 'teams/approve'
   get 'teams/edit_boat'
   get 'teams/welcome'
+  get 'teams/crew'
 
   resources :teams
 

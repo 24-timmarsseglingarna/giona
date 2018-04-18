@@ -22,7 +22,7 @@
     %p
       = @agreement.name + ', publicerad:'
       = I18n.l(@agreement.created_at, format: :normal)
-    %p= @agreement.description
+    = simple_format @agreement.description
   = f.actions do
     = f.action :submit, :as => :button
 

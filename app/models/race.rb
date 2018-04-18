@@ -1,6 +1,7 @@
 class Race < ApplicationRecord
   belongs_to :regatta
   has_many :teams, dependent: :destroy
+  has_many :people, through: :teams
   #default_scope { order(period: :asc, start_from: :asc) }
   serialize :starts, Array
 
@@ -17,6 +18,24 @@ class Race < ApplicationRecord
   validates_numericality_of :common_finish, :greater_than => 0, :allow_nil => true
 
   delegate :name, to: :regatta, prefix: true
+
+  def self.periods
+    ['12', '24', '48', '72', '96', '120']
+  end
+
+    def self.minimums
+    {'12' => '10',
+     '24' => '21',
+     '48' => '44',
+     '72' => '67',
+     '96' => '90',
+     '120' => '113'
+    }
+  end
+
+  def minimal
+    Race.minimums[self.period.to_s]
+  end
 
   def organizer_name
     self.regatta.organizer.name

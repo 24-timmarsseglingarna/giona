@@ -1,10 +1,10 @@
 class TeamsController < ApplicationController
   include ApplicationHelper
   before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :set_handicap_type, :remove_handicap, :submit, :draft, :approve]
-  before_action :authenticate_user!, :except => [:show, :index, :welcome]
+  before_action :authenticate_user!, :except => [:show, :index, :welcome, :crew]
   before_action :authorize_organizer!, only: [:approve]
-  before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome]
-  before_action :check_active!, :except => [:show, :welcome, :index, :new, :create]
+  before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome, :crew]
+  before_action :check_active!, :except => [:show, :welcome, :index, :new, :create, :crew]
   #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
   has_scope :from_regatta, :from_race, :from_boat, :has_person
   has_scope :is_active, :type => :boolean, allow_blank: true
@@ -20,6 +20,10 @@ class TeamsController < ApplicationController
     render 'welcome'
   end
 
+  def crew
+    render 'crew'
+  end
+
   # GET /teams
   # GET /teams.json
   def index
@@ -27,8 +31,7 @@ class TeamsController < ApplicationController
     if current_user
       if current_user.person
         if current_user.person.teams.present?
-          @teams = current_user.person.teams.is_active(true).order created_at: :desc  ## TODO: life cycle state
-          #@teams = apply_scopes(Team).all.order active: :desc, created_at: :desc
+          @teams = current_user.person.teams.is_archived(false).order created_at: :desc
         end
       end
     end
