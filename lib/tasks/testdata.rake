@@ -159,7 +159,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Albin Vigg'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -199,7 +199,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Seacat'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -239,7 +239,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Sveakryssare'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -279,7 +279,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Mixer Cr'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -319,7 +319,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Arcona 355'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -359,7 +359,8 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Bavaria 30 Cr. 05-07'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
+
     team.save!
 
     crew_member = CrewMember.new
@@ -399,7 +400,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Conqubin 38 Cr'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -452,7 +453,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'NF'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -492,7 +493,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Comfort 32'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
@@ -544,7 +545,7 @@ namespace :testdata do
     team.handicap = SrsKeelboat.find_by name: 'Linjett 33'
     team.handicap_type = 'SrsKeelboat'
     team.paid_fee = true
-    team.active = true
+    team.approved!
     team.save!
 
     crew_member = CrewMember.new
