@@ -31,8 +31,7 @@ class TeamsController < ApplicationController
     if current_user
       if current_user.person
         if current_user.person.teams.present?
-          @teams = current_user.person.teams.is_active(true).order created_at: :desc  ## TODO: life cycle state
-          #@teams = apply_scopes(Team).all.order active: :desc, created_at: :desc
+          @teams = current_user.person.teams.is_archived(false).order created_at: :desc
         end
       end
     end

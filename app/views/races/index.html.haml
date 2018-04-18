@@ -20,3 +20,6 @@
             -for race in regatta.races.order(:period, :start_from)
               %li
                 = link_to race_brief(race), new_team_path(:race_id => race.id)
+                - if race.people.include? current_user.person
+                  %i.fas.fa-arrow-left
+                  Du är anmäld

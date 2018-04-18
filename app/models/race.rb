@@ -1,6 +1,7 @@
 class Race < ApplicationRecord
   belongs_to :regatta
   has_many :teams, dependent: :destroy
+  has_many :people, through: :teams
   #default_scope { order(period: :asc, start_from: :asc) }
   serialize :starts, Array
 

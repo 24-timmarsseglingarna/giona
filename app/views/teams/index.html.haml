@@ -34,4 +34,7 @@
           Status på anmälan:
           = team.state_to_s
   - else
-    Du har inte några deltagaranmälningar.
+    %p
+      Du har inte några deltagaranmälningar.
+    %p
+      = link_to 'Gå till deltagaranmälan ...', races_path

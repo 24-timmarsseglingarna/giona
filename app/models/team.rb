@@ -37,6 +37,14 @@ class Team < ApplicationRecord
     end
   end
 
+  def self.is_archived value = true
+    if value
+      where(:state => 5)
+    else
+      where.not(:state => 5)
+    end
+  end
+
 
   def state_to_s
     str = Hash.new
