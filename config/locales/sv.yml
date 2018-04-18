@@ -561,7 +561,7 @@ sv:
         phone: Det nummer som är lättast att nå dig på, gärna mobilen.
         email: "Du ändrar din mejladress under \"Mitt konto\"."
       race:
-        description: Endast om det är något speciellt med den som behöver särskiljas från andra seglingar i samma regatta. T.ex. segling med gemensam målgång vs segling med mål vid start.
+        description: Endast om det är något speciellt med den som behöver särskiljas från andra seglingar i samma regatta. T.ex. single/double handed eller för skutor.
       boat:
         sail_number: Ange endast siffrorna i segelnumret, inte nationsbeteckningen.
       regatta:
