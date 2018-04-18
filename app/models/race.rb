@@ -19,6 +19,8 @@ class Race < ApplicationRecord
 
   delegate :name, to: :regatta, prefix: true
 
+  before_save :default_values
+
   def self.periods
     ['12', '24', '48', '72', '96', '120']
   end
@@ -89,10 +91,21 @@ class Race < ApplicationRecord
 
   def check_start_period
     if self.start_from.present?
-      if self.start_from > self.start_to
-        errors.add(:start_to, "slutet på startperioden kan inte vara före början")
+      if self.start_to.present?
+        if self.start_from > self.start_to
+          errors.add(:start_to, "slutet på startperioden kan inte vara före början")
+        end
       end
     end
   end
+
+  def default_values
+    if self.start_from.present?
+      if self.start_to.blank?
+        self.start_to = self.start_from
+      end
+    end
+  end
+
 
 end
