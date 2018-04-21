@@ -1,0 +1,7 @@
+{
+  "api-version": "0.0.0",
+  "app-info" : {
+         "upgrade-text": "...",
+         "require-upgrade": ["vsn"]
+          }
+}
