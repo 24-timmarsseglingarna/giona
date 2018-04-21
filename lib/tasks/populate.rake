@@ -222,20 +222,37 @@ namespace :import do
     end
   end
 
+# Regnr, Ersatt av, SRS-tabell, Utgått, Båt, Byggår, Segelnr, Båtnamn, Ägare, SXK-tal, UVS, Genua
+
   namespace :sxk do
     task :certificates => :environment do
-      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "sxk-tal-2016.csv"), "r"), :headers => true) do |row|
+    certificates_url = ENV["URL"]
+    end_of_year = DateTime.now.in_time_zone.end_of_year
+    yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
+    file = open(certificates_url)
+      CSV.foreach( file, :headers => true) do |row|
         registry_id = row['Regnr'].to_s.strip
-        name = row['Boat'].to_s.strip
-        unless registry_id.blank? || name.blank?
+        name = row['Båt'].to_s.strip
+        sxk = row['SXK-tal'].to_f
+        boat_name = row['Båtnamn'].to_s.strip unless row['Båtnamn'].to_s.strip.blank?
+        owner_name = row['Ägare'].to_s.strip unless row['Ägare'].to_s.strip.blank?
+        sail_number = row['Segelnr'].to_i
+        unless registry_id.blank? || name.blank? || (registry_id.length < 5)
+          # puts "#{registry_id} #{name} #{sxk} #{boat_name} #{owner_name} #{sail_number}"
           handicap = SxkCertificate.find_or_create_by   registry_id:  registry_id,
-                                                        name:         name
-          handicap.sxk = row['SXKtal'].to_f
-          handicap.boat_name = row['Name'].to_s.strip unless row['Name'].to_s.strip == 'NULL'
-          handicap.owner_name = row['Owner'].to_s.strip unless row['Owner'].to_s.strip == 'NULL'
-          handicap.sail_number = row['Segelnr'].to_i
+                                                        name:         name,
+                                                        sxk:          sxk,
+                                                        boat_name:    boat_name,
+                                                        owner_name:   owner_name,
+                                                        sail_number:  sail_number
+          if row['Utgått'].to_s.strip == '0'
+            handicap.best_before = end_of_year
+          else
+            handicap.best_before = yesterday
+          end
+
           handicap.source = 'SXK-mätbrev'
-          handicap.external_system = 'http://aws.24-timmars.nu/phpmyadmin'
+          handicap.external_system = 'xls'
           handicap.save!
         end
       end
