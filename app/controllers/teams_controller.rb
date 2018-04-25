@@ -105,7 +105,8 @@ class TeamsController < ApplicationController
           if @team.save
             Note.create(team_id: @team.id, user: current_user, description: "Anmälan skapad av #{current_user.to_s}.")
             @team.skipper.update_attribute 'skip_validation', false
-            format.html { redirect_to @team, notice: 'Deltagaranmälan skapad.' }
+            TeamMailer.created_team_email(@team).deliver
+            format.html { redirect_to @team, notice: 'Deltagaranmälan skapad. Vi skickar ett mejl med länk till din anmälan. Komplettera nu anmälan och skicka in den.' }
             format.json { render :show, status: :created, location: @team }
           else
             format.html { render :new }

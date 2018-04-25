@@ -90,7 +90,7 @@ class RegattasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def regatta_params
-      params.require(:regatta).permit(:name, :terrain_id,  :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :web_page, :external_id, :external_system)
+      params.require(:regatta).permit(:name, :description, :terrain_id,  :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :web_page, :external_id, :external_system)
     end
 
     def authorized?

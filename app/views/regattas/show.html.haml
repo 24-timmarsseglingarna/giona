@@ -3,6 +3,9 @@
     %i.fa.fa-trophy(aria-hidden='true')
     = @regatta.name
   .panel-body
+    %p
+    = simple_format @regatta.description
+    %p
     .legend Arrangör:
     %p
       %i.fas.fa-university(aria-hidden='true')
@@ -46,9 +49,18 @@
       %p
         %i.fa.fa-users(aria-hidden='true')
         = @regatta.email_to
-      .legend Text i bekräftelsen på anmälan:
-      %p
+
+
+      .legend Text i i de mejl* som skickas ut till deltagare:
+      .list-group-item
+        %p.list-group-item-text
         = simple_format @regatta.confirmation
+      %br
+      %p
+        *) Mejl skickas när skepparen skapar anmälan, lägger till gast, skickar in anmälan och när arrangören godkänner anmälan. I mejlen finns generell information om status på ansökan och länkar. Till det läggs den text som du formulerar här.
+
+      %p
+
 
     - if has_organizer_rights?
       %p
