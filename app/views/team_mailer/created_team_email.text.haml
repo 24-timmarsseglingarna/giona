@@ -1,0 +1,13 @@
+Hej!
+
+Du har påbörjat deltagaranmälan till #{@team.race.regatta.name} som arrangeras av #{@team.race.regatta.organizer.name}.
+
+Om du inte gör klar anmälan direkt så kan du återkomma till den, ändra och lägga till. Du hittar den på:
+
+=team_url(@team)
+
+Systemet för att anmäla gastar är inte helt färdigutvecklat. Du får uppmana gastarna att registrera användarkonto. När detta är klart kan du lägga till dem som gastar i besättningen. I framtiden kommer gastarna att själva kunna anmäla att de vill segla med dig.
+
+
+
+=  @team.race.regatta.confirmation

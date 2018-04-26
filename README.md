@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.6.1.2
+Version 0.6.2.0
 
 =======
 
@@ -16,7 +16,7 @@ createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona
 rake db:migrate
 rake scrape:srs:keelboats
 rake scrape:srs:certificates
-rake import:sxk:certificates        # Push file first
+rake import:sxk:certificates URL=https://dl.dropboxusercontent.com/s/whahwj7eknbvulb/SXK-tal.csv # or whatever url        
 rake scrape:srs:multihulls
 rake import:srs:dingies             # First, manually copy from pdf and paste into spreadsheet.
 rake batch:pod:organizers
@@ -27,6 +27,11 @@ rake batch:admin                    # Set admin rights
 # Approve/publish PoD/terrain
 rake import:pod:default_starts
 
+=======
+Import file formats:
+*.csv: utf-8, field separator ,  textdelimiter "
+
+=======
 
 /* Development only
 rake import:starema:people          # Process file manually and push
