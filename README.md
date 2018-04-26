@@ -27,6 +27,9 @@ rake batch:admin                    # Set admin rights
 # Approve/publish PoD/terrain
 rake import:pod:default_starts
 
+
+# Set environment variable DEFAULT_URL='whatever.domain'
+# Defaults to 'segla.24-timmars.nu'
 =======
 Import file formats:
 *.csv: utf-8, field separator ,  textdelimiter "
