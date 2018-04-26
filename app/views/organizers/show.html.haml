@@ -19,9 +19,15 @@
       %p
         %i.fa.fa-users(aria-hidden='true')
         = @organizer.email_to
-      .legend Text i bekräftelsen på anmälan:
+      .legend Standardtext i i de mejl* som skickas ut till deltagare:
+      .list-group-item
+        %p.list-group-item-text
+          = simple_format @organizer.confirmation
+      %br
       %p
-        = simple_format @organizer.confirmation
+        *) Mejl skickas när skepparen skapar anmälan, lägger till gast, skickar in anmälan och när arrangören godkänner anmälan. I mejlen finns generell information om status på ansökan och länkar. Till det läggs den text som du formulerar här. Texten här fungerar som en mall som du anpassar för respektive regatta.
+
+      %p
       .legend Standardstartplatser:
       %ul
         - for default_start in @organizer.default_starts
