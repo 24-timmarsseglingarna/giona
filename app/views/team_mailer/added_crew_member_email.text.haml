@@ -1,0 +1,15 @@
+Hej!
+
+Du har blivit anmäld som gast på #{@team.race.regatta.name} som arrangeras av #{@team.race.regatta.organizer.name}.
+
+Du hittar anmälan här:
+
+= link_to team_url(@team), team_url(@team)
+
+Du kan återkomma, ändra och komplettera den.
+
+Generell information om regattan du är anmäld till hittar du här:
+
+= link_to regatta_url(@team.race.regatta), regatta_url(@team.race.regatta)
+
+= simple_format @team.race.regatta.confirmation

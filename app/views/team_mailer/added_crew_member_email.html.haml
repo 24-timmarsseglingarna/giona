@@ -1,0 +1,9 @@
+%p Hej!
+%p Du har blivit anmäld som gast på #{@team.race.regatta.name} som arrangeras av #{@team.race.regatta.organizer.name}.
+%p Du hittar anmälan här:
+%p= link_to team_url(@team), team_url(@team)
+%p Du kan återkomma, ändra och komplettera den.
+%p Generell information om regattan du är anmäld till hittar du här:
+%p= link_to regatta_url(@team.race.regatta), regatta_url(@team.race.regatta)
+%p
+= simple_format @team.race.regatta.confirmation

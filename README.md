@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 0.6.2.3
+Version 1.0.0
 
 =======
 
@@ -52,8 +52,8 @@ rake testdata:team                  # In development/test only
 
 Mail setup in development environment:
 
-export SENDGRID_USERNAME=`heroku config:get SENDGRID_USERNAME`
-export SENDGRID_PASSWORD=`heroku config:get SENDGRID_PASSWORD`
+export SENDGRID_USERNAME=`heroku config:get SENDGRID_USERNAME --app giona`
+export SENDGRID_PASSWORD=`heroku config:get SENDGRID_PASSWORD --app giona`
 
 
 ======
