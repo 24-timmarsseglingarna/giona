@@ -1,4 +1,98 @@
 sv:
+  site_name: Segla 24-timmars
+  agreements:
+    index:
+      title: Användaravtal
+    show:
+      title: Användaravtal
+    edit:
+      title: Redigera användaravtalet
+  boats:
+    index:
+      title: Båtar
+    show:
+      title: Båt
+    edit:
+      title: Ändra uppgifter om båten
+  default_starts:
+    index:
+      title: Stadardstartplatser
+    show:
+      title: Standardstartplats
+    edit:
+      title: Ändra Standardstartplats
+  handicaps:
+    index:
+      title: Handikapp
+    show:
+      title: Handikapp
+    edit:
+      title: Fyll i/Ändra handikapp
+  legs:
+    index:
+      title: Sträckor
+    show:
+      title: Sträcka
+    edit:
+      title: Fyll i/Ändra sträcka
+  organizers:
+    index:
+      title: Arrangörer
+    show:
+      title: Arrangör
+    edit:
+      title: Ändra uppgifter om arrangör
+  people:
+    index:
+      title: Deltagare
+    show:
+      title: Deltagare
+    edit:
+      title: Ändra kontaktuppgifter
+  points:
+    index:
+      title: Punkter
+    show:
+      title: Punkt
+    edit:
+      title: Ändra punkt
+  races:
+    index:
+      title: Seglingar
+    show:
+      title: Segling
+    edit:
+      title: Ändra uppgifter omsegling
+  regattas:
+    index:
+      title: Regattor
+    show:
+      title: Regatta
+    edit:
+      title: Ändra uppgifter om regattan
+  teams:
+    index:
+      title: Anmälningar
+    show:
+      title: Anmälan/loggbok
+    edit:
+      title: Fyll i/ändra anmälan
+  terrains:
+    index:
+      title: Punkt- & distanstabeller
+    show:
+      title: Punkt- & distanstabell
+    edit:
+      title: Fyll i/Ändra P&D
+  users:
+    index:
+      title: Användare
+    show:
+      title: Använarkonto
+    edit:
+      title: Fyll i/ändra användaruppgifter
+
+
   activerecord:
     errors:
       models:
