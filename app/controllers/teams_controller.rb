@@ -58,8 +58,13 @@ class TeamsController < ApplicationController
       if current_user
         if current_user.person.present?
           @team.skipper = current_user.person
-          if @race.regatta.people.include? current_user.person
-            @teams = current_user.person.teams.is_active(true).from_regatta(@race.regatta.id).order created_at: :desc # TODO refactor to life cycle state
+          @teams = Array.new
+          for team in current_user.person.teams
+            if @race.regatta.teams.include? team
+              @teams << team
+            end
+          end
+          if @teams.present?
             flash[:notice] = 'Du är redan anmäld till den här regattan.'
           end
         end
