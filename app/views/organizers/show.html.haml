@@ -40,6 +40,11 @@
     - if has_organizer_rights?
       %i.fa.fa-trophy(aria-hidden='true')
       = link_to 'Skapa ny regatta', new_regatta_path(:organizer_id => @organizer.id)
+      %p
+      .legend Länk för att anmäla sig till arrangörens regattor:
+      %p
+        %i.fas.fa-globe(aria-hidden='true')
+        =link_to( races_url(:organizer_id => @organizer.id), races_url(:organizer_id => @organizer.id) )
 
       %p
         %br
