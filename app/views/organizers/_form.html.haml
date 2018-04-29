@@ -6,7 +6,8 @@
     = f.input :email_to
     = f.input :web_page
     = f.input :confirmation
-    = f.input :external_id
+    - if has_admin_rights?
+      = f.input :external_id
 
   = f.actions do
     = f.action :submit, :as => :input

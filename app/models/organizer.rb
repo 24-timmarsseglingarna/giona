@@ -8,12 +8,25 @@ class Organizer < ApplicationRecord
   has_many :races, :through => :regattas
   has_many :default_starts, dependent: :destroy
 
-  validates_presence_of :name
+  validates_presence_of :name, :email_from, :name_from
   validates_uniqueness_of :name, :external_id
   validates :web_page, url: { allow_nil: true }
+  validate :validate_email_from
+
+
 
   def reset_default_start
      self.defualt_start.delete_all
+  end
+
+  private
+
+  def validate_email_from
+    if self.email_from.present?
+      if ! EmailAddress.valid? self.email_from, host_validation: :syntax
+        errors.add(:email_from, "det är något fel med mejladressen")
+      end
+    end
   end
 
 end

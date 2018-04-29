@@ -12,15 +12,28 @@
       =organizer.name
     .panel-body
       %ul
-      - for regatta in organizer.regattas.is_active(true)
+      - if @regatta.present?
         %li
           %i.fa.fa-trophy(aria-hidden='true')
-          = regatta.name
+          = @regatta.name
           %ul
-            -for race in regatta.races.order(:period, :start_from)
+            -for race in @regatta.races.order(:period, :start_from)
               %li
                 = link_to race_brief(race), new_team_path(:race_id => race.id)
                 - if current_user
                   - if race.people.include? current_user.person
                     %i.fas.fa-arrow-left
                     Du är anmäld
+      - else
+        - for regatta in organizer.regattas.is_active(true)
+          %li
+            %i.fa.fa-trophy(aria-hidden='true')
+            = regatta.name
+            %ul
+              -for race in regatta.races.order(:period, :start_from)
+                %li
+                  = link_to race_brief(race), new_team_path(:race_id => race.id)
+                  - if current_user
+                    - if race.people.include? current_user.person
+                      %i.fas.fa-arrow-left
+                      Du är anmäld
