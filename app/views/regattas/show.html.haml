@@ -36,8 +36,7 @@
     .legend Kontaktperson:
     %p
       %i.fas.fa-address-card(aria-hidden='true')
-      = @regatta.name_from + ' <' + @regatta.email_from + '>'
-
+      = mail_to @regatta.email_from, "#{@regatta.name_from} #{'<'}#{@regatta.email_from}#{'>'}"
 
     - if has_assistant_rights?
       .legend Version av Punkt- & distanstabell:
