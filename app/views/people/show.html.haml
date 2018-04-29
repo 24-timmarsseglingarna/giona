@@ -38,8 +38,8 @@
       - if authorized? || has_assistant_rights?
         = link_to 'Redigera', edit_person_path(@person), class: "btn btn-primary"
     %p
-
-      = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
+      - if has_admin_rights?
+        = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
     %p Bekräftade användaravtal:
     - for consent in @person.consents.reverse
       %ol= link_to "#{consent.agreement.name}, godkänd #{I18n.l(consent.created_at, format: :normal)}", agreement_path(id: consent.agreement.id)
