@@ -660,7 +660,11 @@ sv:
       boat:
         sail_number: Ange endast siffrorna i segelnumret, inte nationsbeteckningen.
       organizer:
-        confirmation: Mall för texten i de mejl som skickas till deltagare. Mejlen inleds med neutral information om status på anmälan. Sedan kommer den text som du skriver in här. Så du kan avsluta med en hälsning och eventuell kontaktinformation.
+        email_from: När mejl skickas till deltagare, vilken mejladress ska då stå som avsändare? Här fyller du i standardvärden. I den specifika regattan kan du ändra.
+        name_from: När mejl skickas till deltagare, vilket namn (förnamn efternamn) ska då stå som avsändare? Här fyller du i standardvärden. I den specifika regattan kan du ändra.
+        email_to: Mejladress till de funktionärer som ska få mejl när något viktigt händer i en regatta. Här fyller du i standardvärden. I den specifika regattan kan du ändra. Om det är flera mejladresser ska de separeras med kommateckan.
+        web_page: Adress till arrangörens webbsida.
+        confirmation: Mall för texten i de mejl som skickas till deltagare. Du kan anpassa texten för den specifika regattan. Mejlen inleds med neutral information om status på anmälan. Sedan kommer den text som du skriver in här. Så du kan avsluta med en hälsning och eventuell kontaktinformation.
       regatta:
         name: Namnet på regattan behöver vara unikt, så att deltagaren förstår vad hen anmäler sig till. Seglingsområde och årtal kan ingå, t.ex. Vårregattan 2018 i Blekinge.
         description: Visas på sidan om regattan, synlig för alla. Kan innehålla information om betalning av avgifter, kringarrangemang och sådant. Starttider och seglingsperioder behöver du inte skriva in, de visas för varje segling som ingår i regattan.

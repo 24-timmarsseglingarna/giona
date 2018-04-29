@@ -30,7 +30,7 @@ class OrganizersController < ApplicationController
 
   # GET /organizers/1/edit
   def edit
-    unless has_admin_rights?
+    unless has_organizer_rights?
       flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
       redirect_to :back
     end
@@ -59,7 +59,7 @@ class OrganizersController < ApplicationController
   # PATCH/PUT /organizers/1
   # PATCH/PUT /organizers/1.json
   def update
-    if has_admin_rights?
+    if has_organizer_rights?
       respond_to do |format|
         if @organizer.update(organizer_params)
           format.html { redirect_to @organizer, notice: 'Arrangören är uppdaterad.' }
