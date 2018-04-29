@@ -1,9 +1,9 @@
 %h1 Ny deltagaranmälan
 
 - if current_user.person.present?
-  - if @race.regatta.people.include? current_user.person
+  - if @teams
     %p Du är redan anmäld till den här regattan. Gå till den deltagaranmälan som redan finns:
-    - @teams.each do |team|
+    - for team in @teams
       %a.list-group-item{:href => team_path(team)}
         %h4.list-group-item-heading
           =team.race.regatta.name
