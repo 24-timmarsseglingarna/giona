@@ -8,7 +8,7 @@ class Regatta < ApplicationRecord
   scope :is_active, ->(value = true) { where(active: value) }
   scope :has_race, ->(r_id) { joins(:races).where("races.id = ?", r_id) }
   scope :from_organizer, ->(o_id) { joins(:organizer).where("organizers.id = ?", o_id)}
-  validates_presence_of :organizer, :name, :terrain, :email_to, :email_from
+  validates_presence_of :organizer, :name, :terrain, :email_to, :email_from, :name_from
   validates_uniqueness_of :name
   validates :web_page, url: { allow_blank: true }
 
@@ -23,6 +23,15 @@ class Regatta < ApplicationRecord
     start_number
   end
 
-private
+  private
+
+  def validate_email_from
+    if self.email_from.present?
+      if ! EmailAddress.valid? self.email_from, host_validation: :syntax
+        errors.add(:email_from, "det är något fel med mejladressen")
+      end
+    end
+  end
+
 
 end

@@ -12,7 +12,7 @@
     .legend Kontaktperson:
     %p
       %i.fas.fa-address-card(aria-hidden='true')
-      #{@organizer.name_from} #{'<'}#{@organizer.email_from}#{'>'}
+      = mail_to @organizer.email_from, "#{@organizer.name_from} #{'<'}#{@organizer.email_from}#{'>'}"
 
     - if has_assistant_rights?
       .legend Informera dessa funktionärer:
@@ -40,6 +40,11 @@
     - if has_organizer_rights?
       %i.fa.fa-trophy(aria-hidden='true')
       = link_to 'Skapa ny regatta', new_regatta_path(:organizer_id => @organizer.id)
+      %p
+      .legend Länk för att anmäla sig till arrangörens regattor:
+      %p
+        %i.fas.fa-globe(aria-hidden='true')
+        =link_to( races_url(:organizer_id => @organizer.id), races_url(:organizer_id => @organizer.id) )
 
       %p
         %br
@@ -65,11 +70,16 @@
       %th Öppen
   %tbody
     - @organizer.regattas.each do |regatta|
-      %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
-        %td= regatta.name
-        %td= regatta.races.pluck(:period).sort.join(', ')
-        %td= race_starts regatta
-        %td= "ja" if regatta.active
+      - if regatta.active? || has_assistant_rights?
+        %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{regatta_path(regatta)}';", :style => "cursor: pointer;"}
+          %td= regatta.name
+          %td= regatta.races.pluck(:period).sort.join(', ')
+          %td= race_starts regatta
+          %td
+            - if regatta.active?
+              ja
+            - else
+              nej
 
 :javascript
   $(document).ready(function() {
