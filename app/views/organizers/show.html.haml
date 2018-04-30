@@ -44,7 +44,7 @@
       .legend Länk för att anmäla sig till arrangörens regattor:
       %p
         %i.fas.fa-globe(aria-hidden='true')
-        =link_to( races_url(:organizer_id => @organizer.id), races_url(:organizer_id => @organizer.id) )
+        =link_to( races_url(:from_organizer => @organizer.id), races_url(:from_organizer => @organizer.id) )
 
       %p
         %br

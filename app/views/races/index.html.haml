@@ -1,39 +1,42 @@
 %h1 Deltagaranmälan för båt och skeppare
 
-- unless @organizers.blank?
-  %p Hitta en segling att anmäla dig, båten och besättningen till.
-- else
-  %p Just nu finns det inte några seglingar att anmäla sig till för ditt urval.
 
-- for organizer in @organizers
+
+- if @regattas.blank?
+  %p Hittar tyvärr inte seglingar som går att anmäla sig till.
+
+- organizer_ids = @regattas.pluck(:organizer_id).uniq
+- organizers = Array.new
+- for organizer_id in organizer_ids
+  - organizers << Organizer.find(organizer_id)
+- for organizer in organizers.sort_by{|e| e[:name]}
   .panel.panel-default
     .panel-heading
       %i.fas.fa-university(aria-hidden='true')
       =organizer.name
     .panel-body
       %ul
-      - if @regatta.present?
-        %li
-          %i.fa.fa-trophy(aria-hidden='true')
-          = @regatta.name
-          %ul
-            -for race in @regatta.races.order(:period, :start_from)
-              %li
-                = link_to race_brief(race), new_team_path(:race_id => race.id)
-                - if current_user
-                  - if race.people.include? current_user.person
-                    %i.fas.fa-arrow-left
-                    Du är anmäld
-      - else
-        - for regatta in organizer.regattas.is_active(true)
+        - for regatta in organizer.regattas.is_active true
           %li
             %i.fa.fa-trophy(aria-hidden='true')
             = regatta.name
             %ul
-              -for race in regatta.races.order(:period, :start_from)
+              - for race in regatta.races.order(:period, :start_from)
                 %li
-                  = link_to race_brief(race), new_team_path(:race_id => race.id)
                   - if current_user
-                    - if race.people.include? current_user.person
-                      %i.fas.fa-arrow-left
-                      Du är anmäld
+                    - if race.regatta.people.include? current_user.person
+                      = link_to race_brief(race), new_team_path(:race_id => race.id),  data: { confirm: "Ska du anmäla dig till en regatta som du redan är anmäld till?" }
+                      - if race.people.include? current_user.person
+                        %i.fas.fa-arrow-left
+                        Du är redan anmäld.
+                        - teams = current_user.person.teams.from_race(race.id)
+                        - for team in teams
+                          = link_to 'Gå till din anmälan ...', team_path(team)
+                    - else
+                      = link_to race_brief(race), new_team_path(:race_id => race.id)
+                  - else
+                    = link_to race_brief(race), new_team_path(:race_id => race.id)
+
+
+- if params[:from_organizer] || params[:from_regatta]
+  =link_to 'Alla seglingar som är öppna för anmälan', races_path(is_active: true), class: 'btn btn-default'
