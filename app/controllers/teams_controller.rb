@@ -58,8 +58,7 @@ class TeamsController < ApplicationController
       if current_user
         if current_user.person.present?
           @team.skipper = current_user.person
-          if @race.regatta.people.include? current_user.person
-            @teams = current_user.person.teams.is_active(true).from_regatta(@race.regatta.id).order created_at: :desc # TODO refactor to life cycle state
+          if current_user.person.teams.from_regatta(@race.regatta.id).present?
             flash[:notice] = 'Du är redan anmäld till den här regattan.'
           end
         end
@@ -174,6 +173,7 @@ class TeamsController < ApplicationController
       crew_member = CrewMember.create person_id: person.id, team_id: @team.id
       Note.create(team_id: @team.id, user: current_user, description: "Gast #{person.name} (#{person.id}) tillagd av #{current_user.to_s}.")
       person.update_attribute 'skip_validation', false
+      TeamMailer.added_crew_member_email(@team, person).deliver
       redirect_to @team, notice: "Gasten #{person.name} tillagd i besättningslistan."
     else
       redirect_to @team, notice: "Gasten #{person.name} fanns redan i besättningslistan."
@@ -202,6 +202,7 @@ class TeamsController < ApplicationController
     @team.save!
     Note.create(team_id: @team.id, user: current_user, description: "#{person.name} (#{person.id}) utsedd till skeppare av #{current_user.to_s}.")
     @team.skipper.update_attribute 'skip_validation', false
+    TeamMailer.set_skipper_email(@team).deliver
     redirect_to @team, notice: "#{@team.skipper.name unless @team.skipper.blank?} är nu skeppare."
   end
 
@@ -263,6 +264,8 @@ class TeamsController < ApplicationController
       @team.start_number = @team.race.regatta.next_start_number if @team.start_number.nil?
       @team.submitted!
       Note.create(team_id: @team.id, user: current_user, description: "Deltagaranmälan inskickad av #{current_user.to_s}.")
+      TeamMailer.submitted_team_email(@team).deliver
+      TeamMailer.inform_officer_email(@team).deliver
       redirect_to @team, notice: 'Toppen! Nu är anmälan inskickad till arrangören.'
     else
       redirect_to @team, alert: 'Det går bara att skicka in anmälan som är i status utkast.'
@@ -289,7 +292,8 @@ class TeamsController < ApplicationController
     if @team.submitted?
       @team.approved!
       Note.create(team_id: @team.id, user: current_user, description: "Deltagaranmälan godkänd av #{current_user.to_s}.")
-      redirect_to @team, notice: 'Anmälan är godkänd och nu synlig i startlistan.'
+      TeamMailer.approved_team_email(@team).deliver
+      redirect_to @team, notice: 'Anmälan är godkänd.'
     else
       redirect_to @team, alert: "Det går bara att godkänna en anmälan som är i status 'inskickad'."
     end

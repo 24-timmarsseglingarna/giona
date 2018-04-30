@@ -1,7 +1,6 @@
 {
-  "api-version": "0.0.0",
-  "app-info" : {
-         "upgrade-text": "...",
-         "require-upgrade": ["vsn"]
-          }
+    "api-version": "1.0.0",
+    "app-info" : {
+        "require-upgrade": []
+    }
 }

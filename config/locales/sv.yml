@@ -1,4 +1,98 @@
 sv:
+  site_name: Segla 24-timmars
+  agreements:
+    index:
+      title: Användaravtal
+    show:
+      title: Användaravtal
+    edit:
+      title: Redigera användaravtalet
+  boats:
+    index:
+      title: Båtar
+    show:
+      title: Båt
+    edit:
+      title: Ändra uppgifter om båten
+  default_starts:
+    index:
+      title: Stadardstartplatser
+    show:
+      title: Standardstartplats
+    edit:
+      title: Ändra Standardstartplats
+  handicaps:
+    index:
+      title: Handikapp
+    show:
+      title: Handikapp
+    edit:
+      title: Fyll i/Ändra handikapp
+  legs:
+    index:
+      title: Sträckor
+    show:
+      title: Sträcka
+    edit:
+      title: Fyll i/Ändra sträcka
+  organizers:
+    index:
+      title: Arrangörer
+    show:
+      title: Arrangör
+    edit:
+      title: Ändra uppgifter om arrangör
+  people:
+    index:
+      title: Deltagare
+    show:
+      title: Deltagare
+    edit:
+      title: Ändra kontaktuppgifter
+  points:
+    index:
+      title: Punkter
+    show:
+      title: Punkt
+    edit:
+      title: Ändra punkt
+  races:
+    index:
+      title: Seglingar
+    show:
+      title: Segling
+    edit:
+      title: Ändra uppgifter omsegling
+  regattas:
+    index:
+      title: Regattor
+    show:
+      title: Regatta
+    edit:
+      title: Ändra uppgifter om regattan
+  teams:
+    index:
+      title: Anmälningar
+    show:
+      title: Anmälan/loggbok
+    edit:
+      title: Fyll i/ändra anmälan
+  terrains:
+    index:
+      title: Punkt- & distanstabeller
+    show:
+      title: Punkt- & distanstabell
+    edit:
+      title: Fyll i/Ändra P&D
+  users:
+    index:
+      title: Användare
+    show:
+      title: Använarkonto
+    edit:
+      title: Fyll i/ändra användaruppgifter
+
+
   activerecord:
     errors:
       models:
@@ -566,7 +660,11 @@ sv:
       boat:
         sail_number: Ange endast siffrorna i segelnumret, inte nationsbeteckningen.
       organizer:
-        confirmation: Mall för texten i de mejl som skickas till deltagare. Mejlen inleds med neutral information om status på anmälan. Sedan kommer den text som du skriver in här. Så du kan avsluta med en hälsning och eventuell kontaktinformation.
+        email_from: När mejl skickas till deltagare, vilken mejladress ska då stå som avsändare? Här fyller du i standardvärden. I den specifika regattan kan du ändra.
+        name_from: När mejl skickas till deltagare, vilket namn (förnamn efternamn) ska då stå som avsändare? Här fyller du i standardvärden. I den specifika regattan kan du ändra.
+        email_to: Mejladress till de funktionärer som ska få mejl när något viktigt händer i en regatta. Här fyller du i standardvärden. I den specifika regattan kan du ändra. Om det är flera mejladresser ska de separeras med kommateckan.
+        web_page: Adress till arrangörens webbsida.
+        confirmation: Mall för texten i de mejl som skickas till deltagare. Du kan anpassa texten för den specifika regattan. Mejlen inleds med neutral information om status på anmälan. Sedan kommer den text som du skriver in här. Så du kan avsluta med en hälsning och eventuell kontaktinformation.
       regatta:
         name: Namnet på regattan behöver vara unikt, så att deltagaren förstår vad hen anmäler sig till. Seglingsområde och årtal kan ingå, t.ex. Vårregattan 2018 i Blekinge.
         description: Visas på sidan om regattan, synlig för alla. Kan innehålla information om betalning av avgifter, kringarrangemang och sådant. Starttider och seglingsperioder behöver du inte skriva in, de visas för varje segling som ingår i regattan.

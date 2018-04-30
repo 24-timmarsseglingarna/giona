@@ -18,7 +18,7 @@ class Race < ApplicationRecord
   validates_numericality_of :common_finish, :greater_than => 0, :allow_nil => true
 
   delegate :name, to: :regatta, prefix: true
-
+  delegate :id, to: :organizer, prefix: true
   before_save :default_values
 
   def self.periods
@@ -78,10 +78,12 @@ class Race < ApplicationRecord
 
   def start_places
     start_hash = Hash.new
-    for start in self.regatta.organizer.default_starts do
-      point = self.regatta.terrain.points.find_by number: start.number
-      unless point.blank?
-        start_hash["#{start.number} #{point.name}"] = start.number
+    for start in self.starts do
+      unless start.blank?
+        point = self.regatta.terrain.points.find_by number: start.to_i
+        unless point.blank?
+          start_hash["#{point.number} #{point.name}"] = point.number
+        end
       end
     end
     start_hash

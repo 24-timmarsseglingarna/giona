@@ -36,15 +36,17 @@
         %i.fa.fa-users.fa-fw(aria-hidden='true')
         Deltagare
 
-    -if has_assistant_rights?
+    -if has_admin_rights?
       %li
         %a{:href => inactive_people_path}
           %i.fa.fa-user-times.fa-fw(aria-hidden='true')
           Raderade deltagare
+    - if has_assistant_rights?
       %li
         %a{:href => users_path}
           %i.fa.fa-users.fa-fw(aria-hidden='true')
           Användare
+    - if has_admin_rights?
       %li
         %a{:href => inactive_users_path}
           %i.fa.fa-user-times.fa-fw(aria-hidden='true')

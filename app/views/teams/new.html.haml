@@ -1,32 +1,33 @@
 %h1 Ny deltagaranmälan
 
-- if current_user.person.present?
-  - if @race.regatta.people.include? current_user.person
-    %p Du är redan anmäld till den här regattan. Gå till den deltagaranmälan som redan finns:
-    - @teams.each do |team|
-      %a.list-group-item{:href => team_path(team)}
-        %h4.list-group-item-heading
-          =team.race.regatta.name
-        %p.list-group-item-text
-          = team.race.regatta.organizer.name
-          %br
-          = team.race.name
-          %br
-          Start:
-          = race_start(team.race)
-          -unless team.start_point.blank?
-            från
-            = team.start_point
-            = name_by_number(team.race.regatta.terrain, team.start_point)
-          %br
-          Skeppare:
-          = team.skipper.try :name
-          %br
-          = team.boat_type_name
-          = team.boat_sail_number
-          = team.boat_name
-    %br
-    %p eller ...
+- if current_user
+  - if current_user.person.present?
+    - if current_user.person.teams.from_regatta(@race.regatta.id).present?
+      %p Du är redan anmäld till den här regattan. Vill du gå till den deltagaranmälan som redan finns:
+      - for team in current_user.person.teams.from_regatta(@race.regatta.id)
+        %a.list-group-item{:href => team_path(team)}
+          %h4.list-group-item-heading
+            =team.race.regatta.name
+          %p.list-group-item-text
+            = team.race.regatta.organizer.name
+            %br
+            = team.race.name
+            %br
+            Start:
+            = race_start(team.race)
+            -unless team.start_point.blank?
+              från
+              = team.start_point
+              = name_by_number(team.race.regatta.terrain, team.start_point)
+            %br
+            Skeppare:
+            = team.skipper.try :name
+            %br
+            = team.boat_type_name
+            = team.boat_sail_number
+            = team.boat_name
+      %br
+      %p eller anmäla dig en gång till ...
 .panel.panel-default
   .panel-heading
     Ny deltagaranmälan

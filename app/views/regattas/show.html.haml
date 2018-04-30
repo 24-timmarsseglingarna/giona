@@ -36,8 +36,7 @@
     .legend Kontaktperson:
     %p
       %i.fas.fa-address-card(aria-hidden='true')
-      = @regatta.name_from + ' <' + @regatta.email_from + '>'
-
+      = mail_to @regatta.email_from, "#{@regatta.name_from} #{'<'}#{@regatta.email_from}#{'>'}"
 
     - if has_assistant_rights?
       .legend Version av Punkt- & distanstabell:
@@ -63,6 +62,12 @@
 
 
     - if has_organizer_rights?
+      %p
+      .legend Länk för att anmäla sig till regattan:
+      %p
+        %i.fas.fa-globe(aria-hidden='true')
+        =link_to( races_url(:from_regatta => @regatta.id), races_url(:from_regatta => @regatta.id) )
+
       %p
         %br
       =link_to 'Ändra', edit_regatta_path(@regatta), class: "btn btn-primary"
