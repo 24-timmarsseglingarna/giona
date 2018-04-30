@@ -10,15 +10,22 @@ class RacesController < ApplicationController
   # GET /races
   # GET /races.json
   def index
-    #@races = apply_scopes(Race).all.order(regatta_id: :asc, period: :asc)
-    if params[:organizer_id].present?
-      @organizers = Organizer.where("id = ?", params[:organizer_id])
-    else
-      @organizers = Organizer.is_active(true).distinct
+    @races = apply_scopes(Race).all
+    @regattas = Array.new
+    for race in @races
+      unless @regattas.include? race.regatta
+        @regattas << race.regatta
+      end
     end
-    if params[:regatta_id].present?
-      @regatta = Regatta.find params[:regatta_id]
-    end
+    #.order(regatta_id: :asc, period: :asc)
+    #if params[:organizer_id].present?
+    #  @organizers = Organizer.where("id = ?", params[:organizer_id])
+    #else
+    #  @organizers = Organizer.is_active(true).distinct
+    #end
+    #if params[:regatta_id].present?
+    #  @regatta = Regatta.find params[:regatta_id]
+    #end
   end
 
   # GET /races/1

@@ -66,7 +66,7 @@
       .legend Länk för att anmäla sig till regattan:
       %p
         %i.fas.fa-globe(aria-hidden='true')
-        =link_to( races_url(:regatta_id => @regatta.id, :organizer_id => @regatta.organizer.id), races_url(:regatta_id => @regatta.id, :organizer_id => @regatta.organizer.id) )
+        =link_to( races_url(:from_regatta => @regatta.id), races_url(:from_regatta => @regatta.id) )
 
       %p
         %br

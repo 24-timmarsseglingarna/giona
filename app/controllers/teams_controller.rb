@@ -58,13 +58,7 @@ class TeamsController < ApplicationController
       if current_user
         if current_user.person.present?
           @team.skipper = current_user.person
-          @teams = Array.new
-          for team in current_user.person.teams
-            if @race.regatta.teams.include? team
-              @teams << team
-            end
-          end
-          if @teams.present?
+          if current_user.person.teams.from_regatta(@race.regatta.id).present?
             flash[:notice] = 'Du är redan anmäld till den här regattan.'
           end
         end
