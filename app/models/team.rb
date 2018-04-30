@@ -17,6 +17,8 @@ class Team < ApplicationRecord
   scope :did_not_start, ->(value = true) { where(did_not_start: value) }
   scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
   scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
+  scope :from_regatta, ->(r_id) { joins(race: :regatta).where("regattas.id = ?", r_id) }
+
   # Team.is_active implemented as a scope
 
   accepts_nested_attributes_for :boat
@@ -86,9 +88,6 @@ class Team < ApplicationRecord
      race.regatta.teams
   end
 
-  def self.from_regatta r_id
-    Regatta.find(r_id).teams
-  end
 
   def set_defaults
     self.did_not_start  ||= false
