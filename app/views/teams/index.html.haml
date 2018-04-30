@@ -35,6 +35,6 @@
           = team.state_to_s
   - else
     %p
-      Du har inte några deltagaranmälningar.
+      Du är inte anmäld till någon regatta.
     %p
-      = link_to 'Gå till deltagaranmälan ...', races_path
+      = link_to 'Anmäl båt och skeppare ...', races_path, class: 'btn btn-primary'

@@ -18,7 +18,7 @@ class Race < ApplicationRecord
   validates_numericality_of :common_finish, :greater_than => 0, :allow_nil => true
 
   delegate :name, to: :regatta, prefix: true
-
+  delegate :id, to: :organizer, prefix: true
   before_save :default_values
 
   def self.periods
