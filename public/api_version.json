@@ -1,6 +1,6 @@
 {
-    "api-version": "1.0.0",
-    "app-info" : {
-        "require-upgrade": []
+    "api_version": "1.0.0",
+    "app_info" : {
+        "require_upgrade": []
     }
 }
