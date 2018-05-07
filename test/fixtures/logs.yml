@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  team_id: 1
+  time: 2018-05-07 13:00:50
+  user_id: 1
+  client: MyString
+  log_type: MyString
+  point: 1
+  data: MyString
+  deleted: false
+  gen: 
+
+two:
+  team_id: 1
+  time: 2018-05-07 13:00:50
+  user_id: 1
+  client: MyString
+  log_type: MyString
+  point: 1
+  data: MyString
+  deleted: false
+  gen: 

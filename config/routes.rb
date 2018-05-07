@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :logs
   resources :agreements
   resources :default_starts
   resources :legs
