@@ -1,4 +1,6 @@
 class Log < ApplicationRecord
+<<<<<<< HEAD
+=======
   belongs_to :team
 
   scope :from_team, ->(t_id) {
@@ -40,4 +42,5 @@ class Log < ApplicationRecord
     end
   end
 
+>>>>>>> devel/log
 end

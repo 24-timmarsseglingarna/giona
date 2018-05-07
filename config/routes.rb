@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       resources :people,        only: [:index, :show]
       resources :boats,         only: [:index, :show]
       resources :teams,         only: [:index, :show]
+      resources :logs
       resources :races,         only: [:index, :show]
       resources :regattas,      only: [:index, :show]
       resources :organizers,      only: [:index, :show]
@@ -42,6 +43,7 @@ Rails.application.routes.draw do
   get 'teams/crew'
 
   resources :teams
+  resources :logs
 
   resources :races
   resources :regattas
