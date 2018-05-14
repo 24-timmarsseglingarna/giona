@@ -2,7 +2,7 @@ class Team < ApplicationRecord
   belongs_to :race
   belongs_to :boat
   has_many :crew_members, dependent: :destroy
-  has_many :log
+  has_many :logs
   has_many :people, :through => :crew_members
   has_many :non_skipper_crew_member, -> { where(skipper: false) }, class_name: 'CrewMember'
   has_many :seamen, :through => :non_skipper_crew_member, :source => :person

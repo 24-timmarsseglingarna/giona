@@ -40,4 +40,51 @@ class Log < ApplicationRecord
     end
   end
 
+  def wind
+    unless JSON.parse(self.data)['wind'].blank?
+      JSON.parse(self.data)['wind']['dir'] + ' ' + JSON.parse(self.data)['wind']['speed']
+    end
+  end
+
+  def position
+    unless JSON.parse(self.data)['position'].blank?
+      JSON.parse(self.data)['position']
+    end
+  end
+
+  def teams
+    unless JSON.parse(self.data)['boats'].blank?
+      regatta = self.team.race.regatta
+      Team.from_regatta(regatta.id).where(start_number: JSON.parse(self.data)['boats'])
+    end
+  end
+
+
+  def sails
+    out = ''
+    unless JSON.parse(self.data)['sails'].blank?
+      if JSON.parse(self.data)['sails']['reef']
+        out += 'rev, '
+      elsif JSON.parse(self.data)['sails']['main']
+        out += 'stor, '
+      end
+      if JSON.parse(self.data)['sails']['jib']
+        out += 'fock, '
+      elsif JSON.parse(self.data)['sails']['genoa']
+        out += 'genua, '
+      end
+      if JSON.parse(self.data)['sails']['code']
+        out += 'code, '
+      elsif JSON.parse(self.data)['sails']['gennaker']
+        out += 'gennaker, '
+      elsif JSON.parse(self.data)['sails']['spinnaker']
+        out += 'spinnaker, '
+      end
+      unless JSON.parse(self.data)['sails']['other'].blank?
+        out += JSON.parse(self.data)['sails']['other'] + ', '
+      end
+    end
+    out && out.sub(/, $/, '')
+  end
+
 end

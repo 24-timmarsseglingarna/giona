@@ -278,6 +278,83 @@
                 %i.fas.fa-times-circle(aria-hidden='true')
                 =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}
 
+-unless @team.logs.blank?
+  %table#giona-logs.table.table-striped.table-bordered.table-hover{:width => "100%"}
+    %thead
+      %tr
+        %th Datum/tid
+        %th Punkt
+        %th Distans
+        %th Vind
+        %th Notering
+        - if params[:rich]
+          %th Team
+          %th User
+          %th Client
+          %th Data
+          %th Deleted
+    %tbody
+    - @team.logs.each do |log|
+      - unless log.deleted
+        %tr{:class => cycle('even', 'odd')}
+          - log_entry = JSON.parse(log.data)
+          %td= I18n.l(log.time, format: :normal)
+          %td
+            - unless log.point.blank?
+              %span.badge
+                = log.point
+              = log.team.race.regatta.terrain.points.find_by( number: log.point).name
+          %td
+          %td= log.wind
+          %td
+            - unless log.position.blank?
+              = log.position
+              %br
+            - unless log_entry['boats'].blank?
+              - regatta = log.team.race.regatta
+              - teams = Team.from_regatta(regatta.id).where(start_number: log_entry['boats'])
+              - for team in teams
+                %span.badge
+                  = team.start_number
+                = team.boat_type_name
+                = team.boat_sail_number
+                = team.boat_name
+                %br
+            - if log.log_type == 'protest'
+              Protest mot misstänkt regelbrott.
+              %br
+            - if log.log_type == 'sign'
+              Loggboken signerad.
+              %br
+            - if log.log_type == 'endOfRace'
+              Seglingsperioden slut.
+              %br
+            - unless log.sails.blank?
+              = log.sails
+              %br
+            - unless log_entry['lanterns'].blank?
+              = 'Tänder lanternorna.' if (log_entry['lanterns'] == 'on')
+              = 'Släcker lanternorna.' if (log_entry['lanterns'] == 'off')
+              %br
+            - unless log_entry['interrupt'].blank?
+              = I18n.t("logs.interrupt.#{log_entry['interrupt']['type']}")
+              %br
+            -unless log_entry['engine'].blank?
+              = 'Startar motor för laddning.' if (log_entry['engine'] == 'on')
+              = 'Stänger av motor för laddning.' if (log_entry['engine'] == 'off')
+              %br
+            - unless log_entry['comment'].blank?
+              = log_entry['comment']
+              %br
+
+          - if params[:rich]
+            %td= log.team_id
+            %td= log.user_id
+            %td= log.client
+            %td= log.data
+            %td= log.deleted
+
+
 - if current_user && i_may_see_links_to(@team)
   %h5 Ändringar:
   %ol.notes
