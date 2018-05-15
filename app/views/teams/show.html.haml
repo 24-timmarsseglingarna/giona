@@ -294,6 +294,8 @@
           %th Data
           %th Deleted
     %tbody
+    - previous_point = nil
+    - trip = 0
     - @logs.each do |log|
       - unless log.deleted
         %tr{:class => cycle('even', 'odd')}
@@ -308,6 +310,14 @@
                 = log.point
               = log.team.race.regatta.terrain.points.find_by( number: log.point).name
           %td
+            - if log.point
+              -if previous_point
+                - distance = distance_between(previous_point, log.point, log.team.race.regatta.terrain)
+                = distance
+                - trip = trip + distance
+              - else
+                0.0
+              - previous_point = log.point
           %td= log.wind
           %td
             - if current_user
@@ -360,18 +370,6 @@
                 - unless log_entry['comment'].blank?
                   = log_entry['comment']
                   %br
-                - else
-                  - unless log_entry['boats'].blank?
-                    - regatta = log.team.race.regatta
-                    - teams = Team.from_regatta(regatta.id).where(start_number: log_entry['boats'])
-                    - for team in teams
-                      %span.badge.alert-success
-                        Startnr
-                        = team.start_number
-                      = team.boat_type_name
-                      = team.boat_sail_number
-                      = team.boat_name
-                      %br
             - else
               - unless log_entry['boats'].blank?
                 - regatta = log.team.race.regatta
@@ -391,7 +389,7 @@
             %td= log.client
             %td= log.data
             %td= log.deleted
-
+  Summa: #{trip}
 
 - if current_user && i_may_see_links_to(@team)
   %h5 Ändringar:
