@@ -51,6 +51,7 @@ sv:
       rescue-dist: Undsättning nödställd - distanstillägg (§11.1.5).
     types:
       round: rundning
+      retire: bryter seglingen (DNF)
       changeSails:  segelskifte
       seeOtherBoats:  siktar andra båtar
       lanterns: lanternor
@@ -96,6 +97,12 @@ sv:
     edit:
       title: Ändra uppgifter om regattan
   teams:
+    sailing_state:
+      not_started: Inte startat
+      started: Startat
+      finished: Gått i mål
+      did_not_start: Startade inte (DNS)
+      did_not_finish: Gick inte i mål (DNF)
     index:
       title: Anmälningar
     show:

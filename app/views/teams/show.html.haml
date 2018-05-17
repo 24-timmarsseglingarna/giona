@@ -25,11 +25,11 @@
           %i.fa.fa-trophy(aria-hidden='true')
           = @team.plaque_distance unless @team.plaque_distance.nil?
           M.
-      - if @team.did_not_start
-        Startade inte.
-      - if @team.did_not_finish
-        Fullföljde inte.
-      .legend Status:
+      .legend Status på seglingen (enligt mobilappen):
+      %p
+        %i.fas.fa-file(aria-hidden='true')
+        = I18n.t("teams.sailing_state.#{@team.sailing_state}")
+      .legend Status på anmälan:
       %p
         %i.fas.fa-file(aria-hidden='true')
         - if @team.draft?
@@ -288,7 +288,6 @@
         %th Vind
         %th Notering
         - if params[:rich]
-          %th Team
           %th User
           %th Client
           %th Data
@@ -336,6 +335,9 @@
                     = team.boat_sail_number
                     = team.boat_name
                     %br
+                - if log.log_type == 'retire'
+                  Avbryter seglingen (DNF).
+                  %br
                 - if log.log_type == 'protest'
                   - suspected_team = log.team.race.regatta.teams.find_by( start_number: log_entry['protest']['boat'])
                   Protest mot misstänkt regelbrott.
@@ -383,13 +385,13 @@
                   = team.boat_name
                   %br
 
-          - if params[:rich]
-            %td= log.team_id
-            %td= log.user_id
-            %td= log.client
-            %td= log.data
-            %td= log.deleted
-  Summa: #{trip}
+          - if params[:rich] && current_user
+            - if has_assistant_rights?
+              %td= log.user_id
+              %td= log.client
+              %td= log.data
+              %td= log.deleted
+  Summa: #{trip.round(1)}
 
 - if current_user && i_may_see_links_to(@team)
   %h5 Ändringar:

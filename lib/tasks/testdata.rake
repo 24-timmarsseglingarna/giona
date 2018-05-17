@@ -78,7 +78,7 @@ namespace :testdata do
     team.start_number = 11
     team.handicap = SrsKeelboat.find_by name: 'Linjett 37'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+    
     team.approved!
     team.save!
 
@@ -118,7 +118,7 @@ namespace :testdata do
     team.start_number = 12
     team.handicap = SrsKeelboat.find_by name: 'Scampi'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -158,7 +158,7 @@ namespace :testdata do
     team.start_number = 13
     team.handicap = SrsKeelboat.find_by name: 'Albin Vigg'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -198,7 +198,7 @@ namespace :testdata do
     team.start_number = 14
     team.handicap = SrsKeelboat.find_by name: 'Seacat'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -238,7 +238,7 @@ namespace :testdata do
     team.start_number = 15
     team.handicap = SrsKeelboat.find_by name: 'Sveakryssare'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -278,7 +278,7 @@ namespace :testdata do
     team.start_number = 16
     team.handicap = SrsKeelboat.find_by name: 'Mixer Cr'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -318,7 +318,7 @@ namespace :testdata do
     team.start_number = 17
     team.handicap = SrsKeelboat.find_by name: 'Arcona 355'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -358,7 +358,7 @@ namespace :testdata do
     team.start_number = 18
     team.handicap = SrsKeelboat.find_by name: 'Bavaria 30 Cr. 05-07'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
 
     team.save!
@@ -399,7 +399,7 @@ namespace :testdata do
     team.start_number = 20
     team.handicap = SrsKeelboat.find_by name: 'Conqubin 38 Cr'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -452,7 +452,7 @@ namespace :testdata do
     team.start_number = 19
     team.handicap = SrsKeelboat.find_by name: 'NF'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -492,7 +492,7 @@ namespace :testdata do
     team.start_number = 21
     team.handicap = SrsKeelboat.find_by name: 'Comfort 32'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -544,7 +544,7 @@ namespace :testdata do
     team.start_number = 22
     team.handicap = SrsKeelboat.find_by name: 'Linjett 33'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -597,7 +597,7 @@ namespace :testdata do
     team.start_number = 1
     team.handicap = SrsKeelboat.find_by name: 'Linjett 33'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 
@@ -628,7 +628,7 @@ namespace :testdata do
     team.start_number = 2
     team.handicap = SrsKeelboat.find_by name: 'Scampi'
     team.handicap_type = 'SrsKeelboat'
-    team.paid_fee = true
+
     team.approved!
     team.save!
 

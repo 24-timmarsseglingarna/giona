@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180507130050) do
+ActiveRecord::Schema.define(version: 20180515201344) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -214,11 +214,8 @@ ActiveRecord::Schema.define(version: 20180507130050) do
     t.integer  "start_point"
     t.integer  "start_number"
     t.float    "plaque_distance"
-    t.boolean  "did_not_start"
-    t.boolean  "did_not_finish"
-    t.boolean  "paid_fee"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.integer  "boat_id"
     t.integer  "finish_point"
     t.boolean  "offshore"
@@ -226,6 +223,7 @@ ActiveRecord::Schema.define(version: 20180507130050) do
     t.integer  "handicap_id"
     t.string   "handicap_type"
     t.integer  "state"
+    t.integer  "sailing_state",    default: 0
   end
 
   create_table "terrains", force: :cascade do |t|

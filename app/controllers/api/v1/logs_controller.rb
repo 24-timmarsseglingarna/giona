@@ -25,6 +25,7 @@ module Api
         @log = Log.new(log_params)
         respond_to do |format|
           if @log.save
+            @log.team.set_sailing_state!
             format.json { render 'logs/show', status: :created, location: @log }
           else
             format.json { render json: @log.errors,
@@ -43,6 +44,7 @@ module Api
             format.json { render 'logs/show', status: :conflict,
                                  location: @log }
           elsif @log.update(log_params)
+            @log.team.set_sailing_state!
             format.json { render 'logs/show', status: :ok, location: @log }
           else
             format.json { render json: @log.errors,
@@ -60,7 +62,6 @@ module Api
           .permit(:team_id, :time, :user_id, :client, :log_type,
                   :deleted, :point, :data)
       end
-
     end
   end
 end

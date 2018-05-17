@@ -15,9 +15,9 @@ class Team < ApplicationRecord
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
   scope :has_person, ->(p_id) {joins(:people).where("people.id = ?", p_id) }
   scope :is_visible, ->() {where("state > ?", 1)}
-  scope :did_not_start, ->(value = true) { where(did_not_start: value) }
-  scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
-  scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
+  #scope :did_not_start, ->(value = true) { where(did_not_start: value) }
+  #scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
+  #scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
   scope :from_regatta, ->(r_id) { joins(race: :regatta).where("regattas.id = ?", r_id) }
 
   # Team.is_active implemented as a scope
@@ -27,6 +27,7 @@ class Team < ApplicationRecord
   after_initialize :set_defaults, unless: :persisted?
 
   enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived]
+  enum sailing_state: [:not_started, :did_not_start, :started, :did_not_finish, :finished]
   after_initialize :set_default_state, :if => :new_record?
 
   delegate :minimal, to: :race
@@ -91,9 +92,6 @@ class Team < ApplicationRecord
 
 
   def set_defaults
-    self.did_not_start  ||= false
-    self.did_not_finish  ||= false
-    self.paid_fee  ||= false
     set_name
   end
 
@@ -182,10 +180,49 @@ class Team < ApplicationRecord
     end
   end
 
+  def has_finished_according_to_logbook?
+    out = false
+    for log in self.logs
+      if JSON.parse(log.data)['finish'].present?
+        out = (JSON.parse(log.data)['finish'] == 'true')
+      end
+    end
+  end
+
+  def set_sailing_state!
+    # states:
+    # not_started
+    # did_not_start
+    # started
+    # did_not_finish
+    # finished
+    has_started = self.logs.where(log_type: 'round', deleted: false).present?
+    has_cancelled = self.logs.where(log_type: 'retire', deleted: false).present?
+    has_finished = false
+    for log in self.logs.where(deleted: false)
+      if JSON.parse(log.data)['finish'].present?
+        if JSON.parse(log.data)['finish'] == 'true'
+          has_finished = true
+        end
+      end
+    end
+
+    if has_cancelled
+      self.did_not_finish!
+    elsif has_finished
+      self.finished!
+    elsif has_started
+      self.started!
+    else
+      self.not_started
+    end
+  end
+
 private
 
   def set_default_state
     self.state = :draft
+    self.sailing_state = :not_started
   end
 
 end
