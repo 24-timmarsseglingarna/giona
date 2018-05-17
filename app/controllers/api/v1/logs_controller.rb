@@ -21,7 +21,6 @@ module Api
       end
 
       def create
-        # FIXME: not correct - how do I call the other logs_controller?
         @log = Log.new(log_params)
         respond_to do |format|
           if @log.save
@@ -35,7 +34,6 @@ module Api
       end
 
       def update
-        # FIXME: not correct - how do I call the other logs_controller?
         @log = Log.find(params[:id])
         respond_to do |format|
           gen = params.delete(:gen)
