@@ -34,11 +34,23 @@ class Log < ApplicationRecord
   # FIXME: add user_name 'virtual' column, and include it
   # instead of the user_id in the json
 
+
   before_save do
     if self.gen != nil
       self.gen += 1
     else
       self.gen = 1
+    end
+  end
+
+  def user_name
+    unless self.user_id.blank?
+      user = User.find self.user_id
+      unless user.person.first_name.blank? && user.person.last_name.blank?
+        "#{user.person.first_name} #{user.person.last_name}"
+      else
+        user.email
+      end
     end
   end
 
