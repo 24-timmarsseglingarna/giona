@@ -35,7 +35,6 @@ class Log < ApplicationRecord
   # instead of the user_id in the json
 
   before_save do
-    # FIXME: also fill in user_id from authenticated user
     if self.gen != nil
       self.gen += 1
     else
