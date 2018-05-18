@@ -31,10 +31,6 @@ class Log < ApplicationRecord
     where("logs.team_id != ?", t)
   }
 
-  # FIXME: add user_name 'virtual' column, and include it
-  # instead of the user_id in the json
-
-
   before_save do
     if self.gen != nil
       self.gen += 1
