@@ -52,9 +52,10 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   #config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   config.file_watcher = ActiveSupport::FileUpdateChecker
+  config.reload_classes_only_on_change = false
 
 
-  # Link in mails to application. 
+  # Link in mails to application.
   config.action_mailer.default_url_options = { host: 'localhost', port: 8080 }
 
   config.web_console.whitelisted_ips = '10.0.2.2'

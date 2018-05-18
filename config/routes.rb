@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       resources :people,        only: [:index, :show]
       resources :boats,         only: [:index, :show]
       resources :teams,         only: [:index, :show]
-      resources :logs
+      resources :logs,          only: [:index, :show, :create, :update]
       resources :races,         only: [:index, :show]
       resources :regattas,      only: [:index, :show]
       resources :organizers,      only: [:index, :show]

@@ -214,7 +214,7 @@ class Team < ApplicationRecord
     elsif has_started
       self.started!
     else
-      self.not_started
+      self.not_started!
     end
   end
 

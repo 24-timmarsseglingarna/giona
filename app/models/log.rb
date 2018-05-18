@@ -4,6 +4,9 @@ class Log < ApplicationRecord
   scope :from_team, ->(t_id) {
     where("logs.team_id = ?", t_id)
   }
+  scope :has_team, ->(t_id) {
+    where("logs.team_id = ?", t_id)
+  }
   scope :from_regatta, ->(r_id) {
     joins(team: :race).where("races.regatta_id = ?", r_id)
   }
