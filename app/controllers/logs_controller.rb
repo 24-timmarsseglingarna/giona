@@ -2,18 +2,9 @@
 class LogsController < ApplicationController
   before_action :set_log, only: [:show, :edit, :update, :destroy]
 
-## FIXME:
-##   must be authenticated and part of the team in order to
-##     - create/update/delete a log entry
-##     - read full log entry
-##   any user should be able to read summary log entried - how do
-##   you let a query parameter (?summary=true) influence which fields
-##   are returned?  should return just :id, :point, :time, :updated_at
-##   where :type == 'round'
-##   This is currently emulated by the client sending has_type + not_client
-
-#  before_action :authenticate_user!, :except => [:show, :welcome]
-#  before_action :interims_authenticate!, :except => [:show, :welcome, :index]
+# Right now, don't manage logs from the logs controller (web)
+# Logs are only managed through the API. And viewed from the
+# teams#show controller, where access is authorized.
 
   has_scope :from_team
   has_scope :from_regatta
