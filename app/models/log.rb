@@ -1,5 +1,6 @@
 class Log < ApplicationRecord
   belongs_to :team
+  validates_presence_of :team_id, :time, :log_type, :gen
 
   scope :from_team, ->(t_id) {
     where("logs.team_id = ?", t_id)
