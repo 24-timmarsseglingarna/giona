@@ -1,6 +1,6 @@
 class ApiController < ActionController::Base
 
-  before_action :insert_token_headers  
+  before_action :insert_token_headers
   respond_to :json
   protect_from_forgery with: :null_session
 

@@ -1,0 +1,33 @@
+%p#notice= notice
+
+%p
+  %b Team:
+  = @log.team_id
+%p
+  %b Time:
+  = @log.time
+%p
+  %b User:
+  = @log.user_id
+%p
+  %b Client:
+  = @log.client
+%p
+  %b Log type:
+  = @log.log_type
+%p
+  %b Point:
+  = @log.point
+%p
+  %b Data:
+  = @log.data
+%p
+  %b Deleted:
+  = @log.deleted
+%p
+  %b Gen:
+  = @log.gen
+
+= link_to 'Edit', edit_log_path(@log)
+\|
+= link_to 'Back', logs_path

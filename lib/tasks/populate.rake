@@ -408,23 +408,23 @@ namespace :import do
               team.boat_sail_number = boat.sail_number
             end
           end
-          if row['SeglingEjStart'].to_i == 1
-            team.did_not_start = true
-          else
-            team.did_not_start = false
-          end
+          #if row['SeglingEjStart'].to_i == 1
+          #  team.did_not_start = true
+          #else
+          #  team.did_not_start = false
+          #end
 
-          if ( row['SeglingBrutit'].to_i == 1 )
-            team.did_not_finish = true
-          else
-            team.did_not_finish = false
-          end
+          #if ( row['SeglingBrutit'].to_i == 1 )
+          #  team.did_not_finish = true
+          #else
+          #  team.did_not_finish = false
+          #end
 
-          if ( row['SeglingBetalt'].to_i == 1 )
-            team.paid_fee = true
-          else
-            team.paid_fee = false
-          end
+          #if ( row['SeglingBetalt'].to_i == 1 )
+          #
+          #else
+          #  team.paid_fee = false
+          #end
 
           team.save!
         end

@@ -27,14 +27,15 @@
       %a{:href => regattas_path(:is_active => true)}
         %i.fa.fa-font.fa-trophy.fa-fw(aria-hidden='true')
         Regattor
-    %li
-      %a{:href => boats_path}
-        %i.fa.fa-ship.fa-fw(aria-hidden='true')
-        Båtar
-    %li
-      %a{:href => people_path}
-        %i.fa.fa-users.fa-fw(aria-hidden='true')
-        Deltagare
+    - if has_assistant_rights?
+      %li
+        %a{:href => boats_path}
+          %i.fa.fa-ship.fa-fw(aria-hidden='true')
+          Båtar
+      %li
+        %a{:href => people_path}
+          %i.fa.fa-users.fa-fw(aria-hidden='true')
+          Deltagare
 
     -if has_admin_rights?
       %li
