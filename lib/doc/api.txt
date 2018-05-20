@@ -18,7 +18,7 @@ QUERIES
 CLASSES
 regattas?is_active=boolean&has_race=N&from_organizer=O
 races?from_regatta=N&has_team=O&has_period=P&from_organizer=Q&is_active=boolean
-teams?from_regatta=M&from_race=N&from_boat=O&has_person=P?is_active=boolean&did_not_start=boolean&did_not_finish=boolean&has_paid_fee=boolean
+teams?from_regatta=M&from_race=N&from_boat=O&has_person=P?is_active=boolean
 people?from_team=N&has_user=O
 user.from_person=N
 boats?from_team=O

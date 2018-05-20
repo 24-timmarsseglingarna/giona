@@ -12,9 +12,6 @@ one:
   start_number: 1
   handicap: 1.5
   plaque_distance: 1.5
-  did_not_start: false
-  did_not_finish: false
-  paid_fee: false
 
 two:
   race_id: 1
@@ -28,6 +25,3 @@ two:
   start_number: 1
   handicap: 1.5
   plaque_distance: 1.5
-  did_not_start: false
-  did_not_finish: false
-  paid_fee: false

@@ -48,4 +48,15 @@ module TeamsHelper
        "panel-danger"
      end
    end
+
+   def distance_between( previous_point_number, point_number, terrain)
+     previous_point = terrain.points.find_by number: previous_point_number
+     point = terrain.points.find_by number: point_number
+     leg = terrain.legs.find_by point: previous_point, to_point: point
+     if leg
+       leg.distance
+     else
+       0.0
+     end
+   end
 end

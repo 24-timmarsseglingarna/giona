@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180422084858) do
+ActiveRecord::Schema.define(version: 20180515201344) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,22 @@ ActiveRecord::Schema.define(version: 20180422084858) do
     t.integer "terrain_id", null: false
     t.index ["leg_id", "terrain_id"], name: "index_legs_terrains_on_leg_id_and_terrain_id", using: :btree
     t.index ["terrain_id", "leg_id"], name: "index_legs_terrains_on_terrain_id_and_leg_id", using: :btree
+  end
+
+  create_table "logs", force: :cascade do |t|
+    t.integer  "team_id"
+    t.datetime "time"
+    t.integer  "user_id"
+    t.string   "client"
+    t.string   "log_type"
+    t.integer  "point"
+    t.string   "data"
+    t.boolean  "deleted",    default: false
+    t.integer  "gen"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.index ["team_id"], name: "index_logs_on_team_id", using: :btree
+    t.index ["updated_at"], name: "index_logs_on_updated_at", using: :btree
   end
 
   create_table "notes", force: :cascade do |t|
@@ -198,11 +214,8 @@ ActiveRecord::Schema.define(version: 20180422084858) do
     t.integer  "start_point"
     t.integer  "start_number"
     t.float    "plaque_distance"
-    t.boolean  "did_not_start"
-    t.boolean  "did_not_finish"
-    t.boolean  "paid_fee"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.integer  "boat_id"
     t.integer  "finish_point"
     t.boolean  "offshore"
@@ -210,6 +223,7 @@ ActiveRecord::Schema.define(version: 20180422084858) do
     t.integer  "handicap_id"
     t.string   "handicap_type"
     t.integer  "state"
+    t.integer  "sailing_state",    default: 0
   end
 
   create_table "terrains", force: :cascade do |t|

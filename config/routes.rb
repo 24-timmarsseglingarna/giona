@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  # resources :logs # Don't manage logs from web ui at the moment.
   resources :agreements
   resources :default_starts
   resources :legs
@@ -19,6 +20,7 @@ Rails.application.routes.draw do
       resources :people,        only: [:index, :show]
       resources :boats,         only: [:index, :show]
       resources :teams,         only: [:index, :show]
+      resources :logs,          only: [:index, :show, :create, :update]
       resources :races,         only: [:index, :show]
       resources :regattas,      only: [:index, :show]
       resources :organizers,      only: [:index, :show]
@@ -41,6 +43,7 @@ Rails.application.routes.draw do
   get 'teams/crew'
 
   resources :teams
+  resources :logs
 
   resources :races
   resources :regattas
