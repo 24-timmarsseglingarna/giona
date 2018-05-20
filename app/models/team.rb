@@ -222,7 +222,7 @@ private
 
   def set_default_state
     self.state = :draft
-    self.sailing_state = :not_started
+    #self.sailing_state = 'not_started'
   end
 
 end
