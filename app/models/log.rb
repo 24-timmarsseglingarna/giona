@@ -12,11 +12,6 @@ class Log < ApplicationRecord
     joins(team: :race).where("races.regatta_id = ?", r_id)
   }
   scope :updated_after, ->(d) {
-    # FIXME: seems as the stored time as microsecond resolution, but
-    # when it is sent, it is rounded to milliseconds; then when it is
-    # passed back it is parsed as having 0 microseconds.  This means
-    # the app always gets the last log entry every time.
-    # For example, stored: X.123456, sent as X.123, parsed to X.123000.
     where("logs.updated_at > ?", DateTime.parse(d).strftime('%Y-%m-%d %H:%M:%S.%N'))
   }
 
