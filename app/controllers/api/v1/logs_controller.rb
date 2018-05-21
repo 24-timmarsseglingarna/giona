@@ -15,7 +15,7 @@ module Api
         @logs = apply_scopes(Log).all.select(:team_id, :time, :user_id, :client, :log_type, :deleted, :point, :gen)
         if params[:from_team]
           if user_signed_in?
-            team = Team.find params[:has_team].to_i
+            team = Team.find params[:from_team].to_i
             if team.people.include? current_user.person
               @logs = apply_scopes(Log).all
               render 'logs/index'
