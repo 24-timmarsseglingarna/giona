@@ -19,6 +19,7 @@ class Team < ApplicationRecord
   #scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
   #scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
   scope :from_regatta, ->(r_id) { joins(race: :regatta).where("regattas.id = ?", r_id) }
+  scope :is_active, ->(b = true) { joins(race: :regatta).where("regattas.active = ?", b) }
 
   # Team.is_active implemented as a scope
 
@@ -33,13 +34,6 @@ class Team < ApplicationRecord
   delegate :minimal, to: :race
   delegate :period, to: :race
 
-  def self.is_active value = true
-    if value
-      where(:state => 1..4)
-    else
-      where.not(:state => 1..4)
-    end
-  end
 
   def self.is_archived value = true
     if value
