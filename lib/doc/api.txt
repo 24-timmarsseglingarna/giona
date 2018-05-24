@@ -27,4 +27,5 @@ logs?has_team=N&from_team=N&from_regatta=O&updated_after='timestamp'&has_type='t
 
 PARAMETERS
 ?is_active always refer to a regatta that is active. Defaults to 'true'.
+?is_visible refers to the internal state of a team. Defaults to 'true'.
 ?from_klass and has_klass always refer to the id of class klass

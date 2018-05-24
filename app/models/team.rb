@@ -14,14 +14,11 @@ class Team < ApplicationRecord
   scope :from_race, ->(r_id) {joins(:race).where("races.id = ?", r_id) }
   scope :from_boat, ->(b_id) {joins(:boat).where("boats.id = ?", b_id) }
   scope :has_person, ->(p_id) {joins(:people).where("people.id = ?", p_id) }
-  scope :is_visible, ->() {where("state > ?", 1)}
   #scope :did_not_start, ->(value = true) { where(did_not_start: value) }
   #scope :did_not_finish, ->(value = true) { where(did_not_finish: value) }
   #scope :has_paid_fee, ->(value = true) { where(paid_fee: value) }
   scope :from_regatta, ->(r_id) { joins(race: :regatta).where("regattas.id = ?", r_id) }
   scope :is_active, ->(b = true) { joins(race: :regatta).where("regattas.active = ?", b) }
-
-  # Team.is_active implemented as a scope
 
   accepts_nested_attributes_for :boat
 
@@ -34,6 +31,13 @@ class Team < ApplicationRecord
   delegate :minimal, to: :race
   delegate :period, to: :race
 
+  def self.is_visible value = true
+    if value == true
+      where "state > ?", 0
+    else
+      where state: 0
+    end
+  end
 
   def self.is_archived value = true
     if value
