@@ -2,6 +2,7 @@ API specification - version 1
 
 SIGN IN
 curl -H "Content-Type: application/json" -X POST -d '{ "user": { "email": "someone@somewhere.com", "password": "secret" } }' http://localhost:8080/users/sign_in.json
+curl -v -H "Content-Type: application/json" -H "X-User-Token: TOKENTOKENTOKEN" -H "X-User-Email: someone@somewhere.com" -X GET http://localhost:8080/api/v1/logs/82
 
 REQUEST HEADERS
 X-User-Email
@@ -16,14 +17,15 @@ QUERIES
 /api/v1/class?parameter1=value1&parameter2=value2
 
 CLASSES
+organizers?has_regatta=N&is_active=boolean
 regattas?is_active=boolean&has_race=N&from_organizer=O
 races?from_regatta=N&has_team=O&has_period=P&from_organizer=Q&is_active=boolean
 teams?from_regatta=M&from_race=N&from_boat=O&has_person=P?is_active=boolean
-people?from_team=N&has_user=O
-user.from_person=N
+people?has_team=N&has_user=O
 boats?from_team=O
-organizers?has_regatta=N&is_active=boolean
+logs?has_team=N&from_team=N&from_regatta=O&updated_after='timestamp'&has_type='type'&not_client='client-identifier-string'&not_team=P
 
-
-TODO
-regattas?from_organizer=N # New class Organizer needed.
+PARAMETERS
+?is_active always refer to a regatta that is active. Defaults to 'true'.
+?is_visible refers to the internal state of a team. Defaults to 'true'.
+?from_klass and has_klass always refer to the id of class klass
