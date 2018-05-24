@@ -4,9 +4,10 @@ module Api
 
       has_scope :from_regatta, :from_race, :from_boat, :has_person
       has_scope :is_active, :type => :boolean, allow_blank: true
+      has_scope :is_visible, :type => :boolean, allow_blank: true
 
       def index
-        @teams = apply_scopes(Team).all
+        @teams = apply_scopes(Team).is_visible(true).all
         render 'teams/index'
       end
 
