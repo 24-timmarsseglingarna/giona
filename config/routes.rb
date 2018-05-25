@@ -42,6 +42,15 @@ Rails.application.routes.draw do
   get 'teams/welcome'
   get 'teams/crew'
 
+  resources :teams do
+  	collection do
+    end
+    member do
+      get 'edit_handicap'
+      patch 'update_handicap'
+    end
+  end
+
   resources :teams
   resources :logs
 

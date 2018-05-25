@@ -22,9 +22,9 @@ namespace :scrape do
           handicap = SrsCertificate.find_or_create_by   registry_id: registry_id,
                                                         source: source,
                                                         best_before: best_before
-          handicap.owner_name = entry.css('td')[1].text.strip
-          handicap.name = entry.css('td')[2].text.strip
-          handicap.boat_name = entry.css('td')[3].text.strip
+          handicap.owner_name = entry.css('td')[1].text.to_s.strip
+          handicap.name = entry.css('td')[2].text.to_s.strip
+          handicap.boat_name = entry.css('td')[3].text.to_s.strip
           handicap.sail_number = entry.css('td')[5].text.to_i
           handicap.srs = entry.css('td')[8].text.gsub(',', '.').to_f
           handicap.sxk = (handicap.srs * 1.22).round(2)
@@ -48,7 +48,7 @@ namespace :scrape do
       puts source
       for entry in entries
         unless first_row
-          name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
           best_before = DateTime.now.in_time_zone.end_of_year
           handicap = SrsKeelboat.find_or_create_by  name: name,
                                                     best_before: best_before,
@@ -72,7 +72,7 @@ namespace :scrape do
       best_before = DateTime.now.in_time_zone.end_of_year
       for entry in entries
         unless first_row
-          name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä')
+          name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
           handicap = SrsMultihull.find_or_create_by   name: name,
                                                       best_before: best_before,
                                                       source: source
@@ -502,6 +502,14 @@ namespace :import do
 end
 
 namespace :batch do
+
+  task :trim_handicap_names => :environment do
+    for handicap in Handicap.all
+      handicap.name.strip!
+      handicap.save!
+    end
+  end
+
   task :agreement => :environment do
     a = Agreement.create name: 'Revision A - riksreglerna 2006',
                          description: 'Start-, resultat- och maratonlistor med personnamn och båtnamn kan komma att publiceras bland annat på Internet vilket alla deltagare förutsättes godkänna i och med att de anmäler sig till seglingen.'

@@ -681,8 +681,7 @@ sv:
         people: Personer
         vacancies: Lediga gastplatser
         boat: Båt
-        :yes: apa
-        :no: banan
+        handicap_type: Typ av handikapp
     hints:
       person:
         phone: Det nummer som är lättast att nå dig på, gärna mobilen.
