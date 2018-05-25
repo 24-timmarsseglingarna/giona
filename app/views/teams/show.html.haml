@@ -239,44 +239,28 @@
       -if @team.boat.nil? && i_may_see_links_to(@team)
         Välj först båt, sedan handikapp.
       -else
-        - if @team.handicap_type.blank? && i_may_see_links_to(@team)
-          Välj en sorts handikapp
-          %ul
-            - Handicap.types.each do |key, value|
-              %li
-                %i.fa.fa-plus-circle(aria-hidden='true')
-                =link_to value, teams_set_handicap_type_path(:id => @team.id, :handicap_type => key ), method: :post
+        - if @team.handicap_type.blank?
+          inget handikapp valt
+          -if i_may_see_links_to(@team)
+            %i.fas.fa-plus(aria-hidden='true')
+            = link_to 'Lägg till handikapp', edit_handicap_team_path(step: 1)
+        - elsif @team.handicap_type == 'SoonSrsCertificate'
+          Kommer att skaffa SRS-mätbrev. Tills vidare ansätts SXK-tal: 2.00
+        - elsif @team.handicap_type == 'SoonSxkCertificate'
+          Kommer att skaffa SRS-mätbrev. Tills vidare ansätts SXK-tal: 2.00
         - else
-          - if @team.handicap_type == 'SoonSrsCertificate'
-            Ska återkomma med SRS-mätbrev.
-            %i.fas.fa-times-circle(aria-hidden='true')
-            =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post
-          - elsif @team.handicap_type == 'SoonSxkCertificate'
-            Ska återkomma med SXK-mätbrev.
-            %i.fas.fa-times-circle(aria-hidden='true')
-            =link_to 'ersätt med handikapp', teams_remove_handicap_path(:id => @team.id), method: :post
-          - else
-            - if @team.handicap.nil?
-              =Handicap.types[@team.handicap_type]
-              - if i_may_see_links_to(@team)
-                %i.fa.fa-plus-circle(aria-hidden='true')
-                =link_to 'ange handikapp', edit_team_path(:id => @team.id, :section => :handicap)
-                %i.fas.fa-times-circle(aria-hidden='true')
-                =link_to 'nollställ', teams_remove_handicap_path(:id => @team.id), method: :post
-            - else
-              - if @team.race.start_from > @team.handicap.best_before
-                %span.error
-                  Handikappet gäller inte vid seglingen. Gäller till: #{I18n.l(@team.handicap.best_before, format: :day)}.
-                %br
-              SXK-tal
-              = @team.handicap.sxk
-              för
-              = @team.handicap.name
-              enligt
-              = @team.handicap.source
-              - if i_may_see_links_to(@team)
-                %i.fas.fa-times-circle(aria-hidden='true')
-                =link_to 'ta bort handikapp', teams_remove_handicap_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill ta bort handikappet från deltagaranmälan?"}
+          SXK-tal
+          = number_with_precision(@team.handicap.sxk, precision: 2)
+          för
+          = @team.handicap.name
+          enligt
+          = @team.handicap.source
+          - if @team.handicap.srs
+            (SRS-tal: #{number_with_precision(@team.handicap.srs, precision: 3)} )
+        -if i_may_see_links_to(@team) && @team.handicap_type.present?
+          %i.fas.fa-pencil-alt(aria-hidden='true')
+          = link_to 'Ändra handikapp', edit_handicap_team_path(step: 1)
+
 
 -unless @logs.blank?
   %table#giona-logs.table.table-striped.table-bordered.table-hover{:width => "100%"}

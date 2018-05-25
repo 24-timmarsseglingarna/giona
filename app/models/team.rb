@@ -148,12 +148,6 @@ class Team < ApplicationRecord
     else
       if self.handicap_type.blank?
         review_status['boat'] = 'Vilken sorts handikapp ska du använda?'
-      else
-        if self.handicap.blank?
-          unless (self.handicap_type = 'SxkCertificate') || (self.handicap_type = 'SxkCertificate')
-            review_status['boat'] = 'Vilket handikapp ska du använda?'
-          end
-        end
       end
     end
 
