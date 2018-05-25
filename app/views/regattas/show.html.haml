@@ -103,7 +103,7 @@
     - @teams.each do |team|
       %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
         %td= team.race.name
-        %td= race_start(team.race)
+        %td= race_start(team.race, true)
         %td= team.start_number
         %td= team.start_point
         %td= team.skipper.name unless team.skipper.nil?
@@ -117,6 +117,7 @@
 :javascript
   $(document).ready(function() {
   $('#giona-teams').DataTable({
+  order: [[1, "asc"]],
   paging: false,
   language: {
           processing:     "Jobbar ...",
