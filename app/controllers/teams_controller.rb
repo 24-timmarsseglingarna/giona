@@ -1,6 +1,6 @@
 class TeamsController < ApplicationController
   include ApplicationHelper
-  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :edit_handicap, :update_handicap, :set_handicap_type, :remove_handicap, :submit, :draft, :approve]
+  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :edit_handicap, :update_handicap, :submit, :draft, :approve]
   before_action :authenticate_user!, :except => [:show, :index, :welcome, :crew]
   before_action :authorize_organizer!, only: [:approve]
   before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome, :crew]
@@ -95,11 +95,6 @@ class TeamsController < ApplicationController
       @known_people = Person.all
     end
     @boats = Boat.all
-    #@srs_keelboats = SrsKeelboat.select_srs_keelboat
-    @srs_multihulls = SrsMultihull.all
-    @srs_dingies = SrsDingy.all
-    @srs_certificates = SrsCertificate.all
-    @sxk_certificates = SxkCertificate.all
   end
 
   # POST /teams
@@ -133,15 +128,10 @@ class TeamsController < ApplicationController
   def update
     old_boat = @team.boat
     old_vacancies = @team.vacancies
-    old_handicap = @team.handicap
-    old_handicap_type = @team.handicap_type
     old_start_point = @team.start_point
     old_offshore = @team.offshore
     old_race = @team.race
     description = ''
-    if (@team.handicap_type == 'SoonSrsCertificate' || @team.handicap_type == 'SoonSxkCertificate')
-      @team.handicap = nil
-    end
     respond_to do |format|
       if @team.update(team_params)
         if @team.race != old_race
@@ -154,14 +144,6 @@ class TeamsController < ApplicationController
         end
         if @team.vacancies != old_vacancies
           description += "Gastefterlysning ändrad av #{current_user.to_s}."
-        end
-        if ((@team.handicap != old_handicap) || (@team.handicap_type != old_handicap_type)) || (@team.handicap != old_handicap)
-          @team.draft!
-          if @team.handicap
-            description += "Handikapp satt till #{@team.handicap.description} (#{@team.handicap.id}) av #{current_user.to_s}."
-          else
-            description += "Handikapp satt till \"#{Handicap.types[@team.handicap_type]}\" av #{current_user.to_s}."
-          end
         end
         if @team.start_point != old_start_point
           description += "Startplats satt till #{@team.start_point} av #{current_user.to_s}."
@@ -230,21 +212,69 @@ class TeamsController < ApplicationController
   end
 
   def update_handicap
-    if (team_params['handicap_type'] == 'SoonSrsCertificate' || team_params['handicap_type'] == 'SoonSxkCertificate')
-      @team.handicap = nil
+    old_handicap = @team.handicap
+    old_handicap_type = @team.handicap_type
+    if params[:step] == '2'
       if @team.update(team_params)
-        @team.review
-        Note.create(team_id: @team.id, user: current_user, description: "#{Handicap.types[@team.handicap_type]}. Valt av #{current_user.to_s}.")
-        redirect_to @team, notice: "Okej, återkom när du skaffat mätbrev. Då uppdaterar du din anmälan. Tills dess så sätter vi SXK-tal 2,0 så länge."
+        if !@team.handicap_type
+          redirect_to edit_handicap_team_path(@team, step: 1), notice: 'Välj typ av handikapp.'
+        else
+          if @team.handicap_type != old_handicap_type
+            Note.create(team_id: @team.id, user: current_user, description: "#{Handicap.types[@team.handicap_type]}. Valt av #{current_user.to_s}.")
+            if @team.state != nil && @team.state != 'draft'
+              @team.draft!
+            end
+          end
+          if @team.handicap_type == 'SoonSrsCertificate' || @team.handicap_type == 'SoonSxkCertificate'
+            @team.handicap = nil
+            @team.save!
+            @team.review
+            redirect_to @team, notice: "Okej, återkom när du skaffat mätbrev. Då uppdaterar du din anmälan. Tills dess så sätter vi SXK-tal 2,0 så länge."
+          else
+            if @team.handicap_type != old_handicap_type
+              @team.handicap = nil
+              @team.save!
+            end
+            if @team.handicap_type == 'SrsCertificate' || @team.handicap_type == 'SxkCertificate'
+              redirect_to edit_handicap_team_path(@team, step: 3), notice: 'Okej, välj nu handikapp för din båt.'
+            else
+              redirect_to edit_handicap_team_path(@team, step: 3), notice: 'Okej, välj nu handikapp för din båttyp.'
+            end
+          end
+        end
       else
-        redirect_to @team, alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.'
+        redirect_to edit_handicap_team_path(@team, step: 1), alert: 'Nu blev det fel. Det är inte ditt fel. Försök igen.'
+      end
+    elsif params[:step] == '3'
+      if @team.update(team_params)
+        if @team.handicap_type.present?
+          if @team.handicap.present?
+            if @team.handicap_type == @team.handicap.type
+              @team.review
+              if @team.handicap != old_handicap
+                Note.create(team_id: @team.id, user: current_user, description: "Handikapp satt till #{@team.handicap.description} (#{@team.handicap.id}) av #{current_user.to_s}.")
+                if @team.state != nil && @team.state != 'draft'
+                  @team.draft!
+                  notice = "Handikapp satt. Du behöver skicka in anmälan för granskning igen."
+                else
+                  notice = "Handikapp satt."
+                end
+              end
+              redirect_to @team, notice: notice
+            else
+              redirect_to edit_handicap_team_path(@team, step: 1), alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.'
+            end
+          else
+            redirect_to edit_handicap_team_path(@team, step: 2), alert: 'Du behöver välja handikapp.'
+          end
+        else
+          redirect_to edit_handicap_team_path(@team, step: 1), alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.'
+        end
+      else
+        redirect_to edit_handicap_team_path(@team, step: 1), alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.'
       end
     else
-      if @team.update(team_params)
-        redirect_to edit_handicap_team_path(@team), notice: "Okej, välj nu din mätbrev från #{Handicap.types[@team.handicap_type]}"
-      else
-        redirect_to @team, alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.'
-      end
+      redirect_to edit_handicap_team_path(@team, step: 1), notice: "Vilken typ av handikapp ska du använda?"
     end
   end
 
