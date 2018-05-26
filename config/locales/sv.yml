@@ -103,6 +103,12 @@ sv:
       finished: Gått i mål
       did_not_start: Startade inte (DNS)
       did_not_finish: Gick inte i mål (DNF)
+      '0': Inte startat
+      '1': Startat
+      '2': Gått i mål
+      '3': Startade inte (DNS)
+      '4': Gick inte i mål (DNF)
+
     index:
       title: Anmälningar
     show:
