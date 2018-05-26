@@ -39,7 +39,7 @@
               Du behöver komplettera deltagaranmälan för att kunna skicka in den.
           -if @status.blank? && i_may_see_links_to( @team ) && current_user
             %p
-              Din anmälan tillräckligt ifylld för att skickas in till arrangören.
+              Din anmälan är tillräckligt ifylld för att skickas in till arrangören.
               Den blir då synlig i startlistan. Du kan gå tillbaka och ändra uppgifter och lägga till besättningsmedlemmar.
             %p
               Genom att skicka in anmälan intygar du att uppgifterna är korrekta och att båt och besättning uppfyller reglernas krav. Reglerna finns på arrangörens webbsida.
@@ -56,6 +56,8 @@
             %p
               Du kan dra tillbaka anmälan. Då försvinner båten från startlistan. Anmälan finns kvar med status 'utkast' så du kan återanmäla dig.
           - if has_organizer_rights?
+            %br
+            %p
             = link_to 'Godkänn anmälan', teams_approve_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
         - elsif @team.approved?
           Godkänd (av arrangören)
@@ -249,14 +251,17 @@
         - elsif @team.handicap_type == 'SoonSxkCertificate'
           Kommer att skaffa SRS-mätbrev. Tills vidare ansätts SXK-tal: 2.00
         - else
-          SXK-tal
-          = number_with_precision(@team.handicap.sxk, precision: 2)
-          för
-          = @team.handicap.name
-          enligt
-          = @team.handicap.source
-          - if @team.handicap.srs
-            (SRS-tal: #{number_with_precision(@team.handicap.srs, precision: 3)} )
+          - if @team.handicap.present?
+            SXK-tal
+            = number_with_precision(@team.handicap.sxk, precision: 2)
+            för
+            = @team.handicap.name
+            enligt
+            = @team.handicap.source
+            - if @team.handicap.srs
+              (SRS-tal: #{number_with_precision(@team.handicap.srs, precision: 3)} )
+          - else
+            Uppgiften om handikapp är inte komplett.
         -if i_may_see_links_to(@team) && @team.handicap_type.present?
           %i.fas.fa-pencil-alt(aria-hidden='true')
           = link_to 'Ändra handikapp', edit_handicap_team_path(step: 1)

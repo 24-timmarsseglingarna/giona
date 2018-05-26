@@ -146,7 +146,12 @@ class Team < ApplicationRecord
     else
       if self.handicap_type.blank?
         review_status['boat'] = 'Vilken sorts handikapp ska du använda?'
+      else
+        if self.handicap.blank? && (['SrsKeelboat', 'SrsMultihull', 'SrsDingy', 'SrsCertificate', 'SxkCertificate'].include? self.handicap_type)
+          review_status['boat'] = 'Vilken sorts handikapp ska du använda?'
+        end
       end
+
     end
 
     review_status
