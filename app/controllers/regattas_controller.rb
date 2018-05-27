@@ -24,6 +24,13 @@ class RegattasController < ApplicationController
     else
       @teams = @regatta.teams.where("state > ?", 0)
     end
+    file_name = "Anmalningsrapport--#{@regatta.name}--exporterad--#{DateTime.now.iso8601}".parameterize
+    respond_to do |format|
+      format.html
+      format.xlsx {
+          response.headers['Content-Disposition'] = "attachment; filename=#{file_name}.xlsx"
+            }
+    end
   end
 
   # GET /regattas/new

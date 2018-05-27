@@ -1,0 +1,111 @@
+wb = xlsx_package.workbook
+
+sheet_header = Hash.new
+sheet_header = [  'Skapad',
+                  'Uppdaterad',
+                  'Status på anmälan',
+                  'Startnr',
+                  'Förnamn',
+                  'Efternamn',
+                  'Mejladress',
+                  'Födelsedatum',
+                  'c/o',
+                  'Gatuadress',
+                  'Postnummer',
+                  'Postort',
+                  'Land',
+                  'Telefon',
+                  'Bokförd i krets',
+                  'Länk t deltagare',
+                  'Båtnamn',
+                  'Båttyp',
+                  'Segelnummer',
+                  'Arrangör',
+                  'Regatta',
+                  'Segling',
+                  'Roll',
+                  'Startplats',
+                  'Havs-/kustsegling',
+                  'Handikapptyp',
+                  'Handikapp',
+                  'SXK-tal',
+                  'Länk t anmälan',
+                  'Deltagarvimpel',
+                  'Medlem i Svenska Kryssarklubben',
+                  'Bet start',
+                  'Bet datum',
+                  'Vimpel',
+                  'Bet vimpel']
+
+wb.add_worksheet(name: "Deltagare") do |sheet|
+  sheet.add_row sheet_header
+
+  for race in @regatta.races
+    for team in race.teams
+      for person in team.people
+        skipper = CrewMember.find_by(team: team, person: person).skipper
+        sheet.add_row [ l(team.created_at, format: :normal),
+                        l(team.updated_at, format: :normal),
+                        team.state_to_s,
+                        team.start_number,
+                        person.first_name,
+                        person.last_name,
+                        person.email,
+                        if person.birthday.blank?
+                          ''
+                        else
+                          l(person.birthday, format: :day)
+                        end,
+                        person.co,
+                        person.street,
+                        person.zip,
+                        person.city,
+                        I18n.t("countries.#{person.country}"),
+                        '\'' + person.phone,
+                        '',
+                        person_url(person),
+                        team.boat_name,
+                        team.boat_type_name,
+                        team.boat_sail_number,
+                        @regatta.organizer.name,
+                        @regatta.name,
+                        race.name,
+                        if skipper == true
+                          'skeppare'
+                        elsif skipper == false
+                          'gast'
+                        else
+                          ''
+                        end,
+                        if team.start_point.present?
+                          name_by_number(@regatta.terrain, team.start_point)
+                        else
+                          ''
+                        end,
+                        if team.offshore
+                          'hav'
+                        else
+                          'kust'
+                        end,
+                        Handicap.types[team.handicap_type],
+                        if team.handicap.present?
+                          team.handicap.name
+                        else
+                          ''
+                        end,
+                        if team.handicap.present?
+                          team.handicap.sxk
+                        else
+                          ''
+                        end,
+                        team_url(team),
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '']
+     end
+   end
+  end
+end

@@ -82,6 +82,11 @@
           %li
             %i.fa.fa-bell(aria-hidden='true')
             = link_to "Period: #{period}", new_race_path(:regatta_id => @regatta.id, :period => period)
+      .legend Rapporter:
+      %p
+        %i.fas.fa-file-excel(aria-hidden='true')
+        = link_to "Deltagarrapport (xlsx)", regatta_path(@regatta, format: "xlsx")
+
 
 
 %h2 Anmälda
