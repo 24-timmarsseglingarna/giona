@@ -28,4 +28,18 @@ class Handicap < ApplicationRecord
     types
   end
 
+  def self.short_types
+    types = {}
+    types['SrsKeelboat'] = 'SRS Kölbåt'
+    types['SrsMultihull'] = 'SRS Flerskrov'
+    types['SrsDingy'] = 'SRS Jolle'
+    types['SrsCertificate'] = 'SRS-mätbrev'
+    types['SoonSrsCertificate'] = 'Interimistiskt'
+    types['SxkCertificate'] = 'SXK-mätbrev'
+    types['SoonSxkCertificate'] = 'Interimistiskt'
+
+    types
+  end
+
+
 end

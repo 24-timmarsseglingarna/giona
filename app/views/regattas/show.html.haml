@@ -38,6 +38,11 @@
       %i.fas.fa-address-card(aria-hidden='true')
       = mail_to @regatta.email_from, "#{@regatta.name_from} #{'<'}#{@regatta.email_from}#{'>'}"
 
+    .legend Listor och rapporter:
+    %p
+      %i.far.fa-file-alt(aria-hidden='true')
+      = link_to 'Startlista (direkt uppdaterad av deltagarna)', start_list_regatta_path(@regatta)
+
     - if has_assistant_rights?
       .legend Version av Punkt- & distanstabell:
       %p

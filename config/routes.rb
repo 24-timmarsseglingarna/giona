@@ -51,6 +51,15 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :regattas do
+  	collection do
+    end
+    member do
+      get 'start_list'
+    end
+  end
+
+
   resources :teams
   resources :logs
 

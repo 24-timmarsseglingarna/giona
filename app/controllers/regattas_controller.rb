@@ -4,10 +4,10 @@ class RegattasController < ApplicationController
   has_scope :is_active, :type => :boolean, allow_blank: true
   has_scope :has_race, :from_organizer
 
-  before_action :authenticate_user!, :except => [:show, :index]
-  before_action :authorized?, :except => [:show, :index]
+  before_action :authenticate_user!, :except => [:show, :start_list, :index]
+  before_action :authorized?, :except => [:show, :start_list, :index]
 
-  before_action :set_regatta, only: [:show, :edit, :update, :destroy]
+  before_action :set_regatta, only: [:show, :start_list, :edit, :update, :destroy]
 
   # GET /regattas
   # GET /regattas.json
@@ -31,6 +31,10 @@ class RegattasController < ApplicationController
           response.headers['Content-Disposition'] = "attachment; filename=#{file_name}.xlsx"
             }
     end
+  end
+
+  def start_list
+    render 'start_list'
   end
 
   # GET /regattas/new
