@@ -1,7 +1,7 @@
 
 %h1= link_to @regatta.name, regatta_path(@regatta)
 %p= @regatta.organizer.name
-- for race in @regatta.races
+- for race in @regatta.races.order(:start_from)
   - unless race.teams.is_visible(true).blank?
     %h4= race.name
     %p
