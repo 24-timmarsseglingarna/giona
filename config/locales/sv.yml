@@ -132,7 +132,7 @@ sv:
     index:
       title: Användare
     show:
-      title: Använarkonto
+      title: Användarkonto
     edit:
       title: Fyll i/ändra användaruppgifter
 
