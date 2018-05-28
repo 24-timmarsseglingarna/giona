@@ -1,0 +1,46 @@
+
+%h1= link_to @regatta.name, regatta_path(@regatta)
+%p= @regatta.organizer.name
+- for race in @regatta.races
+  - unless race.teams.is_visible(true).blank?
+    %h4= race.name
+    %p
+      Start:
+      =race_start(race, false)
+
+
+    %table#giona-teams.table.table-striped.table-bordered.table-hover{:width => "100%"}
+      %thead
+        %tr
+          %th.start_number Startnr
+          %th.start_point Startplats
+          %th.crew Skeppare* / gastar
+          %th.boat Båtnamn / typ / segelnr
+          %th.handicap SXK-tal
+      %tbody
+        - race.teams.is_visible().order(:start_point, :start_number).each do |team|
+          %tr{:class => cycle('even', 'odd'), :onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
+            %td= team.start_number
+            %td
+              = team.start_point
+              = name_by_number(@regatta.terrain, team.start_point) unless team.start_point.blank?
+            %td
+              - for crew_member in team.crew_members.order(skipper: :desc)
+                = crew_member.person.name
+                - if crew_member.skipper
+                  *
+                  - if crew_member.person.phone.present?
+                    #{crew_member.person.phone}
+                %br
+            %td
+              =team.boat_name
+              %br
+              = team.boat_type_name
+              = team.boat_sail_number
+            %td
+              = Handicap.short_types[team.handicap_type]
+              %br
+              - if team.handicap.present?
+                = number_with_precision(team.handicap.sxk, precision: 2)
+              - else
+                2.00
