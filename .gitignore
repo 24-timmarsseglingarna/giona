@@ -18,6 +18,7 @@
 
 # Ignore sensible data
 /db/import/Starema-St-Deltagare.csv
+/db/import/sxk-tal.csv
 /.ruby-version
 
 /railsbox/*
