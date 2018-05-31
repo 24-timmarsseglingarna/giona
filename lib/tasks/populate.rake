@@ -226,29 +226,36 @@ namespace :import do
 
   namespace :sxk do
     task :certificates => :environment do
-    certificates_url = ENV["URL"]
     end_of_year = DateTime.now.in_time_zone.end_of_year
     yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
-    file = open(certificates_url)
+    certificates_url = ENV["URL"]
+    if certificates_url.blank?
+      file = File.open(File.join(Rails.root, "db", "import", "sxk-tal.csv"), "r")
+    else
+      file = open(certificates_url)
+    end
       CSV.foreach( file, :headers => true) do |row|
         registry_id = row['Regnr'].to_s.strip
+        replaced = row['Ersatt av'].to_s.strip
+        dismissed = row['Utgått'].to_s.strip
         name = row['Båt'].to_s.strip
         sxk = row['SXK-tal'].to_f
         boat_name = row['Båtnamn'].to_s.strip unless row['Båtnamn'].to_s.strip.blank?
         owner_name = row['Ägare'].to_s.strip unless row['Ägare'].to_s.strip.blank?
         sail_number = row['Segelnr'].to_i
-        unless registry_id.blank? || name.blank? || (registry_id.length < 5)
-          # puts "#{registry_id} #{name} #{sxk} #{boat_name} #{owner_name} #{sail_number}"
+        unless registry_id.blank? || name.blank? || (registry_id.length < 5) || (sxk < 0.001)
+          puts "#{registry_id} #{name} #{sxk} #{boat_name} #{owner_name} #{sail_number}"
           handicap = SxkCertificate.find_or_create_by   registry_id:  registry_id,
                                                         name:         name,
                                                         sxk:          sxk,
                                                         boat_name:    boat_name,
                                                         owner_name:   owner_name,
                                                         sail_number:  sail_number
-          if row['Utgått'].to_s.strip == '0'
+          if replaced.blank? && dismissed.blank? && handicap.best_before > yesterday
             handicap.best_before = end_of_year
           else
             handicap.best_before = yesterday
+            puts "archived #{registry_id} #{name} #{sxk} #{boat_name} #{owner_name} #{sail_number}"
           end
 
           handicap.source = 'SXK-mätbrev'
