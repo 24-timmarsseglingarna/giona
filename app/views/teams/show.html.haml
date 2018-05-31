@@ -255,7 +255,10 @@
             SXK-tal
             = number_with_precision(@team.handicap.sxk, precision: 2)
             för
-            = @team.handicap.name
+            - unless @team.handicap.boat_name.blank?
+              #{@team.handicap.boat_name}, #{@team.handicap.name},
+            - else
+              = @team.handicap.name
             enligt
             = @team.handicap.source
             - if @team.handicap.srs
