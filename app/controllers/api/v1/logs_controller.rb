@@ -36,6 +36,7 @@ module Api
             # others can (currently) view only type "round"
             @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
             render 'logs/index_filtered'
+          end
         end
       end
 
