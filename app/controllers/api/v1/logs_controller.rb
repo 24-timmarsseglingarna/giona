@@ -17,6 +17,7 @@ module Api
           if user_signed_in?
             team = Team.find params[:from_team].to_i
             if team.people.include? current_user.person || has_organizer_rights?
+              # team members gets all logentries, including "deleted"
               @logs = apply_scopes(Log).all
               render 'logs/index'
             else
@@ -27,8 +28,14 @@ module Api
             @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
           end
         else
-          @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
-          render 'logs/index_filtered'
+          if user_signed_in? && has_organizer_rights?
+            # organizers can view all non-deleted log entries
+            @logs = apply_scopes(Log).all.where(deleted: false)
+            render 'logs/index'
+          else
+            # others can (currently) view only type "round"
+            @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
+            render 'logs/index_filtered'
         end
       end
 
@@ -69,7 +76,8 @@ module Api
         else
           @log = Log.new(log_params)
           team = Team.find @log.team_id
-          unless team.people.include? current_user.person || has_organizer_rights?
+          #unless team.people.include? current_user.person || has_organizer_rights?
+          unless team.people.include? current_user.person
             render json: {
               error: "Du har inte behörighet, det har bara besättningsmedlemmar.",
               status: :forbidden
