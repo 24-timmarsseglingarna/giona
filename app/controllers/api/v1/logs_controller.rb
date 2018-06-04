@@ -16,7 +16,7 @@ module Api
         if params[:from_team]
           if user_signed_in?
             team = Team.find params[:from_team].to_i
-            if team.people.include? current_user.person
+            if team.people.include? current_user.person || has_organizer_rights?
               @logs = apply_scopes(Log).all
               render 'logs/index'
             else
@@ -36,7 +36,7 @@ module Api
         @log = Log.find params[:id]
         if user_signed_in?
           team = Team.find @log.team_id
-          if team.people.include? current_user.person
+          if team.people.include? current_user.person || has_organizer_rights?
             render 'logs/show'
           else
             @logs = Log.where(log_type: 'round', deleted: false, id: params[:id])
@@ -69,7 +69,7 @@ module Api
         else
           @log = Log.new(log_params)
           team = Team.find @log.team_id
-          unless team.people.include? current_user.person
+          unless team.people.include? current_user.person || has_organizer_rights?
             render json: {
               error: "Du har inte behörighet, det har bara besättningsmedlemmar.",
               status: :forbidden
@@ -93,6 +93,7 @@ module Api
         if current_user
           @log = Log.find params[:id]
           team = Team.find @log.team_id
+          #if team.people.include? current_user.person || has_organizer_rights?
           if team.people.include? current_user.person
             @log.user_id = current_user.id
             respond_to do |format|
