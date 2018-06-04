@@ -148,6 +148,19 @@ module Api
         end
       end
 
+      # FIXME: copy-and-pasted from application_helper
+      def has_organizer_rights?
+        if current_user
+          if current_user.role == 'organizer' || current_user.role == 'admin'
+            true
+          else
+            false
+          end
+        else
+          false
+        end
+      end
+
     end
   end
 end
