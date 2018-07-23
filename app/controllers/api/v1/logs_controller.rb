@@ -16,7 +16,8 @@ module Api
         if params[:from_team]
           if user_signed_in?
             team = Team.find params[:from_team].to_i
-            if team.people.include? current_user.person
+            if team.people.include? current_user.person || has_organizer_rights?
+              # team members gets all logentries, including "deleted"
               @logs = apply_scopes(Log).all
               render 'logs/index'
             else
@@ -27,8 +28,15 @@ module Api
             @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
           end
         else
-          @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
-          render 'logs/index_filtered'
+          if user_signed_in? && has_organizer_rights?
+            # organizers can view all non-deleted log entries
+            @logs = apply_scopes(Log).all.where(deleted: false)
+            render 'logs/index'
+          else
+            # others can (currently) view only type "round"
+            @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
+            render 'logs/index_filtered'
+          end
         end
       end
 
@@ -36,7 +44,7 @@ module Api
         @log = Log.find params[:id]
         if user_signed_in?
           team = Team.find @log.team_id
-          if team.people.include? current_user.person
+          if team.people.include? current_user.person || has_organizer_rights?
             render 'logs/show'
           else
             @logs = Log.where(log_type: 'round', deleted: false, id: params[:id])
@@ -69,6 +77,7 @@ module Api
         else
           @log = Log.new(log_params)
           team = Team.find @log.team_id
+          #unless team.people.include? current_user.person || has_organizer_rights?
           unless team.people.include? current_user.person
             render json: {
               error: "Du har inte behörighet, det har bara besättningsmedlemmar.",
@@ -93,6 +102,7 @@ module Api
         if current_user
           @log = Log.find params[:id]
           team = Team.find @log.team_id
+          #if team.people.include? current_user.person || has_organizer_rights?
           if team.people.include? current_user.person
             @log.user_id = current_user.id
             respond_to do |format|
@@ -135,6 +145,19 @@ module Api
           unless team.people.include? current_user.person
             render status: 403, :json => { :errors => 'Du måste vara besättningsmedlem för att få göra det här.' }
           end
+        end
+      end
+
+      # FIXME: copy-and-pasted from application_helper
+      def has_organizer_rights?
+        if current_user
+          if current_user.role == 'organizer' || current_user.role == 'admin'
+            true
+          else
+            false
+          end
+        else
+          false
         end
       end
 

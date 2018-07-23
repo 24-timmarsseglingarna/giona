@@ -196,7 +196,10 @@ namespace :import do
           end
         end
       end
-      if to_be_destroyed
+      ### URGENT HOTFIX ####
+      ### TODO ###
+      ### FIXME ###
+      if false # to_be_destroyed
         puts "Purging."
         terrain.destroy!
       else
@@ -243,7 +246,7 @@ namespace :import do
         boat_name = row['Båtnamn'].to_s.strip unless row['Båtnamn'].to_s.strip.blank?
         owner_name = row['Ägare'].to_s.strip unless row['Ägare'].to_s.strip.blank?
         sail_number = row['Segelnr'].to_i
-        unless registry_id.blank? || name.blank? || (registry_id.length < 5) || (sxk < 0.001)
+        unless registry_id.blank? || name.blank? || (registry_id.length < 5) || (sxk.blank?)
           puts "#{registry_id} #{name} #{sxk} #{boat_name} #{owner_name} #{sail_number}"
           handicap = SxkCertificate.find_or_create_by   registry_id:  registry_id,
                                                         name:         name,
@@ -251,11 +254,10 @@ namespace :import do
                                                         boat_name:    boat_name,
                                                         owner_name:   owner_name,
                                                         sail_number:  sail_number
-          if replaced.blank? && dismissed.blank? && handicap.best_before > yesterday
+          if replaced.blank? && dismissed.blank?
             handicap.best_before = end_of_year
           else
             handicap.best_before = yesterday
-            puts "archived #{registry_id} #{name} #{sxk} #{boat_name} #{owner_name} #{sail_number}"
           end
 
           handicap.source = 'SXK-mätbrev'
