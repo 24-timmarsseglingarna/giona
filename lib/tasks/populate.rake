@@ -196,7 +196,10 @@ namespace :import do
           end
         end
       end
-      if to_be_destroyed
+      ### URGENT HOTFIX ####
+      ### TODO ###
+      ### FIXME ###
+      if false # to_be_destroyed
         puts "Purging."
         terrain.destroy!
       else
