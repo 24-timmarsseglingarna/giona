@@ -89,6 +89,33 @@ namespace :scrape do
 end
 
 namespace :import do
+  namespace :srs do
+    task :multihull_certificates => :environment do
+      srs_table_url = "http://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
+      best_before = DateTime.now.in_time_zone.end_of_year
+      source = "SRS-mätbrev flerskrov #{DateTime.now.year.to_s}"
+      file = open(srs_table_url)
+      #for row in file
+        json = JSON.parse file.first
+        for boat in json['Data']
+          registry_id = boat['Certno']
+          handicap = SrsMultihullCertificate.find_or_create_by    registry_id: registry_id,
+                                                                  source: source,
+                                                                  best_before: best_before
+          handicap.owner_name = boat['CustomerFirstName'].strip + ' ' + boat['CustomerLastName'].strip
+          handicap.name = boat['Boattype'].strip
+          handicap.boat_name = boat['Boatname'].strip unless boat['Boatname'].blank? 
+          handicap.sail_number = boat['SailNo']
+          handicap.srs = boat['SRS1'].to_f
+          handicap.sxk = (handicap.srs * 1.22).round(2)
+          handicap.external_system = 'http://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll'
+          handicap.save!
+        end
+      #end
+    end
+
+  end
+
   namespace :pod do
     task :default_starts => :environment do
       for organizer in Organizer.all

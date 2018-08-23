@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 1.3.5.1
+Version 1.3.6
 
 =======
 
@@ -16,6 +16,7 @@ createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona
 rake db:migrate
 rake scrape:srs:keelboats
 rake scrape:srs:certificates
+rake import:srs:multihull_certificates
 rake import:sxk:certificates URL=https://dl.dropboxusercontent.com/s/whahwj7eknbvulb/SXK-tal.csv # or whatever url        
 rake scrape:srs:multihulls
 rake import:srs:dingies             # First, manually copy from pdf and paste into spreadsheet.
