@@ -6,8 +6,9 @@ class RegattasController < ApplicationController
 
   before_action :authenticate_user!, :except => [:show, :start_list, :index]
   before_action :authorized?, :except => [:show, :start_list, :index]
+  before_action :authorized_assistant?, :only => [:email_list]
 
-  before_action :set_regatta, only: [:show, :start_list, :edit, :update, :destroy]
+  before_action :set_regatta, only: [:show, :start_list, :email_list, :edit, :update, :destroy]
 
   # GET /regattas
   # GET /regattas.json
@@ -36,6 +37,12 @@ class RegattasController < ApplicationController
   def start_list
     render 'start_list'
   end
+
+  def email_list
+    @people = @regatta.people
+    render 'email_list'
+  end
+
 
   # GET /regattas/new
   def new
@@ -111,4 +118,10 @@ class RegattasController < ApplicationController
       end
     end
 
+    def authorized_assistant?
+      if ! has_assistant_rights?
+        flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
+        redirect_to :back
+      end
+    end
 end

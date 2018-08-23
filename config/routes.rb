@@ -56,6 +56,7 @@ Rails.application.routes.draw do
     end
     member do
       get 'start_list'
+      get 'email_list'
     end
   end
 
