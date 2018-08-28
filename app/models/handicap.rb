@@ -36,7 +36,7 @@ class Handicap < ApplicationRecord
     types['SrsMultihull'] = 'SRS Flerskrov'
     types['SrsDingy'] = 'SRS Jolle'
     types['SrsCertificate'] = 'SRS-mätbrev enskrov'
-    types['SrsCertificate'] = 'SRS-mätbrev flerskrov'
+    types['SrsMultihullCertificate'] = 'SRS-mätbrev flerskrov'
     types['SoonSrsCertificate'] = 'Interimistiskt'
     types['SxkCertificate'] = 'SXK-mätbrev'
     types['SoonSxkCertificate'] = 'Interimistiskt'
