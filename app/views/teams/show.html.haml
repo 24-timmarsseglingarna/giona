@@ -34,9 +34,6 @@
         %i.fas.fa-file(aria-hidden='true')
         - if @team.draft?
           Utkast (syns inte i startlistan)
-          -if ! @status.blank? && i_may_see_links_to( @team ) && current_user
-            %p
-              Du behöver komplettera deltagaranmälan för att kunna skicka in den.
           -if @status.blank? && i_may_see_links_to( @team ) && current_user
             %p
               Din anmälan är tillräckligt ifylld för att skickas in till arrangören.
@@ -69,7 +66,7 @@
           %br
           %p
           - if @team.draft?
-            = link_to 'Radera anmälan helt.', @team, :method => :delete, :data => {:confirm => "Är du säker på att du vill radera deltagaransökan? Om du ångrar dig måste du fylla i den igen."}
+            = link_to 'Radera anmälan helt.', @team, :method => :delete, :class => "btn btn-default", :data => {:confirm => "Är du säker på att du vill radera deltagaransökan? Om du ångrar dig måste du fylla i den igen."}
           - elsif @team.submitted?
             = link_to 'Dra tillbaka anmälan, gör den till ett utkast.', teams_draft_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill dra tillbaka deltagaranmälan? Båten kommer att försvinna från startlistan men finnas kvar med status 'utkast'. Du kan skicka in anmälan igen."}
           - elsif @team.approved?

@@ -4,6 +4,7 @@ class TeamsController < ApplicationController
   before_action :authenticate_user!, :except => [:show, :index, :welcome, :crew]
   before_action :authorize_organizer!, only: [:approve]
   before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome, :crew]
+  before_action :check_status!, only: [:show]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create, :crew]
   #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
   has_scope :from_regatta, :from_race, :from_boat, :has_person
@@ -404,6 +405,17 @@ class TeamsController < ApplicationController
       if @team.archived?
         flash[:alert] = 'Anmälan/loggboken är arkiverad och kan inte ändras.'
         redirect_to :back
+      end
+    end
+
+    def check_status!
+      @status = @team.review
+      if @team.draft? && current_user
+        if ! @status.blank?
+          flash.now['alert'] = 'Du behöver komplettera din anmälan nedan innan du kan skicka in den.'
+        else
+          flash.now['alert'] = 'Du behöver nu skicka in din anmälan nedan.'
+        end
       end
     end
 
