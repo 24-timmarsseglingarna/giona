@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180515201344) do
+ActiveRecord::Schema.define(version: 20181121195430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20180515201344) do
     t.integer  "version"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
+    t.boolean  "addtime",     default: false
     t.index ["to_point_id"], name: "index_legs_on_to_point_id", using: :btree
   end
 
@@ -162,6 +163,7 @@ ActiveRecord::Schema.define(version: 20180515201344) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "version"
+    t.string   "footnote"
     t.index ["number"], name: "index_points_on_number", using: :btree
   end
 
