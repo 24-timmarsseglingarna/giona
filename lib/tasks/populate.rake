@@ -135,6 +135,9 @@ namespace :import do
         name = point.xpath("name").text
         descr = point.xpath("descr").text
         footnote = point.xpath("footnote").text
+        if footnote.blank?
+          footnote = nil
+        end
         lat = point.xpath("lat").text.to_f
         long = point.xpath("long").text.to_f
         unless (point_number.blank? || name.blank? ||
