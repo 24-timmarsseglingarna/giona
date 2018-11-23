@@ -1,3 +1,4 @@
+# coding: utf-8
 class TeamsController < ApplicationController
   include ApplicationHelper
   before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :edit_handicap, :update_handicap, :submit, :draft, :approve]
@@ -412,7 +413,7 @@ class TeamsController < ApplicationController
       @status = @team.review
       if @team.draft? && current_user
         if ! @status.blank?
-          flash.now['alert'] = 'Du behöver komplettera din anmälan nedan innan du kan skicka in den.'
+          flash.now['danger'] = 'Du behöver komplettera din anmälan nedan innan du kan skicka in den.'
         else
           flash.now['alert'] = 'Du behöver nu skicka in din anmälan nedan.'
         end
