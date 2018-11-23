@@ -120,7 +120,7 @@ namespace :import do
     task :terrain => :environment do
       print "Getting PoD from server..."
       doc = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
-                           nil, 'ISO-8859-1')
+                           nil, 'utf-8')
       puts " ok"
 
       terrain = Terrain.new
@@ -178,7 +178,6 @@ namespace :import do
                                           offshore:    offshore,
                                           addtime:     addtime)
           if leg.new_record?
-            puts "added new leg! #{leg.id}"
             duplicates =
               Leg.where("point_id = :point_id AND to_point_id = :to_point_id",
                         {point_id: from_point, to_point_id: to_point})

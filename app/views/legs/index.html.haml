@@ -7,6 +7,7 @@
       %th To point
       %th Distance
       %th Offshore
+      %th Addtime
       %th Version
       %th
       %th
@@ -19,6 +20,7 @@
         %td= leg.to_point_id
         %td= leg.distance
         %td= leg.offshore
+        %td= leg.addtime
         %td= leg.version
         %td= link_to 'Show', leg
         %td= link_to 'Edit', edit_leg_path(leg)
