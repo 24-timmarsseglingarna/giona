@@ -412,7 +412,7 @@ class TeamsController < ApplicationController
       @status = @team.review
       if @team.draft? && current_user
         if ! @status.blank?
-          flash.now['alert'] = 'Du behöver komplettera din anmälan nedan innan du kan skicka in den.'
+          flash.now['danger'] = 'Du behöver komplettera din anmälan nedan innan du kan skicka in den.'
         else
           flash.now['alert'] = 'Du behöver nu skicka in din anmälan nedan.'
         end
