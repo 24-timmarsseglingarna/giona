@@ -127,11 +127,18 @@ namespace :import do
       terrain.version_name = "During import"
       terrain.published = false
 
+      # points number 9000 and above are not real points; they are used to mark
+      # area borders.  it would be better to not store them in the PoD database,
+      # or that they are removed from api call.
+      MAXPOINT=8999
+
       points = doc.xpath("/PoD/points/point")
       puts "Found #{points.count} points."
       ndups = 0
+      point_ids = {}
       points.each do |point|
         point_number = point.xpath("number").text.to_i
+        next if point_number > MAXPOINT
         name = point.xpath("name").text
         descr = point.xpath("descr").text
         footnote = point.xpath("footnote").text
@@ -142,21 +149,22 @@ namespace :import do
         long = point.xpath("long").text.to_f
         unless (point_number.blank? || name.blank? ||
                 descr.blank? || lat == 0 || long == 0)
-          point = Point.find_or_initialize_by(number: point_number,
-                                              name: name,
-                                              definition: descr,
-                                              footnote: footnote,
-                                              latitude: lat,
-                                              longitude: long)
-          if point.new_record?
+          pt = Point.find_or_initialize_by(number: point_number,
+                                           name: name,
+                                           definition: descr,
+                                           footnote: footnote,
+                                           latitude: lat,
+                                           longitude: long)
+          if pt.new_record?
             duplicates = Point.where("number = ?", point_number)
             version = duplicates.maximum("version").to_i + 1
-            point.version = version
-            point.save!
+            pt.version = version
+            pt.save!
           else
             ndups = ndups + 1
           end
-          terrain.points << point
+          point_ids[point_number] = pt.id
+          terrain.points << pt
         else
           puts "Skipping incomplete point. number: #{point_number} " +
                "name: #{name} defintion: #{definition} " +
@@ -169,30 +177,34 @@ namespace :import do
       legs = doc.xpath("/PoD/legs/leg")
       puts "Found #{legs.count} legs."
       legs.each do |leg|
-        from_point = leg.xpath('from').text.to_i
-        to_point = leg.xpath('to').text.to_i
+        from_number = leg.xpath('from').text.to_i
+        to_number = leg.xpath('to').text.to_i
+        next if from_number > MAXPOINT || to_number > MAXPOINT
+        point_id = point_ids[from_number]
+        to_point_id = point_ids[to_number]
         dist = leg.xpath('dist').text.to_f
         offshore = leg.xpath('sea').text.to_i == 1
         addtime = leg.xpath('addtime').text.to_i == 1
-        unless (from_point == 0 || to_point == 0)
-          leg = Leg.find_or_initialize_by(point_id:    from_point,
-                                          to_point_id: to_point,
-                                          distance:    dist,
-                                          offshore:    offshore,
-                                          addtime:     addtime)
-          if leg.new_record?
+        unless (point_id.nil? || to_point_id.nil?)
+          lg = Leg.find_or_initialize_by(point_id:    point_id,
+                                         to_point_id: to_point_id,
+                                         distance:    dist,
+                                         offshore:    offshore,
+                                         addtime:     addtime)
+          if lg.new_record?
             duplicates =
               Leg.where("point_id = :point_id AND to_point_id = :to_point_id",
-                        {point_id: from_point, to_point_id: to_point})
+                        {point_id: point_id, to_point_id: to_point_id})
             version = duplicates.maximum("version").to_i + 1
-            leg.version = version
-            leg.save!
+            lg.version = version
+            lg.save!
           else
             ndups = ndups + 1
           end
-          terrain.legs << leg
+          terrain.legs << lg
         else
-          puts "Skipping incomplete leg. to: #{to} from #{from}"
+          puts "Skipping incomplete leg. Missing point #{from_number} " +
+               "or #{to_number}"
         end
       end
       puts "#{ndups} were duplicates."
