@@ -67,7 +67,7 @@ Rails.application.routes.draw do
   resources :races
   resources :regattas
 
-  devise_for :users
+  devise_for :users, :controllers => { :passwords => "passwords" }
 
   resources :users do
     collection do
