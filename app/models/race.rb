@@ -47,6 +47,10 @@ class Race < ApplicationRecord
     self.regatta.organizer.id
   end
 
+  def terrain_id
+    self.regatta.terrain_id
+  end
+
   def self.from_organizer o_id
     Organizer.find(o_id).races
   end
