@@ -124,6 +124,7 @@ namespace :import do
       puts " ok"
 
       terrain = Terrain.new
+      terrain.version_name = "During import"
       terrain.published = false
 
       # points number 9000 and above are not real points; they are used to mark
