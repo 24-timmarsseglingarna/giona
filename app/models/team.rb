@@ -24,7 +24,11 @@ class Team < ApplicationRecord
 
   after_initialize :set_defaults, unless: :persisted?
 
-  enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived]
+  # the value 'closed' is manually set on teams that participated
+  # while the review process in Giona was not implemented.  it means
+  # that the data for the team is not complete; e.g., it might not
+  # have a proper log book and result.
+  enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived, :closed]
   enum sailing_state: [:not_started, :did_not_start, :started, :did_not_finish, :finished]
   after_initialize :set_default_state, :if => :new_record?
 
@@ -39,33 +43,25 @@ class Team < ApplicationRecord
     end
   end
 
+  # we treat both 'archived' and 'closed' as archived
   def self.is_archived value = true
     if value
-      where(:state => 5)
+      where "state >= ?", 5
     else
-      where.not(:state => 5)
+      where "state < ?", 5
     end
   end
-
 
   def state_to_s
     str = Hash.new
     str['draft'] = 'utkast'
     str['submitted'] = 'inskickad'
     str['approved'] = 'godkänd'
+    str['signed'] = 'signerad'
+    str['reviewed'] = 'granskad'
+    str['archived'] = 'arkiverad'
+    str['closed'] = 'stängd'
     str[self.state]
-  end
-
-  def active
-    self.visible?
-  end
-
-  def active?
-    self.visible?
-  end
-
-  def visible?
-    self.state > 0
   end
 
   def sxk

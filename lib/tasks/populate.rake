@@ -616,6 +616,16 @@ namespace :batch do
     end
   end
 
+  # this task is supposed to be used until we have implemented the
+  # full review process in Giona.  run this to close all teams in all
+  # archived regattas as "incomplete".  their data can not be
+  # trusted (e.g., they might not have a log book, or incomplete log
+  # book.)
+  task :close_teams => :environment do
+    for team in Team.is_archived(false).joins(race: :regatta).where("regattas.active = ?", false)
+      t.closed!
+    end
+  end
 
 end
 
