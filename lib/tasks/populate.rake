@@ -310,53 +310,6 @@ namespace :import do
 
   end
 
-  namespace :xls do
-    task :shorthand => :environment do
-      CSV.foreach( File.open(File.join("/", "tmp", "import", "2017E-startlista--A.csv"), "r"), :headers => true) do |row|
-
-        # pre req: Regatta exists, one race only
-
-        regatta = Regatta.find_by name: 'Ensamseglingen 2017'
-        race = regatta.races.take
-
-        person = Person.find_or_create_by email: row['person_email'].to_s.strip
-        person.first_name = row['person_first_name'].to_s.strip if person.first_name.blank?
-        person.last_name = row['person_last_name'].to_s.strip if person.last_name.blank?
-        person.external_system = '2017E-startlista--A' if person.external_system.blank?
-        person.save!
-
-        boat = Boat.find_or_create_by   name: row['boat_name'].to_s.strip,
-                                        boat_type_name: row['boat_type_name'].to_s.strip,
-                                        sail_number: row['boat_sail_no'].to_s.strip
-        boat.external_system = '2017E-startlista--A' if boat.external_system.blank?
-        boat.save!
-
-        handicap = LegacyBoatType.new
-        handicap.sxk = row['handicap_handicap'].to_s.strip
-        handicap.external_system = '2017E-startlista--A'
-        handicap.source = 'Arkiv'
-        handicap.best_before = DateTime.parse('2017-06-30')
-        handicap.save!
-
-        t = Team.find_or_create_by race: race, boat: boat
-        t.state = 'approved'
-        t.offshore = true
-        t.finish_point = 553
-        t.name = boat.name + ' / ' + person.last_name
-        t.skipper = person
-        t.handicap = handicap
-        t.handicap_type = 'LegacyBoatType'
-        t.boat_type_name = boat.boat_type_name
-        t.boat_name = boat.name
-        t.boat_sail_number = boat.sail_number
-        t.start_point = row['team_start_no']
-        t.start_number = row['team_start_number']
-        t.external_system = '2017E-startlista--A'
-        t.save!
-      end
-    end
-  end
-
   namespace :starema do
     task :people => :environment do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Deltagare.csv"), "r"), :headers => true) do |row|
@@ -410,75 +363,6 @@ namespace :import do
                                        common_finish: nil,
                                        )
         race.save!
-      end
-    end
-
-
-    task :teams => :environment do
-      # File format: SeglingNr, SeglingRegistrerandeKrets, SeglingFNStart, SeglingStartDag,
-      # SeglingStartTid, SeglingPeriod, SeglingFNBoatIndivid, SeglingBåtIndivid, SeglingBåtTyp,
-      # SeglingFNStartpunkt, SeglingStartnr, SeglingÖvertid, SeglingTotalDist, SeglingAvdrag,
-      # SeglingGodkDist, SeglingSxkTal, SeglingPlakatDist, SeglingEfteranmäld, SeglingEjStart,
-      # SeglingBrutit, SeglingFiktiv, SeglingÅr, SeglingVH, SeglingLåst, SeglingDeltarFest,
-      # SeglingDeltarFestNotering, SeglingBetalt, SeglingBetaltBelopp, SeglingKorrDistans
-
-      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Seglingar.csv"), "r"), :headers => true) do |row|
-        team = Team.find_or_create_by(external_id: row['SeglingNr'].to_s.strip.to_i, external_system: 'Starema-St')
-        race = Race.find_by( external_id: row['SeglingFNStart'].to_s.strip.to_i, external_system: 'Starema-St')
-        if race.nil?
-          puts row
-          team.destroy!
-        else
-          team.race_id = race.id
-          team.start_number = row['SeglingStartnr'].to_s.strip
-          team.boat_name = row['SeglingBåtIndivid'].to_s.strip
-          team.boat_type_name = row['SeglingBåtTyp'].to_s.strip
-          #team.boat_sail_number =
-          team.start_point = row['SeglingFNStartpunkt'].to_s.strip.to_i
-          #team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
-          team.plaque_distance = row['SeglingPlakatDist'].to_s.strip.to_f
-          team.name = "#{team.boat_name} / #{team.boat_type_name}" if team.name.blank?
-          boat = Boat.find_by( external_id: row['SeglingFNBoatIndivid'].to_s.strip.to_i, external_system: 'Starema-St')
-          if boat.nil?
-            puts row
-          else
-            boat.boat_type_name = team.boat_type_name
-            boat.save!
-            team.boat_id = boat.id
-            handicap = LegacyBoatType.find_or_create_by( name: team.boat_type_name,
-                                                          handicap: row['SeglingSxkTal'].to_s.strip.to_f,
-                                                          external_system: 'Starema-St',
-                                                          source: 'Arkiv',
-                                                          best_before: DateTime.parse('2017-12-31'))
-            team.handicap = handicap
-            team.handicap_type = 'LegacyBoatType'
-
-            if boat.sail_number == 0 || boat.sail_number.nil?
-              team.boat_sail_number = nil
-            else
-              team.boat_sail_number = boat.sail_number
-            end
-          end
-          #if row['SeglingEjStart'].to_i == 1
-          #  team.did_not_start = true
-          #else
-          #  team.did_not_start = false
-          #end
-
-          #if ( row['SeglingBrutit'].to_i == 1 )
-          #  team.did_not_finish = true
-          #else
-          #  team.did_not_finish = false
-          #end
-
-          #if ( row['SeglingBetalt'].to_i == 1 )
-          #
-          #else
-          #  team.paid_fee = false
-          #end
-
-          team.save!
-        end
       end
     end
 
@@ -663,9 +547,10 @@ namespace :batch do
       best_before = DateTime.now.in_time_zone.end_of_year
       for h in Handicap.where(best_before: best_before)
         h.best_before = nil
-        h.save! # FIXME: batch?
+        h.save!
       end
   end
+
 
 end
 

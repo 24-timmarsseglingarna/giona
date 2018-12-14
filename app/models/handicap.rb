@@ -7,7 +7,6 @@ class Handicap < ApplicationRecord
   scope :srs_certificate, -> { where(type: 'SrsCertificate')}
   scope :srs_multihull_certificate, -> { where(type: 'SrsMultihullCertificate')}
   scope :sxk_certificate, -> { where(type: 'SxkCertificate')}
-  scope :legacy_boat_type, -> { where(type: 'LegacyBoatType')}
   scope :active, -> { where("best_before IS ? OR best_before > ?",
                             nil, DateTime.now)}
 
