@@ -3,7 +3,7 @@
 one:
   name: MyString
   handicap: 1.5
-  best_before: 2017-04-25 17:31:59
+  expired_at: 2017-04-25 17:31:59
   source: MyString
   srs: 1.5
   registry_id: MyString
@@ -17,7 +17,7 @@ one:
 two:
   name: MyString
   handicap: 1.5
-  best_before: 2017-04-25 17:31:59
+  expired_at: 2017-04-25 17:31:59
   source: MyString
   srs: 1.5
   registry_id: MyString

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181121195430) do
+ActiveRecord::Schema.define(version: 20181214122546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 20181121195430) do
   create_table "handicaps", force: :cascade do |t|
     t.string   "name"
     t.float    "sxk"
-    t.datetime "best_before"
+    t.datetime "expired_at"
     t.string   "source"
     t.float    "srs"
     t.string   "registry_id"

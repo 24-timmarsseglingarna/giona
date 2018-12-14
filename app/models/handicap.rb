@@ -7,16 +7,13 @@ class Handicap < ApplicationRecord
   scope :srs_certificate, -> { where(type: 'SrsCertificate')}
   scope :srs_multihull_certificate, -> { where(type: 'SrsMultihullCertificate')}
   scope :sxk_certificate, -> { where(type: 'SxkCertificate')}
-  scope :active, -> { where("best_before IS ? OR best_before > ?",
-                            nil, DateTime.now)}
+  scope :active, -> { where("expired_at IS ?", nil)}
 
   # The column 'name' is boat_type_name.
-  # The column 'best_before' is expired_at; i.e., it is set when the
-  # handicap has been expired (detected during import).
   #
   # For all certificates, the 'registry_id' is the unique identifier.
   # For non-certificates, the 'name' (boat type name) is the unique identifier.
-  # This gives the invariant: (type, registry_id, name, best_before) is unique.
+  # This gives the invariant: (type, registry_id, name, expired_at) is unique.
 
   default_scope { order 'name', 'sail_number' }
 
@@ -56,9 +53,7 @@ class Handicap < ApplicationRecord
     yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
     # keep track of all active handicaps
     cur_handicaps = Hash.new
-    for h in Handicap.where(
-               "type = :type and best_before IS :best_before",
-               {type: type, best_before: nil})
+    for h in Handicap.active.where("type = ?", type)
       cur_handicaps[h.id] = true
     end
     isCert = (type == 'SrsCertificate' ||
@@ -75,21 +70,26 @@ class Handicap < ApplicationRecord
       if isCert
         cur = Handicap.find_by(type: type,
                                registry_id: h[:registry_id],
-                               best_before: nil)
+                               expired_at: nil)
       else
         cur = Handicap.find_by(type: type,
                                name: h[:name],
-                               best_before: nil)
+                               expired_at: nil)
       end
       cur_handicaps.delete(cur.id) unless cur.nil?
-      if not cur.nil? and cur.sxk != sxk
+      if not cur.nil? and (cur.sxk != sxk or not h[:expired_at].nil?)
         puts "Changed rating: handicap #{cur.description} (#{cur.id})"
-        # we found an existing handicap that has a new sxk rating.
+        # we found an existing handicap that has a new sxk rating, or
+        # has expired.
         # we need to mark it as obsolete, and check if there are any
         # active teams that use this handicap.  these teams need to set
         # a new handicap.
         Team.handicap_changed(cur.id, dryrun)
-        cur.best_before = yesterday
+        if h[:expired_at].nil?
+          cur.expired_at = yesterday
+        else
+          cur.expired_at = h[:expired_at]
+        end
         cur.save! unless dryrun
       end
       if cur.nil? or cur.sxk != sxk
@@ -116,6 +116,7 @@ class Handicap < ApplicationRecord
         newh.owner_name = h[:owner_name]
         newh.boat_name = h[:boat_name]
         newh.sail_number = h[:sail_number]
+        newh.expired_at = h[:expired_at]
         puts "Add handicap: #{newh.description}"
         newh.save! unless dryrun
       end
@@ -125,7 +126,7 @@ class Handicap < ApplicationRecord
       cur = Handicap.find(cur_id[0])
       puts "Remove: handicap #{cur.description} (#{cur.id})"
       Team.handicap_changed(cur.id, dryrun)
-      cur.best_before = yesterday
+      cur.expired_at = yesterday
       cur.save! unless dryrun
     end
   end

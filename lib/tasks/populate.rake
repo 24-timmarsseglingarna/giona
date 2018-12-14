@@ -15,7 +15,6 @@ namespace :scrape do
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      best_before = DateTime.now.in_time_zone.end_of_year
       source = "SRS-mätbrev #{DateTime.now.year.to_s}"
       handicaps = new Array
       for entry in entries
@@ -543,12 +542,37 @@ namespace :batch do
 
   # this is a run-once task to clean up handicaps imported before we
   # changed how best_before was handled
-  task :remove_best_before_from_handicap => :environment do
-      best_before = DateTime.now.in_time_zone.end_of_year
-      for h in Handicap.where(best_before: best_before)
-        h.best_before = nil
+  # NOTE: must run db migrate first!
+  task :remove_expired_at_from_handicap => :environment do
+    eoy = DateTime.now.in_time_zone.end_of_year
+    # first, do sanity check
+    res = Handicap.where(expired_at: nil)
+    if res.length != 0
+      puts "There are #{res.length} handicaps without expired_at in the db already"
+    end
+    res = Handicap.where("expired_at < ?", eoy)
+    if res.length != 0
+      puts "There are #{res.length} expired handicaps in the db already"
+    end
+    res = Handicap.where("expired_at > ?", eoy)
+    if res.length != 0
+      puts "There are #{res.length} handicaps with expired_at in the future!!"
+    end
+
+    res = Handicap.where(expired_at: eoy)
+    puts "Removing expired_at from #{res.length} current handicaps"
+    for h in res
+      # ensure that there are not another handicap with the same "key" that
+      # is not expired
+      duplicates = Handicap.active.where("name = :n and type = :t and registry_id = :r",
+                                         {n: h.name, t: h.type, r: h.registry_id})
+      if duplicates.length > 0
+        puts "NOTE: found duplicate active handicaps #{duplicates[0].id}"
+      else
+        h.expired_at = nil
         h.save!
       end
+    end
   end
 
 
