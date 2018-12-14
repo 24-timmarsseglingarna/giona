@@ -9,17 +9,19 @@ require 'cgi'
 
 namespace :scrape do
   namespace :srs do
+    # rake scrape:srs:certificates
+    # rake scrape:srs:certificates[dryrun]
     task :certificates, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = "http://matbrev.svensksegling.se/Home/ApprovedList"
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      source = "SRS-mätbrev #{DateTime.now.year.to_s}"
-      handicaps = new Array
+      source = "SRS-mätbrev"
+      handicaps = Array.new
       for entry in entries
         unless first_row
-          h = new Hash
+          h = Hash.new
           h[:registry_id] = CGI::parse((entry.css('td')[0].css('a').map { |link| link['href'] })[0])["rpt"][0].to_s
           h[:owner_name] = entry.css('td')[1].text.to_s.strip
           h[:name] = entry.css('td')[2].text.to_s.strip
@@ -35,7 +37,6 @@ namespace :scrape do
     end
   end
 
-
   namespace :srs do
     task :keelboats, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
@@ -43,11 +44,11 @@ namespace :scrape do
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      source = "SRS kölbåtar #{DateTime.now.year.to_s}"
-      handicaps = new Array
+      source = "SRS kölbåtar"
+      handicaps = Array.new
       for entry in entries
         unless first_row
-          h = new Hash
+          h = Hash.new
           h[:name] = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
           h[:srs] = entry.css('td')[6].text.gsub(',', '.').to_f
           handicaps << h
@@ -64,13 +65,14 @@ namespace :scrape do
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      source = "SRS flerskrov #{DateTime.now.year.to_s}"
-      handicaps = new Array
+      source = "SRS flerskrov"
+      handicaps = Array.new
       for entry in entries
         unless first_row
-          h = new Hash
+          h = Hash.new
           h[:name] = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
           h[:srs] = entry.css('td')[1].text.gsub(',', '.').to_f
+          handicaps << h
         else
           first_row = false
         end
@@ -85,12 +87,12 @@ namespace :import do
     task :multihull_certificates, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = "http://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
-      source = "SRS-mätbrev flerskrov #{DateTime.now.year.to_s}"
+      source = "SRS-mätbrev flerskrov"
       file = open(srs_table_url)
       json = JSON.parse file.first
-      handicaps = new Array
+      handicaps = Array.new
       for boat in json['Data']
-        h = new Hash
+        h = Hash.new
         h[:registry_id] = boat['Certno']
         h[:owner_name] = boat['CustomerFirstName'].strip + ' ' +
                          boat['CustomerLastName'].strip
@@ -98,6 +100,7 @@ namespace :import do
         h[:boat_name] = boat['Boatname'].strip unless boat['Boatname'].blank?
         h[:sail_number] = boat['SailNo']
         h[:srs] = boat['SRS1'].to_f
+        handicaps << h
       end
       Handicap.import('SrsMultihullCertificate', source, srs_table_url,
                       handicaps, dryrun)
@@ -110,12 +113,13 @@ namespace :import do
     task :dingies, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
-      source = "SRS jolle #{DateTime.now.year.to_s}"
-      handicaps = new Array
+      source = "SRS jolle"
+      handicaps = Array.new
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle.csv"), "r"), :headers => true) do |row|
-        h = new Hash
+        h = Hash.new
         h[:name] = row['Typ'].to_s.strip
         h[:srs] = row['SRS'].to_f
+        handicaps << h
       end
       Handicap.import('SrsDingy', source, srs_table_url, handicaps, dryrun)
     end
@@ -124,44 +128,55 @@ namespace :import do
 # Regnr, Ersatt av, SRS-tabell, Utgått, Båt, Byggår, Segelnr, Båtnamn, Ägare, SXK-tal, UVS, Genua
 
   namespace :sxk do
-    task :certificates => :environment do
-      end_of_year = DateTime.now.in_time_zone.end_of_year
-      yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
-      certificates_url = ENV["URL"]
-      if certificates_url.blank?
-        file = File.open(File.join(Rails.root, "db", "import", "sxk-tal.csv"), "r")
-      else
-        file = open(certificates_url)
-      end
-      CSV.foreach( file, :headers => true) do |row|
-        registry_id = row['Regnr'].to_s.strip
-        replaced = row['Ersatt av'].to_s.strip
-        dismissed = row['Utgått'].to_s.strip
-        name = row['Båt'].to_s.strip
-        sxk = row['SXK-tal'].to_f
-        boat_name = row['Båtnamn'].to_s.strip unless row['Båtnamn'].to_s.strip.blank?
-        owner_name = row['Ägare'].to_s.strip unless row['Ägare'].to_s.strip.blank?
-        sail_number = row['Segelnr'].to_i
-        unless registry_id.blank? || name.blank? || (registry_id.length < 5) || (sxk.blank?)
-          puts "#{registry_id} #{name} #{sxk} #{boat_name} #{owner_name} #{sail_number}"
-          handicap = SxkCertificate.find_or_create_by   registry_id:  registry_id,
-                                                        name:         name,
-                                                        sxk:          sxk,
-                                                        boat_name:    boat_name,
-                                                        owner_name:   owner_name,
-                                                        sail_number:  sail_number
-          if replaced.blank? && dismissed.blank?
-            handicap.best_before = end_of_year
-          else
-            handicap.best_before = yesterday
-          end
-
-          handicap.source = 'SXK-mätbrev'
-          handicap.external_system = 'xls'
-          handicap.save!
+    task :certificates, [:dryrun] => :environment do |task, args|
+      dryrun = not(args[:dryrun].nil?)
+      sxk_table_url = 'https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php'
+      source = "SXK-mätbrev"
+      doc = Nokogiri::XML(open(sxk_table_url), nil, 'utf-8')
+      certificates = doc.xpath("/SXKbrev/brev")
+      handicaps = Array.new
+      certificates.each do |cert|
+        h = Hash.new
+        registry_id = cert.xpath("Regnr").text.strip
+        expired_at = cert.xpath("Utgatt").text.strip
+        sxk = cert.xpath("SXKtal").text.strip.gsub(',', '.')
+        # sanity check
+        if registry_id.blank?
+          puts "Skipping certificate with empty 'Regnr'"
+          next
         end
+        if sxk.blank? and expired_at.blank?
+          puts "Skipping certificate #{registry_id} with empty 'SXKtal' and no 'Utgatt'"
+          next
+        end
+        h[:registry_id] = registry_id
+        unless expired_at.blank?
+          h[:expired_at] = expired_at.to_date
+        end
+        unless sxk.blank?
+          h[:sxk] = sxk.to_f
+        end
+        name = cert.xpath("Bat").text.strip
+        unless name.blank?
+          h[:name] = name
+        end
+        boat_name = cert.xpath("Batnamn").text.strip
+        unless boat_name.blank?
+          h[:boat_name] = boat_name
+        end
+        owner_name = cert.xpath("Agare").text.strip
+        unless owner_name.blank?
+          h[:owner_name] = owner_name
+        end
+        sail_number = cert.xpath("Segelnr").text.strip
+        unless sail_number.blank?
+          h[:sail_number] = sail_number
+        end
+        handicaps << h
       end
+      Handicap.import('SxkCertificate', source, sxk_table_url, handicaps, dryrun)
     end
+
   end
 
   namespace :pod do
