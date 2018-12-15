@@ -33,7 +33,10 @@ namespace :scrape do
           first_row = false
         end
       end
-      Handicap.import('SrsCertificate', source, srs_table_url, handicaps, dryrun)
+      ActiveRecord::Base.transaction do
+        Handicap.import('SrsCertificate', source, srs_table_url,
+                        handicaps, dryrun)
+      end
     end
   end
 
@@ -56,7 +59,9 @@ namespace :scrape do
           first_row = false
         end
       end
-      Handicap.import('SrsKeelboat', source, srs_table_url, handicaps, dryrun)
+      ActiveRecord::Base.transaction do
+        Handicap.import('SrsKeelboat', source, srs_table_url, handicaps, dryrun)
+      end
     end
 
     task :multihulls, [:dryrun] => :environment do |task, args|
@@ -77,7 +82,9 @@ namespace :scrape do
           first_row = false
         end
       end
-      Handicap.import('SrsMultihull', source, srs_table_url, handicaps, dryrun)
+      ActiveRecord::Base.transaction do
+        Handicap.import('SrsMultihull', source, srs_table_url, handicaps, dryrun)
+      end
     end
   end
 end
@@ -102,8 +109,10 @@ namespace :import do
         h[:srs] = boat['SRS1'].to_f
         handicaps << h
       end
-      Handicap.import('SrsMultihullCertificate', source, srs_table_url,
-                      handicaps, dryrun)
+      ActiveRecord::Base.transaction do
+        Handicap.import('SrsMultihullCertificate', source, srs_table_url,
+                        handicaps, dryrun)
+      end
     end
 
     # NOTE:
@@ -121,11 +130,11 @@ namespace :import do
         h[:srs] = row['SRS'].to_f
         handicaps << h
       end
-      Handicap.import('SrsDingy', source, srs_table_url, handicaps, dryrun)
+      ActiveRecord::Base.transaction do
+        Handicap.import('SrsDingy', source, srs_table_url, handicaps, dryrun)
+      end
     end
   end
-
-# Regnr, Ersatt av, SRS-tabell, Utgått, Båt, Byggår, Segelnr, Båtnamn, Ägare, SXK-tal, UVS, Genua
 
   namespace :sxk do
     task :certificates, [:dryrun] => :environment do |task, args|
@@ -170,11 +179,19 @@ namespace :import do
         end
         sail_number = cert.xpath("Segelnr").text.strip
         unless sail_number.blank?
-          h[:sail_number] = sail_number
+          # 'Segelnr' may contain letters; extract the number.
+          # do not match a single zero
+          m = sail_number.match("([1-9][0-9]*)")
+          unless m.nil?
+            h[:sail_number] = m[1].to_i
+          end
         end
         handicaps << h
       end
-      Handicap.import('SxkCertificate', source, sxk_table_url, handicaps, dryrun)
+      ActiveRecord::Base.transaction do
+        Handicap.import('SxkCertificate', source, sxk_table_url,
+                        handicaps, dryrun)
+      end
     end
 
   end

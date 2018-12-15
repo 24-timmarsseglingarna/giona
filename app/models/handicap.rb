@@ -18,7 +18,12 @@ class Handicap < ApplicationRecord
   default_scope { order 'name', 'sail_number' }
 
   def description
-    "#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}, #{self.source}"
+    if self.expired_at
+      exp = "Utgått #{self.expired_at} - "
+    else
+      exp = ""
+    end
+    "#{exp}#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}, #{self.source}"
   end
 
   def self.types
@@ -76,14 +81,27 @@ class Handicap < ApplicationRecord
                                name: h[:name],
                                expired_at: nil)
       end
+      is_new = cur.nil?
+      is_expired = h[:expired_at].nil?
+      has_changed_sxk = (not is_new and cur.sxk != sxk)
       cur_handicaps.delete(cur.id) unless cur.nil?
-      if not cur.nil? and (cur.sxk != sxk or not h[:expired_at].nil?)
-        puts "Changed rating: handicap #{cur.description} (#{cur.id})"
+
+      if not(is_new) and is_expired and cur.expired_at == h[:expired_at]
+        # we already have this expired handicap in our database
+        next
+      end
+
+      if not(is_new) and (has_changed_sxk or is_expired)
         # we found an existing handicap that has a new sxk rating, or
         # has expired.
         # we need to mark it as obsolete, and check if there are any
         # active teams that use this handicap.  these teams need to set
         # a new handicap.
+        if has_changed_sxk
+          puts "Changed rating to #{sxk}: #{cur.description} (#{cur.id})"
+        else
+          puts "Expired handicap: #{cur.description} (#{cur.id})"
+        end
         Team.handicap_changed(cur.id, dryrun)
         if h[:expired_at].nil?
           cur.expired_at = yesterday
@@ -92,7 +110,9 @@ class Handicap < ApplicationRecord
         end
         cur.save! unless dryrun
       end
-      if cur.nil? or cur.sxk != sxk
+      # we need to create a new handicap if this is new and not expired,
+      # or if it a changed existing and not expired.
+      if (is_new or has_changed_sxk) and not(is_expired)
         case type
         when 'SrsKeelboat'
           newh = SrsKeelboat.new
@@ -121,7 +141,7 @@ class Handicap < ApplicationRecord
         newh.save! unless dryrun
       end
     end
-    # cur_handicaps now contains handicaps that need to be removed
+    # cur_handicaps now contains handicaps that need to be expired
     for cur_id in cur_handicaps
       cur = Handicap.find(cur_id[0])
       puts "Remove: handicap #{cur.description} (#{cur.id})"
