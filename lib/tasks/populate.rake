@@ -34,8 +34,9 @@ namespace :scrape do
         end
       end
       ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
         Handicap.import('SrsCertificate', source, srs_table_url,
-                        handicaps, dryrun)
+                        handicaps, user, dryrun)
       end
     end
   end
@@ -60,7 +61,9 @@ namespace :scrape do
         end
       end
       ActiveRecord::Base.transaction do
-        Handicap.import('SrsKeelboat', source, srs_table_url, handicaps, dryrun)
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SrsKeelboat', source, srs_table_url,
+                        handicaps, user, dryrun)
       end
     end
 
@@ -83,7 +86,9 @@ namespace :scrape do
         end
       end
       ActiveRecord::Base.transaction do
-        Handicap.import('SrsMultihull', source, srs_table_url, handicaps, dryrun)
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SrsMultihull', source, srs_table_url,
+                        handicaps, user, dryrun)
       end
     end
   end
@@ -110,8 +115,9 @@ namespace :import do
         handicaps << h
       end
       ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
         Handicap.import('SrsMultihullCertificate', source, srs_table_url,
-                        handicaps, dryrun)
+                        handicaps, user, dryrun)
       end
     end
 
@@ -131,7 +137,9 @@ namespace :import do
         handicaps << h
       end
       ActiveRecord::Base.transaction do
-        Handicap.import('SrsDingy', source, srs_table_url, handicaps, dryrun)
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SrsDingy', source, srs_table_url,
+                        handicaps, user, dryrun)
       end
     end
   end
@@ -189,8 +197,9 @@ namespace :import do
         handicaps << h
       end
       ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
         Handicap.import('SxkCertificate', source, sxk_table_url,
-                        handicaps, dryrun)
+                        handicaps, user, dryrun)
       end
     end
 

@@ -23,7 +23,6 @@ class TeamMailer < ApplicationMailer
     mail(to: officers, from: skipper_with_name, subject: "Deltagaranmälan till #{team.race.regatta.name}" )
   end
 
-
   def added_crew_member_email(team, person)
     receiver_with_name = %("#{person.first_name} #{person.last_name}" <#{person.email}>)
     sender_with_name = %("#{team.race.regatta.name_from}" <#{team.race.regatta.email_from}>)
@@ -50,6 +49,13 @@ class TeamMailer < ApplicationMailer
     sender_with_name = %("#{team.race.regatta.name_from}" <#{team.race.regatta.email_from}>)
     @team = team
     mail(to: receiver_with_name, from: sender_with_name, subject: "Ditt valda handikapp i #{team.race.regatta.name} har gått ut." )
+  end
+
+  def handicap_reset_officer_email(team)
+    officers = team.race.regatta.email_to.split(',')
+    @team = team
+    # mail from the default address; segla@24-timmars.nu
+    mail(to: officers, subject: "Det valda handikappet i #{team.race.regatta.name} har gått ut." )
   end
 
 end

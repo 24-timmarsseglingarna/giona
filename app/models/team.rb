@@ -116,17 +116,18 @@ class Team < ApplicationRecord
     new_skipper.save!
   end
 
-  def self.handicap_changed(handicap_id, dryrun=false)
+  def self.handicap_changed(handicap_id, user, dryrun=false)
     for t in Team.is_archived(false).where("handicap_id = ?", handicap_id)
       puts "Team #{t.id} uses changed handicap and needs to pick new handicap"
-      t.do_handicap_changed unless dryrun
+      t.do_handicap_changed(user) unless dryrun
     end
   end
 
-  def do_handicap_changed
+  def do_handicap_changed user
     # PRE: called only when self.handcap_id refers to an obsolete handicap
     reset_handicap = false
     send_email = false
+    send_officer_email = false
     case self.state
     when nil, :draft
       reset_handicap = true
@@ -140,18 +141,21 @@ class Team < ApplicationRecord
       send_email = true
       reset_handicap = true
     when :reviewed
-      # FIXME: probably need to inform the organizer and let the
-      # organizer handle this case manually
+      send_officer_email = true
       reset_handicap = true
     end
     if reset_handicap
-      Note.create(team_id: self.id, user: User.first, # FIXME: which user??
+      Note.create(team_id: self.id,
+                  user: user,
                   description: "Det valda handikappet (#{self.handicap_id}) är utgånget och har därför nollställts.")
       self.handicap_id = nil
       self.handicap_type = nil
       self.save!
       if send_email
         TeamMailer.handicap_reset_email(self).deliver
+      end
+      if send_officer_email
+        TeamMailer.handicap_reset_officer_email(self).deliver
       end
     end
   end

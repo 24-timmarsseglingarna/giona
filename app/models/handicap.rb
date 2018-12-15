@@ -18,7 +18,7 @@ class Handicap < ApplicationRecord
   default_scope { order 'name', 'sail_number' }
 
   def description
-    if self.expired_at
+    if not self.expired_at.nil?
       exp = "Utgått #{self.expired_at} - "
     else
       exp = ""
@@ -54,7 +54,7 @@ class Handicap < ApplicationRecord
     types
   end
 
-  def self.import(type, source, external_system, handicaps, dryrun=false)
+  def self.import(type, source, external_system, handicaps, user, dryrun=false)
     yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
     # keep track of all active handicaps
     cur_handicaps = Hash.new
@@ -82,11 +82,17 @@ class Handicap < ApplicationRecord
                                expired_at: nil)
       end
       is_new = cur.nil?
-      is_expired = h[:expired_at].nil?
+      is_expired = (not h[:expired_at].nil?)
       has_changed_sxk = (not is_new and cur.sxk != sxk)
+      if is_expired
+        expired_at = h[:expired_at].to_date
+      else
+        expired_at = nil
+      end
+
       cur_handicaps.delete(cur.id) unless cur.nil?
 
-      if not(is_new) and is_expired and cur.expired_at == h[:expired_at]
+      if not(is_new) and is_expired and cur.expired_at == expired_at
         # we already have this expired handicap in our database
         next
       end
@@ -103,10 +109,10 @@ class Handicap < ApplicationRecord
           puts "Expired handicap: #{cur.description} (#{cur.id})"
         end
         Team.handicap_changed(cur.id, dryrun)
-        if h[:expired_at].nil?
+        if not is_expired
           cur.expired_at = yesterday
         else
-          cur.expired_at = h[:expired_at]
+          cur.expired_at = expired_at
         end
         cur.save! unless dryrun
       end
@@ -136,7 +142,7 @@ class Handicap < ApplicationRecord
         newh.owner_name = h[:owner_name]
         newh.boat_name = h[:boat_name]
         newh.sail_number = h[:sail_number]
-        newh.expired_at = h[:expired_at]
+        newh.expired_at = expired_at
         puts "Add handicap: #{newh.description}"
         newh.save! unless dryrun
       end
