@@ -104,7 +104,7 @@ namespace :import do
                                                                   best_before: best_before
           handicap.owner_name = boat['CustomerFirstName'].strip + ' ' + boat['CustomerLastName'].strip
           handicap.name = boat['Boattype'].strip
-          handicap.boat_name = boat['Boatname'].strip unless boat['Boatname'].blank? 
+          handicap.boat_name = boat['Boatname'].strip unless boat['Boatname'].blank?
           handicap.sail_number = boat['SailNo']
           handicap.srs = boat['SRS1'].to_f
           handicap.sxk = (handicap.srs * 1.22).round(2)
@@ -564,6 +564,22 @@ namespace :import do
 end
 
 namespace :batch do
+
+  task :add_nobody => :environment do
+    email = 'nobody@24-timmars.nu'
+    p = Person.new
+    p.first_name = 'No'
+    p.last_name = 'Body'
+    p.email = email
+    p.save!
+    u = User.new
+    u.email = email
+    u.person = p
+    o = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
+    passwd = (0...50).map { o[rand(o.length)] }.join
+    u.reset_password(passwd, passwd)
+    u.save!
+  end
 
   task :trim_handicap_names => :environment do
     for handicap in Handicap.all
