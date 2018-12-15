@@ -1,6 +1,6 @@
 class TeamsController < ApplicationController
   include ApplicationHelper
-  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :edit_handicap, :update_handicap, :submit, :draft, :approve]
+  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :edit_handicap, :update_handicap, :set_handicap, :submit, :draft, :approve]
   before_action :authenticate_user!, :except => [:show, :index, :welcome, :crew]
   before_action :authorize_organizer!, only: [:approve]
   before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome, :crew]
@@ -209,6 +209,33 @@ class TeamsController < ApplicationController
   end
 
   def edit_handicap
+    # FIXME: create index on team.boat_id
+    # normally, this array contains a single value, or is empty.
+    @known_handicaps = Array.new
+    # get all teams where this boat has participated
+    for t in Team.where("boat_id = ?", @team.boat_id).order("created_at DESC")
+      h = t.handicap
+      if t.id != @team.id and not h.nil?
+        if h.registry_id.nil?
+          # try to find active with same name
+          @known_handicaps = Handicap.
+                               where("type = ?", h.type).
+                               where("name = ?", h.name).
+                               active
+        else
+          # try to find active with same registry id
+          @known_handicaps = Handicap.
+                               where("type = ?", h.type).
+                               where("registry_id = ?", h.registry_id).
+                               active
+        end
+        if !@known_handicaps.empty?
+          # we found a current handicap (or more) for the most recent team,
+          # suggest that to the user
+          break
+        end
+      end
+    end
     render 'edit_handicap'
   end
 
@@ -276,6 +303,29 @@ class TeamsController < ApplicationController
       end
     else
       redirect_to edit_handicap_team_path(@team, step: 1), notice: "Vilken typ av handikapp ska du använda?"
+    end
+  end
+
+  def set_handicap
+    old_handicap = @team.handicap
+    old_handicap_type = @team.handicap_type
+    new_handicap = Handicap.find params[:handicap_id]
+    if new_handicap.nil?
+        redirect_to edit_handicap_team_path(@team, step: 1), alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.'
+    else
+      @team.handicap = new_handicap
+      @team.handicap_type = new_handicap.type
+      if @team.handicap != old_handicap
+        Note.create(team_id: @team.id, user: current_user, description: "Handikapp satt till #{@team.handicap.description} (#{@team.handicap.id}) av #{current_user.to_s}.")
+        if @team.state != nil && @team.state != 'draft'
+          @team.draft!
+          notice = "Handikapp satt. Du behöver skicka in anmälan för granskning igen."
+        else
+          notice = "Handikapp satt."
+        end
+      end
+      @team.save!
+      redirect_to @team, notice: notice
     end
   end
 
@@ -412,7 +462,7 @@ class TeamsController < ApplicationController
       @status = @team.review
       if @team.draft? && current_user
         if ! @status.blank?
-          flash.now['alert'] = 'Du behöver komplettera din anmälan nedan innan du kan skicka in den.'
+          flash.now['danger'] = 'Du behöver komplettera din anmälan nedan innan du kan skicka in den.'
         else
           flash.now['alert'] = 'Du behöver nu skicka in din anmälan nedan.'
         end

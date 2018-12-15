@@ -38,7 +38,6 @@ namespace :testdata do
     regatta.confirmation = 'Hej och välkommen. Jättekul. Lång text om hur det funkar. Ska skickas via mejl.'
     regatta.terrain = Terrain.where(published: true).last
     regatta.active = true
-    regatta.terrain_id = 1
     regatta.save!
 
     race = Race.new
@@ -569,7 +568,6 @@ namespace :testdata do
     regatta.confirmation = 'Hej och välkommen. Jättekul. Lång text om hur det funkar. Ska skickas via mejl.'
     regatta.terrain = Terrain.where(published: true).first
     regatta.active = true
-    regatta.terrain_id = 1
     regatta.save!
 
     race = Race.new

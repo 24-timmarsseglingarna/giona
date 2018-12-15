@@ -3,7 +3,7 @@
 =======
 # giona
 
-Version 1.3.8
+Version 1.4.0
 
 =======
 
@@ -25,6 +25,7 @@ rake import:pod:terrain
 rake batch:agreement                # At least one end user agreement must exist.
 # Create first user
 rake batch:admin                    # Set admin rights
+rake batch:add_nobody               # User with no specific permissions
 # Approve/publish PoD/terrain
 rake import:pod:default_starts
 

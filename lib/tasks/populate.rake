@@ -104,7 +104,7 @@ namespace :import do
                                                                   best_before: best_before
           handicap.owner_name = boat['CustomerFirstName'].strip + ' ' + boat['CustomerLastName'].strip
           handicap.name = boat['Boattype'].strip
-          handicap.boat_name = boat['Boatname'].strip unless boat['Boatname'].blank? 
+          handicap.boat_name = boat['Boatname'].strip unless boat['Boatname'].blank?
           handicap.sail_number = boat['SailNo']
           handicap.srs = boat['SRS1'].to_f
           handicap.sxk = (handicap.srs * 1.22).round(2)
@@ -117,122 +117,148 @@ namespace :import do
   end
 
   namespace :pod do
+    task :terrain => :environment do
+      print "Getting PoD from server..."
+      doc = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
+                           nil, 'utf-8')
+      puts " ok"
+
+      terrain = Terrain.new
+      terrain.version_name = "During import"
+      terrain.published = false
+
+      # points number 9000 and above are not real points; they are used to mark
+      # area borders.  it would be better to not store them in the PoD database,
+      # or that they are removed from api call.
+      MAXPOINT=8999
+
+      points = doc.xpath("/PoD/points/point")
+      puts "Found #{points.count} points."
+      ndups = 0
+      point_ids = {}
+      points.each do |point|
+        point_number = point.xpath("number").text.to_i
+        next if point_number > MAXPOINT
+        name = point.xpath("name").text
+        descr = point.xpath("descr").text
+        footnote = point.xpath("footnote").text
+        if footnote.blank?
+          footnote = nil
+        end
+        lat = point.xpath("lat").text.to_f
+        long = point.xpath("long").text.to_f
+        unless (point_number.blank? || name.blank? ||
+                descr.blank? || lat == 0 || long == 0)
+          pt = Point.find_or_initialize_by(number: point_number,
+                                           name: name,
+                                           definition: descr,
+                                           footnote: footnote,
+                                           latitude: lat,
+                                           longitude: long)
+          if pt.new_record?
+            duplicates = Point.where("number = ?", point_number)
+            version = duplicates.maximum("version").to_i + 1
+            pt.version = version
+            pt.save!
+          else
+            ndups = ndups + 1
+          end
+          point_ids[point_number] = pt.id
+          terrain.points << pt
+        else
+          puts "Skipping incomplete point. number: #{point_number} " +
+               "name: #{name} defintion: #{definition} " +
+               "lat: #{lat} long: #{long}."
+        end
+      end
+      puts "#{ndups} were duplicates."
+
+      ndups = 0
+      legs = doc.xpath("/PoD/legs/leg")
+      puts "Found #{legs.count} legs."
+      legs.each do |leg|
+        from_number = leg.xpath('from').text.to_i
+        to_number = leg.xpath('to').text.to_i
+        next if from_number > MAXPOINT || to_number > MAXPOINT
+        point_id = point_ids[from_number]
+        to_point_id = point_ids[to_number]
+        dist = leg.xpath('dist').text.to_f
+        offshore = leg.xpath('sea').text.to_i == 1
+        addtime = leg.xpath('addtime').text.to_i == 1
+        unless (point_id.nil? || to_point_id.nil?)
+          lg = Leg.find_or_initialize_by(point_id:    point_id,
+                                         to_point_id: to_point_id,
+                                         distance:    dist,
+                                         offshore:    offshore,
+                                         addtime:     addtime)
+          if lg.new_record?
+            duplicates =
+              Leg.where("point_id = :point_id AND to_point_id = :to_point_id",
+                        {point_id: point_id, to_point_id: to_point_id})
+            version = duplicates.maximum("version").to_i + 1
+            lg.version = version
+            lg.save!
+          else
+            ndups = ndups + 1
+          end
+          terrain.legs << lg
+        else
+          puts "Skipping incomplete leg. Missing point #{from_number} " +
+               "or #{to_number}"
+        end
+      end
+      puts "#{ndups} were duplicates."
+
+      puts "Checking for duplicate terrains..."
+      # check for duplicates (what's the probability...?)
+      to_be_destroyed = false
+      for t in Terrain.all
+        puts "Comparing with terrain #{t.version_name}."
+        if terrain.points.sort_by {|x| x.id} == t.points.sort_by {|x| x.id}
+          puts "  Same set of points."
+          if terrain.legs.sort_by {|x| x.id} == t.legs.sort_by {|x| x.id}
+            puts "  Same legs."
+            to_be_destroyed = true
+            break
+          end
+        end
+      end
+      if to_be_destroyed
+        puts "The PoD is already present, did not import."
+        terrain.destroy!
+      else
+        puts "Added new terrain #{terrain.version_name}."
+        terrain.save!
+      end
+    end
+
     task :default_starts => :environment do
+      print "Getting PoD from server..."
+      doc = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
+                           nil, 'ISO-8859-1')
+      puts " ok"
+
+      print "Setting default start points..."
+      # set default starts
       for organizer in Organizer.all
-        unless organizer.external_id.blank?
+        extid = organizer.external_id
+        unless extid.blank?
           organizer.default_starts.destroy_all
-          doc = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?krets=#{url_encode(organizer.external_id.strip)}"), nil, 'ISO-8859-1')
-          doc.xpath("//startpunkter//startpunkt//nummer").each do |number|
-            point_number = number.content.strip.to_i
+          doc.xpath("/PoD/kretsar/krets[name='#{extid}']/startpoints/number").
+            each do |number|
+            point_number = number.text.to_i
             unless Point.where("number = ?", point_number).blank?
-              default_start = DefaultStart.find_or_create_by organizer_id: organizer.id, number: point_number
+              default_start = DefaultStart.find_or_create_by(
+                organizer_id: organizer.id, number: point_number)
               default_start.save!
             end
           end
         end
       end
+      puts " ok"
+
     end
 
-    task :terrain => :environment do
-      # environment variable MAX=integer to limit number of points for testing purposes.
-
-      # create new terrain
-      # import points
-      # import legs
-      # compare current terrain with previous, purge if needed
-      #
-      terrain = Terrain.new
-      terrain.version_name = "During import."
-      terrain.published = false
-      terrain.save!
-      max_no = ENV['MAX'].to_i
-
-      doc1 = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/api/xmlapi2.php?points"), nil, 'ISO-8859-1'  )
-      if max_no == 0
-        numbers = doc1.xpath("//punkter//punkt//nummer")
-      else
-        numbers = doc1.xpath("//punkter//punkt//nummer").first(max_no)
-      end
-      puts "Read #{numbers.count} points."
-      numbers.each do |number|
-        point_number =  number.content.to_s.strip.to_i
-        doc2 = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?point=#{url_encode(point_number)}"), nil, 'ISO-8859-1')
-        name = doc2.xpath("//PoD//punkt//namn").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
-        definition = doc2.xpath("//PoD//punkt//definition").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
-        lat = doc2.xpath("//PoD//punkt//lat").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
-        long = doc2.xpath("//PoD//punkt//long").first.content.strip.encode("iso-8859-1").force_encoding("utf-8")
-
-        unless point_number.blank? || name.blank? || definition.blank? || lat.blank? || long.blank?
-          longitude = (long.split[0].to_d + long.split[1].gsub(/,/, ".").to_d/60).to_f
-          latitude = (lat.split[0].to_d + lat.split[1].gsub(/,/, ".").to_d/60).to_f
-
-          point = Point.find_or_initialize_by(  number: point_number,
-                                                name: name,
-                                                definition: definition,
-                                                latitude: latitude,
-                                                longitude: longitude)
-          if point.new_record?
-            points = Point.where("number = ?", point_number)
-            if points.blank?
-              version = 1
-            else
-              version = points.maximum("version") + 1
-            end
-            point.version = version
-            point.save!
-          end
-          terrain.points << point
-        else
-          puts "Skipping incomplete. number: #{point_number} name: #{name} defintion: #{definition} lat: #{lat} long: #{long}."
-        end
-      end
-      terrain.points.each do |point|
-        doc = Nokogiri.XML(open("https://dev.24-timmars.nu/PoD/xmlapi.php?point=#{url_encode(point.number)}"), nil, 'ISO-8859-1')
-        doc.search("tillpunkter").search("punkt").each do |other_end|
-          o = Point.find_by number: other_end.search("nummer").first.content.strip.to_i
-          unless o.blank?
-            distance = other_end.search("distans").first.content.strip.to_f
-            offshore = false # TODO update when API includes
-            leg = Leg.find_or_initialize_by(  point_id:     point.id,
-                                              to_point_id:  o.id,
-                                              distance:     distance,
-                                              offshore:     offshore)
-            if leg.new_record?
-              legs = Leg.where("point_id = :point_id AND to_point_id = :to_point_id",
-                                {point_id: point.id, to_point_id: o.id})
-              version = legs.maximum("version").to_i + 1
-              leg.version = version
-              leg.save!
-            end
-            terrain.legs << leg
-          end
-        end
-      end
-      puts "Read #{terrain.legs.count} legs."
-      # purge
-      to_be_destroyed = false
-      n = Terrain.all.count
-      for t in Terrain.all.first(n-1)
-        puts
-        puts "Comparing with terrain #{t.name}."
-        if terrain.points == t.points
-          puts "Same set of points."
-          if terrain.legs == t.legs
-            puts "Same legs."
-            to_be_destroyed = true
-          end
-        end
-      end
-      ### URGENT HOTFIX ####
-      ### TODO ###
-      ### FIXME ###
-      if false # to_be_destroyed
-        puts "Purging."
-        terrain.destroy!
-      else
-        puts "Keeping new version #{terrain.name}."
-      end
-    end
   end
 
   namespace :srs do
@@ -538,6 +564,22 @@ namespace :import do
 end
 
 namespace :batch do
+
+  task :add_nobody => :environment do
+    email = 'nobody@24-timmars.nu'
+    p = Person.new
+    p.first_name = 'No'
+    p.last_name = 'Body'
+    p.email = email
+    p.save!
+    u = User.new
+    u.email = email
+    u.person = p
+    o = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
+    passwd = (0...50).map { o[rand(o.length)] }.join
+    u.reset_password(passwd, passwd)
+    u.save!
+  end
 
   task :trim_handicap_names => :environment do
     for handicap in Handicap.all

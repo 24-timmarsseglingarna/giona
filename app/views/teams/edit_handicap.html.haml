@@ -1,6 +1,21 @@
+-if not @known_handicaps.empty? and params[:step] == '1'
+  .panel.panel-default
+    .panel-heading
+      Har du samma handikapp som vid tidigare segling?
+    .panel-body
+      %ul
+        -for h in @known_handicaps
+          %li
+            - if h.registry_id.present?
+              - regstr = "| #{h.registry_id}"
+            - else
+              - regstr = ""
+            %i.fa.fa-calculator(aria-hidden='true')
+            =link_to "#{Handicap.short_types[h.type]} #{regstr} | #{h.name} | SXK-tal: #{h.sxk}", teams_set_handicap_path(:handicap_id => h.id, :id => @team.id), method: :post
+
 .panel.panel-default
   .panel-heading
-    Seglingen
+    Välj handikapp
   .panel-body
     .legend Regatta:
     %p
