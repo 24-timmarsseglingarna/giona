@@ -84,16 +84,11 @@ class Handicap < ApplicationRecord
       is_new = cur.nil?
       is_expired = (not h[:expired_at].nil?)
       has_changed_sxk = (not is_new and cur.sxk != sxk)
-      if is_expired
-        expired_at = h[:expired_at].to_date
-      else
-        expired_at = nil
-      end
 
       cur_handicaps.delete(cur.id) unless cur.nil?
 
-      if not(is_new) and is_expired and cur.expired_at == expired_at
-        # we already have this expired handicap in our database
+      if is_new and is_expired
+        # skip expired handicaps that we don't have as current
         next
       end
 
@@ -112,12 +107,12 @@ class Handicap < ApplicationRecord
         if not is_expired
           cur.expired_at = yesterday
         else
-          cur.expired_at = expired_at
+          cur.expired_at = h[:expired_at]
         end
         cur.save! unless dryrun
       end
       # we need to create a new handicap if this is new and not expired,
-      # or if it a changed existing and not expired.
+      # or if this is a changed existing and not expired.
       if (is_new or has_changed_sxk) and not(is_expired)
         case type
         when 'SrsKeelboat'
@@ -142,7 +137,7 @@ class Handicap < ApplicationRecord
         newh.owner_name = h[:owner_name]
         newh.boat_name = h[:boat_name]
         newh.sail_number = h[:sail_number]
-        newh.expired_at = expired_at
+        newh.expired_at = h[:expired_at]
         puts "Add handicap: #{newh.description}"
         newh.save! unless dryrun
       end
