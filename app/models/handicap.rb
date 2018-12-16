@@ -95,7 +95,7 @@ class Handicap < ApplicationRecord
       if not(is_new) and (has_changed_sxk or is_expired)
         # we found an existing handicap that has a new sxk rating, or
         # has expired.
-        # we need to mark it as obsolete, and check if there are any
+        # we need to mark it as expired, and check if there are any
         # active teams that use this handicap.  these teams need to set
         # a new handicap.
         if has_changed_sxk
