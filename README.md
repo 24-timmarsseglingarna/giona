@@ -14,21 +14,23 @@ createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona
 
 # Populate
 rake db:migrate
+# DO: Create first user
+rake batch:admin                    # Set admin rights
+rake batch:add_nobody               # User with no specific permissions
+
 rake scrape:srs:keelboats
 rake scrape:srs:certificates
 rake import:srs:multihull_certificates
-rake import:sxk:certificates URL=https://dl.dropboxusercontent.com/s/whahwj7eknbvulb/SXK-tal.csv # or whatever url        
+rake import:sxk:certificates
 rake scrape:srs:multihulls
 rake import:srs:dingies             # First, manually copy from pdf and paste into spreadsheet.
+
 rake batch:pod:organizers
 rake import:pod:terrain
-rake batch:agreement                # At least one end user agreement must exist.
-# Create first user
-rake batch:admin                    # Set admin rights
-rake batch:add_nobody               # User with no specific permissions
-# Approve/publish PoD/terrain
+# DO: Approve/publish PoD/terrain
 rake import:pod:default_starts
 
+rake batch:agreement                # At least one end user agreement must exist.
 
 # Set environment variable DEFAULT_URL='whatever.domain'
 # Defaults to 'segla.24-timmars.nu'
