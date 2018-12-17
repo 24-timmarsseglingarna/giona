@@ -623,7 +623,7 @@ namespace :batch do
   # book.)
   task :close_teams => :environment do
     for team in Team.is_archived(false).joins(race: :regatta).where("regattas.active = ?", false)
-      t.closed!
+      team.closed!
     end
   end
 
