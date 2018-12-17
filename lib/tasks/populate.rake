@@ -212,10 +212,6 @@ namespace :import do
                            nil, 'utf-8')
       puts " ok"
 
-      terrain = Terrain.new
-      terrain.version_name = "During import"
-      terrain.published = false
-
       # points number 9000 and above are not real points; they are used to mark
       # area borders.  it would be better to not store them in the PoD database,
       # or that they are removed from api call.
@@ -223,101 +219,108 @@ namespace :import do
 
       points = doc.xpath("/PoD/points/point")
       puts "Found #{points.count} points."
-      ndups = 0
-      point_ids = {}
-      points.each do |point|
-        point_number = point.xpath("number").text.to_i
-        next if point_number > MAXPOINT
-        name = point.xpath("name").text
-        descr = point.xpath("descr").text
-        footnote = point.xpath("footnote").text
-        if footnote.blank?
-          footnote = nil
-        end
-        lat = point.xpath("lat").text.to_f
-        long = point.xpath("long").text.to_f
-        unless (point_number.blank? || name.blank? ||
-                descr.blank? || lat == 0 || long == 0)
-          pt = Point.find_or_initialize_by(number: point_number,
-                                           name: name,
-                                           definition: descr,
-                                           footnote: footnote,
-                                           latitude: lat,
-                                           longitude: long)
-          if pt.new_record?
-            duplicates = Point.where("number = ?", point_number)
-            version = duplicates.maximum("version").to_i + 1
-            pt.version = version
-            pt.save!
-          else
-            ndups = ndups + 1
-          end
-          point_ids[point_number] = pt.id
-          terrain.points << pt
-        else
-          puts "Skipping incomplete point. number: #{point_number} " +
-               "name: #{name} defintion: #{definition} " +
-               "lat: #{lat} long: #{long}."
-        end
-      end
-      puts "#{ndups} were duplicates."
 
-      ndups = 0
-      legs = doc.xpath("/PoD/legs/leg")
-      puts "Found #{legs.count} legs."
-      legs.each do |leg|
-        from_number = leg.xpath('from').text.to_i
-        to_number = leg.xpath('to').text.to_i
-        next if from_number > MAXPOINT || to_number > MAXPOINT
-        point_id = point_ids[from_number]
-        to_point_id = point_ids[to_number]
-        dist = leg.xpath('dist').text.to_f
-        offshore = leg.xpath('sea').text.to_i == 1
-        addtime = leg.xpath('addtime').text.to_i == 1
-        unless (point_id.nil? || to_point_id.nil?)
-          lg = Leg.find_or_initialize_by(point_id:    point_id,
-                                         to_point_id: to_point_id,
-                                         distance:    dist,
-                                         offshore:    offshore,
-                                         addtime:     addtime)
-          if lg.new_record?
-            duplicates =
-              Leg.where("point_id = :point_id AND to_point_id = :to_point_id",
-                        {point_id: point_id, to_point_id: to_point_id})
-            version = duplicates.maximum("version").to_i + 1
-            lg.version = version
-            lg.save!
-          else
-            ndups = ndups + 1
-          end
-          terrain.legs << lg
-        else
-          puts "Skipping incomplete leg. Missing point #{from_number} " +
-               "or #{to_number}"
-        end
-      end
-      puts "#{ndups} were duplicates."
+      ActiveRecord::Base.transaction do
+        terrain = Terrain.new
+        terrain.version_name = "During import"
+        terrain.published = false
 
-      puts "Checking for duplicate terrains..."
-      # check for duplicates (what's the probability...?)
-      to_be_destroyed = false
-      for t in Terrain.all
-        puts "Comparing with terrain #{t.version_name}."
-        if terrain.points.sort_by {|x| x.id} == t.points.sort_by {|x| x.id}
-          puts "  Same set of points."
-          if terrain.legs.sort_by {|x| x.id} == t.legs.sort_by {|x| x.id}
-            puts "  Same legs."
-            to_be_destroyed = true
-            break
+        ndups = 0
+        point_ids = {}
+        points.each do |point|
+          point_number = point.xpath("number").text.to_i
+          next if point_number > MAXPOINT
+          name = point.xpath("name").text
+          descr = point.xpath("descr").text
+          footnote = point.xpath("footnote").text
+          if footnote.blank?
+            footnote = nil
+          end
+          lat = point.xpath("lat").text.to_f
+          long = point.xpath("long").text.to_f
+          unless (point_number.blank? || name.blank? ||
+                  descr.blank? || lat == 0 || long == 0)
+            pt = Point.find_or_initialize_by(number: point_number,
+                                             name: name,
+                                             definition: descr,
+                                             footnote: footnote,
+                                             latitude: lat,
+                                             longitude: long)
+            if pt.new_record?
+              duplicates = Point.where("number = ?", point_number)
+              version = duplicates.maximum("version").to_i + 1
+              pt.version = version
+              pt.save!
+            else
+              ndups = ndups + 1
+            end
+            point_ids[point_number] = pt.id
+            terrain.points << pt
+          else
+            puts "Skipping incomplete point. number: #{point_number} " +
+                 "name: #{name} defintion: #{definition} " +
+                 "lat: #{lat} long: #{long}."
           end
         end
-      end
-      if to_be_destroyed
-        puts "The PoD is already present, did not import."
-        terrain.destroy!
-      else
-        puts "Added new terrain #{terrain.version_name}."
-        terrain.save!
+        puts "#{ndups} were duplicates."
+
+        ndups = 0
+        legs = doc.xpath("/PoD/legs/leg")
+        puts "Found #{legs.count} legs."
+        legs.each do |leg|
+          from_number = leg.xpath('from').text.to_i
+          to_number = leg.xpath('to').text.to_i
+          next if from_number > MAXPOINT || to_number > MAXPOINT
+          point_id = point_ids[from_number]
+          to_point_id = point_ids[to_number]
+          dist = leg.xpath('dist').text.to_f
+          offshore = leg.xpath('sea').text.to_i == 1
+          addtime = leg.xpath('addtime').text.to_i == 1
+          unless (point_id.nil? || to_point_id.nil?)
+            lg = Leg.find_or_initialize_by(point_id:    point_id,
+                                           to_point_id: to_point_id,
+                                           distance:    dist,
+                                           offshore:    offshore,
+                                           addtime:     addtime)
+            if lg.new_record?
+              duplicates =
+                Leg.where("point_id = :point_id AND to_point_id = :to_point_id",
+                          {point_id: point_id, to_point_id: to_point_id})
+              version = duplicates.maximum("version").to_i + 1
+              lg.version = version
+              lg.save!
+            else
+              ndups = ndups + 1
+            end
+            terrain.legs << lg
+          else
+            puts "Skipping incomplete leg. Missing point #{from_number} " +
+                 "or #{to_number}"
+          end
+        end
+        puts "#{ndups} were duplicates."
+
+        puts "Checking for duplicate terrains..."
+        # check for duplicates (what's the probability...?)
+        to_be_destroyed = false
+        for t in Terrain.all
+          puts "Comparing with terrain #{t.version_name}."
+          if terrain.points.sort_by {|x| x.id} == t.points.sort_by {|x| x.id}
+            puts "  Same set of points."
+            if terrain.legs.sort_by {|x| x.id} == t.legs.sort_by {|x| x.id}
+              puts "  Same legs."
+              to_be_destroyed = true
+              break
+            end
+          end
+        end
+        if to_be_destroyed
+          puts "The PoD is already present, did not import."
+          terrain.destroy!
+        else
+          puts "Added new terrain #{terrain.version_name}."
+          terrain.save!
+        end
       end
     end
 
@@ -329,23 +332,24 @@ namespace :import do
 
       print "Setting default start points..."
       # set default starts
-      for organizer in Organizer.all
-        extid = organizer.external_id
-        unless extid.blank?
-          organizer.default_starts.destroy_all
-          doc.xpath("/PoD/kretsar/krets[name='#{extid}']/startpoints/number").
-            each do |number|
-            point_number = number.text.to_i
-            unless Point.where("number = ?", point_number).blank?
-              default_start = DefaultStart.find_or_create_by(
-                organizer_id: organizer.id, number: point_number)
-              default_start.save!
+      ActiveRecord::Base.transaction do
+        for organizer in Organizer.all
+          extid = organizer.external_id
+          unless extid.blank?
+            organizer.default_starts.destroy_all
+            doc.xpath("/PoD/kretsar/krets[name='#{extid}']/startpoints/number").
+              each do |number|
+              point_number = number.text.to_i
+              unless Point.where("number = ?", point_number).blank?
+                default_start = DefaultStart.find_or_create_by(
+                  organizer_id: organizer.id, number: point_number)
+                default_start.save!
+              end
             end
           end
         end
+        puts " ok"
       end
-      puts " ok"
-
     end
 
   end
