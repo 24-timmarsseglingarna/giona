@@ -24,7 +24,11 @@ class Team < ApplicationRecord
 
   after_initialize :set_defaults, unless: :persisted?
 
-  enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived]
+  # the value 'closed' is manually set on teams that participated
+  # while the review process in Giona was not implemented.  it means
+  # that the data for the team is not complete; e.g., it might not
+  # have a proper log book and result.
+  enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived, :closed]
   enum sailing_state: [:not_started, :did_not_start, :started, :did_not_finish, :finished]
   after_initialize :set_default_state, :if => :new_record?
 
@@ -39,33 +43,25 @@ class Team < ApplicationRecord
     end
   end
 
+  # we treat both 'archived' and 'closed' as archived
   def self.is_archived value = true
     if value
-      where(:state => 5)
+      where "state >= ?", 5
     else
-      where.not(:state => 5)
+      where "state < ?", 5
     end
   end
-
 
   def state_to_s
     str = Hash.new
     str['draft'] = 'utkast'
     str['submitted'] = 'inskickad'
     str['approved'] = 'godkänd'
+    str['signed'] = 'signerad'
+    str['reviewed'] = 'granskad'
+    str['archived'] = 'arkiverad'
+    str['closed'] = 'stängd'
     str[self.state]
-  end
-
-  def active
-    self.visible?
-  end
-
-  def active?
-    self.visible?
-  end
-
-  def visible?
-    self.state > 0
   end
 
   def sxk
@@ -114,6 +110,50 @@ class Team < ApplicationRecord
     new_skipper = CrewMember.find_by team_id: self.id, person_id: person.id
     new_skipper.skipper = true
     new_skipper.save!
+  end
+
+  def self.handicap_changed(handicap_id, user, dryrun=false)
+    for t in Team.is_archived(false).where("handicap_id = ?", handicap_id)
+      puts "Team #{t.id} uses changed handicap and needs to pick new handicap"
+      t.do_handicap_changed(user) unless dryrun
+    end
+  end
+
+  def do_handicap_changed user
+    # PRE: called only when self.handcap_id refers to an obsolete handicap
+    reset_handicap = false
+    send_email = false
+    send_officer_email = false
+    case self.state
+    when nil, :draft
+      reset_handicap = true
+      send_email = true
+    when :submitted
+      self.state = :draft
+      reset_handicap = true
+      send_email = true
+    when:approved
+      self.state = :submitted
+      send_email = true
+      reset_handicap = true
+    when :reviewed
+      send_officer_email = true
+      reset_handicap = true
+    end
+    if reset_handicap
+      Note.create(team_id: self.id,
+                  user: user,
+                  description: "Det valda handikappet (#{self.handicap_id}) är utgånget och har därför nollställts.")
+      self.handicap_id = nil
+      self.handicap_type = nil
+      self.save!
+      if send_email
+        TeamMailer.handicap_reset_email(self).deliver
+      end
+      if send_officer_email
+        TeamMailer.handicap_reset_officer_email(self).deliver
+      end
+    end
   end
 
   def review

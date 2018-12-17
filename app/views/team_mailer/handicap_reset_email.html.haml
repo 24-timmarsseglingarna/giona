@@ -1,0 +1,6 @@
+%p Hej!
+%p Ditt valda handikapp i #{@team.race.regatta.name} har ändrats eller gått ut.
+%p Du behöver logga in och välja ett nytt handikapp här:
+%p= link_to team_url(@team), team_url(@team)
+%p Generell information om regattan du är anmäld till hittar du här:
+%p= link_to regatta_url(@team.race.regatta), regatta_url(@team.race.regatta)

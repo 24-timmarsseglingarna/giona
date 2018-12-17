@@ -3,7 +3,7 @@
 one:
   name: MyString
   sxk: 1.5
-  best_before: 2017-04-26 16:12:27
+  expired_at: 2017-04-26 16:12:27
   source: MyString
   srs: 1.5
   registry_id: MyString
@@ -17,7 +17,7 @@ one:
 two:
   name: MyString
   sxk: 1.5
-  best_before: 2017-04-26 16:12:27
+  expired_at: 2017-04-26 16:12:27
   source: MyString
   srs: 1.5
   registry_id: MyString

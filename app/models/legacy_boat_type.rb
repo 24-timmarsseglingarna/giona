@@ -1,3 +1,0 @@
-class LegacyBoatType < Handicap
-  
-end

@@ -73,28 +73,28 @@ class HandicapsController < ApplicationController
       @handicap = type_class.find(params[:id])
     end
 
-    def set_type 
-       @type = type 
+    def set_type
+       @type = type
     end
 
-    def type 
+    def type
         Handicap.types.include?(params[:type]) ? params[:type] : "Handicap"
     end
 
-    def type_class 
-        type.constantize 
-    end    
+    def type_class
+        type.constantize
+    end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def handicap_params
-      params.require(@handicap.type.underscore.to_sym).permit(:name, :sxk, :best_before, :source, :srs, :registry_id, :sail_number, :boat_name, :owner_name, :external_system, :external_id)
+      params.require(@handicap.type.underscore.to_sym).permit(:name, :sxk, :expired_at, :source, :srs, :registry_id, :sail_number, :boat_name, :owner_name, :external_system, :external_id)
     end
 
     def authorized?
-      if ! has_admin_rights? 
+      if ! has_admin_rights?
         flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
         redirect_to :back
-      end  
+      end
     end
 
 end

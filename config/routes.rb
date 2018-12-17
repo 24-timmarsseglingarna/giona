@@ -11,7 +11,6 @@ Rails.application.routes.draw do
   resources :srs_keelboats, controller: 'handicaps', type: 'SrsKeelboats'
   resources :srs_multihulls, controller: 'handicaps', type: 'SrsMultihulls'
   resources :srs_dingies, controller: 'handicaps', type: 'SrsDingies'
-  resources :legacy_boat_types, controller: 'handicaps', type: 'LegacyBoatTypes'
   resources :srs_certificates, controller: 'handicaps', type: 'SrsCertificates'
   resources :sxk_certificates, controller: 'handicaps', type: 'SxkCertificates'
 

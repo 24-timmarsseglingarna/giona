@@ -9,80 +9,86 @@ require 'cgi'
 
 namespace :scrape do
   namespace :srs do
-    task :certificates => :environment do
+    # rake scrape:srs:certificates
+    # rake scrape:srs:certificates[dryrun]
+    task :certificates, [:dryrun] => :environment do |task, args|
+      dryrun = not(args[:dryrun].nil?)
       srs_table_url = "http://matbrev.svensksegling.se/Home/ApprovedList"
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      best_before = DateTime.now.in_time_zone.end_of_year
-      source = "SRS-mätbrev #{DateTime.now.year.to_s}"
+      source = "SRS-mätbrev"
+      handicaps = Array.new
       for entry in entries
         unless first_row
-          registry_id = CGI::parse((entry.css('td')[0].css('a').map { |link| link['href'] })[0])["rpt"][0].to_s
-          handicap = SrsCertificate.find_or_create_by   registry_id: registry_id,
-                                                        source: source,
-                                                        best_before: best_before
-          handicap.owner_name = entry.css('td')[1].text.to_s.strip
-          handicap.name = entry.css('td')[2].text.to_s.strip
-          handicap.boat_name = entry.css('td')[3].text.to_s.strip
-          handicap.sail_number = entry.css('td')[5].text.to_i
-          handicap.srs = entry.css('td')[8].text.gsub(',', '.').to_f
-          handicap.sxk = (handicap.srs * 1.22).round(2)
-          handicap.external_system = 'http://matbrev.svensksegling.se/Home/ApprovedList'
-          handicap.save!
+          h = Hash.new
+          h[:registry_id] = CGI::parse((entry.css('td')[0].css('a').map { |link| link['href'] })[0])["rpt"][0].to_s
+          h[:owner_name] = entry.css('td')[1].text.to_s.strip
+          h[:name] = entry.css('td')[2].text.to_s.strip
+          h[:boat_name] = entry.css('td')[3].text.to_s.strip
+          h[:sail_number] = entry.css('td')[5].text.to_i
+          h[:srs] = entry.css('td')[8].text.gsub(',', '.').to_f
+          handicaps << h
         else
           first_row = false
         end
+      end
+      ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SrsCertificate', source, srs_table_url,
+                        handicaps, user, dryrun)
       end
     end
   end
 
-
   namespace :srs do
-    task :keelboats => :environment do
+    task :keelboats, [:dryrun] => :environment do |task, args|
+      dryrun = not(args[:dryrun].nil?)
       srs_table_url = "http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      source = "SRS kölbåtar #{DateTime.now.year.to_s}"
-      puts source
+      source = "SRS kölbåtar"
+      handicaps = Array.new
       for entry in entries
         unless first_row
-          name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
-          best_before = DateTime.now.in_time_zone.end_of_year
-          handicap = SrsKeelboat.find_or_create_by  name: name,
-                                                    best_before: best_before,
-                                                    source: source
-          handicap.srs = entry.css('td')[6].text.gsub(',', '.').to_f
-          handicap.sxk = (handicap.srs * 1.22).round(2)
-          handicap.external_system = 'http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter='
-          handicap.save!
+          h = Hash.new
+          h[:name] = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
+          h[:srs] = entry.css('td')[6].text.gsub(',', '.').to_f
+          handicaps << h
         else
           first_row = false
         end
       end
+      ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SrsKeelboat', source, srs_table_url,
+                        handicaps, user, dryrun)
+      end
     end
 
-    task :multihulls => :environment do
+    task :multihulls, [:dryrun] => :environment do |task, args|
+      dryrun = not(args[:dryrun].nil?)
       srs_table_url = "http://matbrev.svensksegling.se/home/srsflerskrovlist"
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      source = "SRS flerskrov #{DateTime.now.year.to_s}"
-      best_before = DateTime.now.in_time_zone.end_of_year
+      source = "SRS flerskrov"
+      handicaps = Array.new
       for entry in entries
         unless first_row
-          name = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
-          handicap = SrsMultihull.find_or_create_by   name: name,
-                                                      best_before: best_before,
-                                                      source: source
-          handicap.srs = entry.css('td')[1].text.gsub(',', '.').to_f
-          handicap.sxk = (handicap.srs * 1.22).round(2)
-          handicap.external_system = 'http://matbrev.svensksegling.se/home/srsflerskrovlist'
-          handicap.save!
+          h = Hash.new
+          h[:name] = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
+          h[:srs] = entry.css('td')[1].text.gsub(',', '.').to_f
+          handicaps << h
         else
           first_row = false
         end
+      end
+      ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SrsMultihull', source, srs_table_url,
+                        handicaps, user, dryrun)
       end
     end
   end
@@ -90,28 +96,111 @@ end
 
 namespace :import do
   namespace :srs do
-    task :multihull_certificates => :environment do
+    task :multihull_certificates, [:dryrun] => :environment do |task, args|
+      dryrun = not(args[:dryrun].nil?)
       srs_table_url = "http://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
-      best_before = DateTime.now.in_time_zone.end_of_year
-      source = "SRS-mätbrev flerskrov #{DateTime.now.year.to_s}"
+      source = "SRS-mätbrev flerskrov"
       file = open(srs_table_url)
-      #for row in file
-        json = JSON.parse file.first
-        for boat in json['Data']
-          registry_id = boat['Certno']
-          handicap = SrsMultihullCertificate.find_or_create_by    registry_id: registry_id,
-                                                                  source: source,
-                                                                  best_before: best_before
-          handicap.owner_name = boat['CustomerFirstName'].strip + ' ' + boat['CustomerLastName'].strip
-          handicap.name = boat['Boattype'].strip
-          handicap.boat_name = boat['Boatname'].strip unless boat['Boatname'].blank?
-          handicap.sail_number = boat['SailNo']
-          handicap.srs = boat['SRS1'].to_f
-          handicap.sxk = (handicap.srs * 1.22).round(2)
-          handicap.external_system = 'http://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll'
-          handicap.save!
+      json = JSON.parse file.first
+      handicaps = Array.new
+      for boat in json['Data']
+        h = Hash.new
+        h[:registry_id] = boat['Certno']
+        h[:owner_name] = boat['CustomerFirstName'].strip + ' ' +
+                         boat['CustomerLastName'].strip
+        h[:name] = boat['Boattype'].strip
+        h[:boat_name] = boat['Boatname'].strip unless boat['Boatname'].blank?
+        h[:sail_number] = boat['SailNo']
+        h[:srs] = boat['SRS1'].to_f
+        handicaps << h
+      end
+      ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SrsMultihullCertificate', source, srs_table_url,
+                        handicaps, user, dryrun)
+      end
+    end
+
+    # NOTE:
+    #   this task needs a file 'srs-jolle.csv' with a header row
+    #   and each row on the form:
+    #     <boat-type-name>;<srs>
+    task :dingies, [:dryrun] => :environment do |task, args|
+      dryrun = not(args[:dryrun].nil?)
+      srs_table_url = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
+      source = "SRS jolle"
+      handicaps = Array.new
+      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle.csv"), "r"), :headers => true) do |row|
+        h = Hash.new
+        h[:name] = row['Typ'].to_s.strip
+        h[:srs] = row['SRS'].to_f
+        handicaps << h
+      end
+      ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SrsDingy', source, srs_table_url,
+                        handicaps, user, dryrun)
+      end
+    end
+  end
+
+  namespace :sxk do
+    task :certificates, [:dryrun] => :environment do |task, args|
+      dryrun = not(args[:dryrun].nil?)
+      sxk_table_url = 'https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php'
+      source = "SXK-mätbrev"
+      doc = Nokogiri::XML(open(sxk_table_url), nil, 'utf-8')
+      certificates = doc.xpath("/SXKbrev/brev")
+      handicaps = Array.new
+      certificates.each do |cert|
+        h = Hash.new
+        registry_id = cert.xpath("Regnr").text.strip
+        expired_at = cert.xpath("Utgatt").text.strip
+        sxk = cert.xpath("SXKtal").text.strip.gsub(',', '.')
+        # sanity check
+        if registry_id.blank?
+          puts "Skipping certificate with empty 'Regnr'"
+          next
         end
-      #end
+        if sxk.blank? and expired_at.blank?
+          puts "Skipping certificate #{registry_id} with empty 'SXKtal' and no 'Utgatt'"
+          next
+        end
+        h[:registry_id] = registry_id
+        unless expired_at.blank?
+          h[:expired_at] = expired_at.to_date
+        end
+        unless sxk.blank?
+          h[:sxk] = sxk.to_f
+        end
+        name = cert.xpath("Bat").text.strip
+        unless name.blank?
+          h[:name] = name
+        end
+        boat_name = cert.xpath("Batnamn").text.strip
+        unless boat_name.blank?
+          h[:boat_name] = boat_name
+        end
+        owner_name = cert.xpath("Agare").text.strip
+        unless owner_name.blank?
+          h[:owner_name] = owner_name
+        end
+        sail_number = cert.xpath("Segelnr").text.strip
+        unless sail_number.blank?
+          # 'Segelnr' may contain letters; extract the number.
+          # do not match a single zero
+          m = sail_number.match("([1-9][0-9]*)")
+          unless m.nil?
+            h[:sail_number] = m[1].to_i
+          end
+        end
+        handicaps << h
+      end
+      ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        Handicap.import('SxkCertificate', source, sxk_table_url,
+                        handicaps, user, dryrun)
+      end
     end
 
   end
@@ -261,113 +350,6 @@ namespace :import do
 
   end
 
-  namespace :srs do
-    task :dingies => :environment do
-      source = "SRS jolle #{DateTime.now.year.to_s}"
-      best_before = DateTime.now.in_time_zone.end_of_year
-      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle-2017.csv"), "r"), :headers => true) do |row|
-        name = row['Typ'].to_s.strip
-        handicap = SrsDingy.find_or_create_by name: name,
-                                              source: source,
-                                              best_before: best_before
-        handicap.srs = row['SRS'].to_f
-        handicap.sxk = (handicap.srs * 1.22).round(2)
-        handicap.external_system = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
-        handicap.save!
-      end
-    end
-  end
-
-# Regnr, Ersatt av, SRS-tabell, Utgått, Båt, Byggår, Segelnr, Båtnamn, Ägare, SXK-tal, UVS, Genua
-
-  namespace :sxk do
-    task :certificates => :environment do
-    end_of_year = DateTime.now.in_time_zone.end_of_year
-    yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
-    certificates_url = ENV["URL"]
-    if certificates_url.blank?
-      file = File.open(File.join(Rails.root, "db", "import", "sxk-tal.csv"), "r")
-    else
-      file = open(certificates_url)
-    end
-      CSV.foreach( file, :headers => true) do |row|
-        registry_id = row['Regnr'].to_s.strip
-        replaced = row['Ersatt av'].to_s.strip
-        dismissed = row['Utgått'].to_s.strip
-        name = row['Båt'].to_s.strip
-        sxk = row['SXK-tal'].to_f
-        boat_name = row['Båtnamn'].to_s.strip unless row['Båtnamn'].to_s.strip.blank?
-        owner_name = row['Ägare'].to_s.strip unless row['Ägare'].to_s.strip.blank?
-        sail_number = row['Segelnr'].to_i
-        unless registry_id.blank? || name.blank? || (registry_id.length < 5) || (sxk.blank?)
-          puts "#{registry_id} #{name} #{sxk} #{boat_name} #{owner_name} #{sail_number}"
-          handicap = SxkCertificate.find_or_create_by   registry_id:  registry_id,
-                                                        name:         name,
-                                                        sxk:          sxk,
-                                                        boat_name:    boat_name,
-                                                        owner_name:   owner_name,
-                                                        sail_number:  sail_number
-          if replaced.blank? && dismissed.blank?
-            handicap.best_before = end_of_year
-          else
-            handicap.best_before = yesterday
-          end
-
-          handicap.source = 'SXK-mätbrev'
-          handicap.external_system = 'xls'
-          handicap.save!
-        end
-      end
-    end
-  end
-
-  namespace :xls do
-    task :shorthand => :environment do
-      CSV.foreach( File.open(File.join("/", "tmp", "import", "2017E-startlista--A.csv"), "r"), :headers => true) do |row|
-
-        # pre req: Regatta exists, one race only
-
-        regatta = Regatta.find_by name: 'Ensamseglingen 2017'
-        race = regatta.races.take
-
-        person = Person.find_or_create_by email: row['person_email'].to_s.strip
-        person.first_name = row['person_first_name'].to_s.strip if person.first_name.blank?
-        person.last_name = row['person_last_name'].to_s.strip if person.last_name.blank?
-        person.external_system = '2017E-startlista--A' if person.external_system.blank?
-        person.save!
-
-        boat = Boat.find_or_create_by   name: row['boat_name'].to_s.strip,
-                                        boat_type_name: row['boat_type_name'].to_s.strip,
-                                        sail_number: row['boat_sail_no'].to_s.strip
-        boat.external_system = '2017E-startlista--A' if boat.external_system.blank?
-        boat.save!
-
-        handicap = LegacyBoatType.new
-        handicap.sxk = row['handicap_handicap'].to_s.strip
-        handicap.external_system = '2017E-startlista--A'
-        handicap.source = 'Arkiv'
-        handicap.best_before = DateTime.parse('2017-06-30')
-        handicap.save!
-
-        t = Team.find_or_create_by race: race, boat: boat
-        t.state = 'approved'
-        t.offshore = true
-        t.finish_point = 553
-        t.name = boat.name + ' / ' + person.last_name
-        t.skipper = person
-        t.handicap = handicap
-        t.handicap_type = 'LegacyBoatType'
-        t.boat_type_name = boat.boat_type_name
-        t.boat_name = boat.name
-        t.boat_sail_number = boat.sail_number
-        t.start_point = row['team_start_no']
-        t.start_number = row['team_start_number']
-        t.external_system = '2017E-startlista--A'
-        t.save!
-      end
-    end
-  end
-
   namespace :starema do
     task :people => :environment do
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Deltagare.csv"), "r"), :headers => true) do |row|
@@ -421,75 +403,6 @@ namespace :import do
                                        common_finish: nil,
                                        )
         race.save!
-      end
-    end
-
-
-    task :teams => :environment do
-      # File format: SeglingNr, SeglingRegistrerandeKrets, SeglingFNStart, SeglingStartDag,
-      # SeglingStartTid, SeglingPeriod, SeglingFNBoatIndivid, SeglingBåtIndivid, SeglingBåtTyp,
-      # SeglingFNStartpunkt, SeglingStartnr, SeglingÖvertid, SeglingTotalDist, SeglingAvdrag,
-      # SeglingGodkDist, SeglingSxkTal, SeglingPlakatDist, SeglingEfteranmäld, SeglingEjStart,
-      # SeglingBrutit, SeglingFiktiv, SeglingÅr, SeglingVH, SeglingLåst, SeglingDeltarFest,
-      # SeglingDeltarFestNotering, SeglingBetalt, SeglingBetaltBelopp, SeglingKorrDistans
-
-      CSV.foreach( File.open(File.join(Rails.root, "db", "import", "Starema-St-Seglingar.csv"), "r"), :headers => true) do |row|
-        team = Team.find_or_create_by(external_id: row['SeglingNr'].to_s.strip.to_i, external_system: 'Starema-St')
-        race = Race.find_by( external_id: row['SeglingFNStart'].to_s.strip.to_i, external_system: 'Starema-St')
-        if race.nil?
-          puts row
-          team.destroy!
-        else
-          team.race_id = race.id
-          team.start_number = row['SeglingStartnr'].to_s.strip
-          team.boat_name = row['SeglingBåtIndivid'].to_s.strip
-          team.boat_type_name = row['SeglingBåtTyp'].to_s.strip
-          #team.boat_sail_number =
-          team.start_point = row['SeglingFNStartpunkt'].to_s.strip.to_i
-          #team.handicap = row['SeglingSxkTal'].to_s.strip.to_f
-          team.plaque_distance = row['SeglingPlakatDist'].to_s.strip.to_f
-          team.name = "#{team.boat_name} / #{team.boat_type_name}" if team.name.blank?
-          boat = Boat.find_by( external_id: row['SeglingFNBoatIndivid'].to_s.strip.to_i, external_system: 'Starema-St')
-          if boat.nil?
-            puts row
-          else
-            boat.boat_type_name = team.boat_type_name
-            boat.save!
-            team.boat_id = boat.id
-            handicap = LegacyBoatType.find_or_create_by( name: team.boat_type_name,
-                                                          handicap: row['SeglingSxkTal'].to_s.strip.to_f,
-                                                          external_system: 'Starema-St',
-                                                          source: 'Arkiv',
-                                                          best_before: DateTime.parse('2017-12-31'))
-            team.handicap = handicap
-            team.handicap_type = 'LegacyBoatType'
-
-            if boat.sail_number == 0 || boat.sail_number.nil?
-              team.boat_sail_number = nil
-            else
-              team.boat_sail_number = boat.sail_number
-            end
-          end
-          #if row['SeglingEjStart'].to_i == 1
-          #  team.did_not_start = true
-          #else
-          #  team.did_not_start = false
-          #end
-
-          #if ( row['SeglingBrutit'].to_i == 1 )
-          #  team.did_not_finish = true
-          #else
-          #  team.did_not_finish = false
-          #end
-
-          #if ( row['SeglingBetalt'].to_i == 1 )
-          #
-          #else
-          #  team.paid_fee = false
-          #end
-
-          team.save!
-        end
       end
     end
 
@@ -665,6 +578,52 @@ namespace :batch do
     for regatta in Organizer.find_by( name: 'Svenska Kryssarklubbens Stockholmskrets' ).regattas
       regatta.name = regatta.name.gsub(/\ i\ Stockholm/, '')
       regatta.save!
+    end
+  end
+
+  # this is a run-once task to clean up handicaps imported before we
+  # changed how best_before was handled
+  # NOTE: must run db migrate first!
+  task :remove_expired_at_from_handicap => :environment do
+    eoy = DateTime.now.in_time_zone.end_of_year
+    # first, do sanity check
+    res = Handicap.where(expired_at: nil)
+    if res.length != 0
+      puts "There are #{res.length} handicaps without expired_at in the db already"
+    end
+    res = Handicap.where("expired_at < ?", eoy)
+    if res.length != 0
+      puts "There are #{res.length} expired handicaps in the db already"
+    end
+    res = Handicap.where("expired_at > ?", eoy)
+    if res.length != 0
+      puts "There are #{res.length} handicaps with expired_at in the future!!"
+    end
+
+    res = Handicap.where(expired_at: eoy)
+    puts "Removing expired_at from #{res.length} current handicaps"
+    for h in res
+      # ensure that there are not another handicap with the same "key" that
+      # is not expired
+      duplicates = Handicap.active.where("name = :n and type = :t and registry_id = :r",
+                                         {n: h.name, t: h.type, r: h.registry_id})
+      if duplicates.length > 0
+        puts "NOTE: found duplicate active handicaps #{duplicates[0].id}"
+      else
+        h.expired_at = nil
+        h.save!
+      end
+    end
+  end
+
+  # this task is supposed to be used until we have implemented the
+  # full review process in Giona.  run this to close all teams in all
+  # archived regattas as "incomplete".  their data can not be
+  # trusted (e.g., they might not have a log book, or incomplete log
+  # book.)
+  task :close_teams => :environment do
+    for team in Team.is_archived(false).joins(race: :regatta).where("regattas.active = ?", false)
+      t.closed!
     end
   end
 

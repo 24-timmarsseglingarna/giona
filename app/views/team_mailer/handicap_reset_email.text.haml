@@ -1,0 +1,11 @@
+Hej!
+
+Ditt valda handikapp i #{@team.race.regatta.name} har ändrats eller gått ut.
+
+Du behöver logga in och välja ett nytt handikapp här:
+
+= link_to team_url(@team), team_url(@team)
+
+Generell information om regattan du är anmäld till hittar du här:
+
+link_to regatta_url(@team.race.regatta),regatta_url(@team.race.regatta)

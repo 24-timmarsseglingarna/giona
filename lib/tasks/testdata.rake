@@ -1,9 +1,27 @@
 # coding: utf-8
 
 
-# install with: rake testdata:team
-
 namespace :testdata do
+  # rake testdata:test_handicap
+  # rake testdata:test_handicap[dryrun]
+  task :test_handicap, [:dryrun] => :environment do |task, args|
+    dryrun = not(args[:dryrun].nil?)
+    handicaps = Array.new
+    h = Hash.new
+    h[:registry_id] = "E6488"
+    h[:owner_name] = "Kalle Kula"
+    h[:name] = "1111"
+    h[:boat_name] = "TESTING"
+    h[:sail_number] = 8
+    h[:srs] = 0.9
+    handicaps << h
+    source = "SRS"
+    srs_table_url = "urn:test"
+    Handicap.import('SrsCertificate', source, srs_table_url, handicaps, dryrun)
+
+  end
+
+  # install with: rake testdata:team
   task :team => :environment do
     # first, clean up from previous runs
     regatta = Regatta.find_by(name: 'Testregatta')

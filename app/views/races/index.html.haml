@@ -1,7 +1,6 @@
 %h1 Deltagaranmälan för båt och skeppare
 
 
-
 - if @regattas.blank?
   %p Hittar tyvärr inte seglingar som går att anmäla sig till.
 
@@ -16,7 +15,10 @@
       =organizer.name
     .panel-body
       %ul
+        - regattas = Array.new
         - for regatta in organizer.regattas.is_active true
+          - regattas << regatta
+        - for regatta in regattas.sort_by{|r| r.races.order(:start_from).first.start_from}.reverse
           %li
             %i.fa.fa-trophy(aria-hidden='true')
             = regatta.name

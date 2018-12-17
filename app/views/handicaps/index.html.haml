@@ -17,7 +17,7 @@
           %th Segelnr
           %th Ägare
           %th SRS
-          %th Gäller t.o.m.
+          %th Utgått
 
       %tbody
         - @handicaps.each do |handicap|
@@ -30,10 +30,10 @@
             %td= handicap.sail_number
             %td= handicap.owner_name
             %td= handicap.srs
-            %td= I18n.l(handicap.best_before, format: :day) unless handicap.best_before.nil?
+            %td= I18n.l(handicap.expired_at, format: :day) unless handicap.expired_at.nil?
 
 
 :javascript
   $(document).ready(function() {
   $('#giona-handicaps').DataTable();
-  } );  
+  } );
