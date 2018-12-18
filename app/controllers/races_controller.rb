@@ -10,7 +10,7 @@ class RacesController < ApplicationController
   # GET /races
   # GET /races.json
   def index
-    @races = apply_scopes(Race).all
+    @races = apply_scopes(Race).is_active
     @regattas = Array.new
     for race in @races
       unless @regattas.include? race.regatta
