@@ -56,6 +56,25 @@ class RacesController < ApplicationController
       for start in regatta.organizer.default_starts
         @race.starts << start.number.to_s
       end
+      # guess a start time based on other races in the same regatta.
+      # this means less clicks for the organizer that creates the race.
+      @guessStartFrom = ""
+      possibleStartFrom = ""
+      for r in regatta.races
+        finish = r.start_from.advance(hours: r.period)
+        if finish.wday == 0
+          # we found a race with finish on sunday, let's use it as our guess
+          start = finish.advance(hours: -@race.period)
+          @guessStartFrom = start.iso8601
+          break
+        else
+          possibleStartFrom = finish.advance(hours: -@race.period)
+        end
+      end
+      if @guessStartFrom == "" and possibleStartFrom != ""
+        # no race with finish on a sunday, use what we have as a guess
+        @guessStartFrom = possibleStartFrom.iso8601
+      end
     end
   end
 

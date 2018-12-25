@@ -36,34 +36,6 @@
 
 :javascript
   $(function () {
-  $('#race_start_from').datetimepicker({
-  icons: {
-    time: 'fa fa-clock-o',
-    date: 'fa fa-calendar',
-    up: 'fa fa-arrow-up',
-    down: 'fa fa-arrow-down',
-    previous: 'fa fa-arrow-left',
-    next: 'fa fa-arrow-right',
-    today: 'fa fa-calendar-check-o',
-    clear: 'fa fa-eraser',
-    close: 'fa fa-close'
-    },
-  locale: 'sv',
-  sideBySide: true
-  });
-  $('#race_start_to').datetimepicker({
-  icons: {
-    time: 'fa fa-clock-o',
-    date: 'fa fa-calendar',
-    up: 'fa fa-arrow-up',
-    down: 'fa fa-arrow-down',
-    previous: 'fa fa-arrow-left',
-    next: 'fa fa-arrow-right',
-    today: 'fa fa-calendar-check-o',
-    clear: 'fa fa-eraser',
-    close: 'fa fa-close'
-    },
-  locale: 'sv',
-  sideBySide: true
-  });
+      var guessStartFrom = "#{@guessStartFrom}";
+      setup_race_new_view(guessStartFrom);
   });
