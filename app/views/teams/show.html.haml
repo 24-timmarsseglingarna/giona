@@ -266,121 +266,129 @@
           %i.fas.fa-pencil-alt(aria-hidden='true')
           = link_to 'Ändra handikapp', edit_handicap_team_path(step: 1)
 
+.panel{:class => "#{panel_context(@status['logbook'])}"}
+  .panel-heading
+    Loggbok
+  .panel-body
+    -if i_may_see_links_to(@team) && can_register_logbook(@team)
+      %p
+        %i.fa.fa-plus-circle(aria-hidden='true')
+        = link_to 'Registrera loggbok', logbook_link(@team)
 
--unless @logs.blank?
-  %table#giona-logs.table.table-striped.table-bordered.table-hover{:width => "100%"}
-    %thead
-      %tr
-        %th Datum/tid
-        %th Punkt
-        %th Distans
-        %th Vind
-        %th Notering
-        - if params[:rich]
-          %th User
-          %th Client
-          %th Data
-          %th Deleted
-    %tbody
-    - previous_point = nil
-    - trip = 0
-    - @logs.each do |log|
-      - unless log.deleted
-        %tr{:class => cycle('even', 'odd')}
-          - unless log.data.blank?
-            - log_entry = JSON.parse(log.data)
-          - else
-            - log_entry = Hash.new
-          %td= I18n.l(log.time, format: :normal)
-          %td
-            - unless log.point.blank?
-              %span.badge
-                = log.point
-              = log.team.race.regatta.terrain.points.find_by( number: log.point).name
-          %td
-            - if log.point
-              -if previous_point
-                - distance = distance_between(previous_point, log.point, log.team.race.regatta.terrain)
-                = distance
-                - trip = trip + distance
+    -unless @logs.blank?
+      %table#giona-logs.table.table-striped.table-bordered.table-hover{:width => "100%"}
+        %thead
+          %tr
+            %th Datum/tid
+            %th Punkt
+            %th Distans
+            %th Vind
+            %th Notering
+            - if params[:rich]
+              %th User
+              %th Client
+              %th Data
+              %th Deleted
+        %tbody
+        - previous_point = nil
+        - trip = 0
+        - @logs.each do |log|
+          - unless log.deleted
+            %tr{:class => cycle('even', 'odd')}
+              - unless log.data.blank?
+                - log_entry = JSON.parse(log.data)
               - else
-                0.0
-              - previous_point = log.point
-          %td= log.wind
-          %td
-            - if current_user
-              - if (has_assistant_rights? || (@team.people.include? current_user.person))
-                - unless log.position.blank?
-                  = log.position
-                  %br
-                - unless log_entry['boats'].blank?
-                  - regatta = log.team.race.regatta
-                  - teams = Team.from_regatta(regatta.id).where(start_number: log_entry['boats'])
-                  - for team in teams
-                    %span.badge.alert-success
-                      Startnr
-                      = team.start_number
-                    = team.boat_type_name
-                    = team.boat_sail_number
-                    = team.boat_name
-                    %br
-                - if log.log_type == 'retire'
-                  Avbryter seglingen (DNF).
-                  %br
-                - if log.log_type == 'protest'
-                  - suspected_team = log.team.race.regatta.teams.find_by( start_number: log_entry['protest']['boat'])
-                  Protest mot misstänkt regelbrott.
-                  %br
-                  %span.badge.alert-danger
-                    Startnr
-                    = suspected_team.start_number
-                  = suspected_team.boat_type_name
-                  = suspected_team.boat_sail_number
-                  = suspected_team.boat_name
-                  %br
-                - if log.log_type == 'sign'
-                  Loggboken signerad.
-                  %br
-                - if log.log_type == 'endOfRace'
-                  Seglingsperioden slut.
-                  %br
-                - unless log.sails.blank?
-                  = log.sails
-                  %br
-                - unless log_entry['lanterns'].blank?
-                  = 'Tänder lanternorna.' if (log_entry['lanterns'] == 'on')
-                  = 'Släcker lanternorna.' if (log_entry['lanterns'] == 'off')
-                  %br
-                - unless log_entry['interrupt'].blank?
-                  = I18n.t("logs.interrupt.#{log_entry['interrupt']['type']}")
-                  %br
-                -unless log_entry['engine'].blank?
-                  = 'Startar motor för laddning.' if (log_entry['engine'] == 'on')
-                  = 'Stänger av motor för laddning.' if (log_entry['engine'] == 'off')
-                  %br
-                - unless log_entry['comment'].blank?
-                  = log_entry['comment']
-                  %br
-            - else
-              - unless log_entry['boats'].blank?
-                - regatta = log.team.race.regatta
-                - teams = Team.from_regatta(regatta.id).where(start_number: log_entry['boats'])
-                - for team in teams
-                  %span.badge.alert-success
-                    Startnr
-                    = team.start_number
-                  = team.boat_type_name
-                  = team.boat_sail_number
-                  = team.boat_name
-                  %br
+                - log_entry = Hash.new
+              %td= I18n.l(log.time, format: :normal)
+              %td
+                - unless log.point.blank?
+                  %span.badge
+                    = log.point
+                  = log.team.race.regatta.terrain.points.find_by( number: log.point).name
+              %td
+                - if log.point
+                  -if previous_point
+                    - distance = distance_between(previous_point, log.point, log.team.race.regatta.terrain)
+                    = distance
+                    - trip = trip + distance
+                  - else
+                    0.0
+                  - previous_point = log.point
+              %td= log.wind
+              %td
+                - if current_user
+                  - if (has_assistant_rights? || (@team.people.include? current_user.person))
+                    - unless log.position.blank?
+                      = log.position
+                      %br
+                    - unless log_entry['boats'].blank?
+                      - regatta = log.team.race.regatta
+                      - teams = Team.from_regatta(regatta.id).where(start_number: log_entry['boats'])
+                      - for team in teams
+                        %span.badge.alert-success
+                          Startnr
+                          = team.start_number
+                        = team.boat_type_name
+                        = team.boat_sail_number
+                        = team.boat_name
+                        %br
+                    - if log.log_type == 'retire'
+                      Avbryter seglingen (DNF).
+                      %br
+                    - if log.log_type == 'protest'
+                      - suspected_team = log.team.race.regatta.teams.find_by( start_number: log_entry['protest']['boat'])
+                      Protest mot misstänkt regelbrott.
+                      %br
+                      %span.badge.alert-danger
+                        Startnr
+                        = suspected_team.start_number
+                      = suspected_team.boat_type_name
+                      = suspected_team.boat_sail_number
+                      = suspected_team.boat_name
+                      %br
+                    - if log.log_type == 'sign'
+                      Loggboken signerad.
+                      %br
+                    - if log.log_type == 'endOfRace'
+                      Seglingsperioden slut.
+                      %br
+                    - unless log.sails.blank?
+                      = log.sails
+                      %br
+                    - unless log_entry['lanterns'].blank?
+                      = 'Tänder lanternorna.' if (log_entry['lanterns'] == 'on')
+                      = 'Släcker lanternorna.' if (log_entry['lanterns'] == 'off')
+                      %br
+                    - unless log_entry['interrupt'].blank?
+                      = I18n.t("logs.interrupt.#{log_entry['interrupt']['type']}")
+                      %br
+                    -unless log_entry['engine'].blank?
+                      = 'Startar motor för laddning.' if (log_entry['engine'] == 'on')
+                      = 'Stänger av motor för laddning.' if (log_entry['engine'] == 'off')
+                      %br
+                    - unless log_entry['comment'].blank?
+                      = log_entry['comment']
+                      %br
+                - else
+                  - unless log_entry['boats'].blank?
+                    - regatta = log.team.race.regatta
+                    - teams = Team.from_regatta(regatta.id).where(start_number: log_entry['boats'])
+                    - for team in teams
+                      %span.badge.alert-success
+                        Startnr
+                        = team.start_number
+                      = team.boat_type_name
+                      = team.boat_sail_number
+                      = team.boat_name
+                      %br
 
-          - if params[:rich] && current_user
-            - if has_assistant_rights?
-              %td= log.user_id
-              %td= log.client
-              %td= log.data
-              %td= log.deleted
-  Summa: #{trip.round(1)}
+              - if params[:rich] && current_user
+                - if has_assistant_rights?
+                  %td= log.user_id
+                  %td= log.client
+                  %td= log.data
+                  %td= log.deleted
+      Summa: #{trip.round(1)}
 
 - if current_user && i_may_see_links_to(@team)
   %h5 Ändringar:

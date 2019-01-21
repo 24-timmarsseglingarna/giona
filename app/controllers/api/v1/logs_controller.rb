@@ -77,22 +77,28 @@ module Api
         else
           @log = Log.new(log_params)
           team = Team.find @log.team_id
-          #unless team.people.include? current_user.person || has_organizer_rights?
-          unless team.people.include? current_user.person
+          if team.people.include? current_user.person || has_organizer_rights?
+            if team.is_signed && !has_organizer_rights?
+              render json: {
+                       error: "Loggen är signerad och kan inte ändras.",
+                       status: :forbidden
+                     }, status: :forbidden
+            else
+              @log.user_id = current_user.id if current_user
+              respond_to do |format|
+                if @log.save
+                  @log.team.set_sailing_state!
+                  format.json { render 'logs/show', status: :created, location: @log }
+                else
+                  format.json { render json: @log.errors, status: :unprocessable_entity }
+                end
+              end
+            end
+          else
             render json: {
               error: "Du har inte behörighet, det har bara besättningsmedlemmar.",
               status: :forbidden
               }, status: :forbidden
-          else
-            @log.user_id = current_user.id if current_user
-            respond_to do |format|
-              if @log.save
-                @log.team.set_sailing_state!
-                format.json { render 'logs/show', status: :created, location: @log }
-              else
-                format.json { render json: @log.errors, status: :unprocessable_entity }
-              end
-            end
           end
         end
       end
@@ -102,21 +108,27 @@ module Api
         if current_user
           @log = Log.find params[:id]
           team = Team.find @log.team_id
-          #if team.people.include? current_user.person || has_organizer_rights?
-          if team.people.include? current_user.person
-            @log.user_id = current_user.id
-            respond_to do |format|
-              gen = params.delete(:gen)
-              if @log.gen != gen
-                # the client tries to update a stale copy, reject
-                format.json { render 'logs/show', status: :conflict, location: @log }
-              elsif @log.update(log_params)
-                @log.team.set_sailing_state!
-                format.json { render 'logs/show', status: :ok, location: @log }
-              else
-                format.json { render json: @log.errors, status: :unprocessable_entity }
-              end
-            end # /respond_to
+          if team.people.include? current_user.person || has_organizer_rights?
+            if team.is_signed && !has_organizer_rights?
+              render json: {
+                       error: "Loggen är signerad och kan inte ändras.",
+                       status: :forbidden
+                     }, status: :forbidden
+            else
+              @log.user_id = current_user.id
+              respond_to do |format|
+                gen = params.delete(:gen)
+                if @log.gen != gen
+                  # the client tries to update a stale copy, reject
+                  format.json { render 'logs/show', status: :conflict, location: @log }
+                elsif @log.update(log_params)
+                  @log.team.set_sailing_state!
+                  format.json { render 'logs/show', status: :ok, location: @log }
+                else
+                  format.json { render json: @log.errors, status: :unprocessable_entity }
+                end
+              end # /respond_to
+            end
           else
             respond_to do |format|
               format.json { render json: 'Du har inte behörighet.', status: :forbidden }

@@ -236,11 +236,16 @@ class Team < ApplicationRecord
     has_started = self.logs.where(log_type: 'round', deleted: false).present?
     has_cancelled = self.logs.where(log_type: 'retire', deleted: false).present?
     has_finished = false
+    is_signed = false
     for log in self.logs.where(deleted: false)
-      if JSON.parse(log.data)['finish'].present?
-        if JSON.parse(log.data)['finish'] == 'true'
+      jsondata = JSON.parse(log.data)
+      if jsondata['finish'].present?
+        if jsondata['finish'] == 'true'
           has_finished = true
         end
+      end
+      if log.log_type == 'sign'
+        is_signed = true
       end
     end
 
@@ -253,6 +258,14 @@ class Team < ApplicationRecord
     else
       self.not_started!
     end
+    if is_signed
+      self.signed!
+    end
+  end
+
+  def is_signed
+    self.state == 'signed' || self.state == 'reviewed' ||
+      self.state == 'archived' || self.state == 'closed'
   end
 
 private

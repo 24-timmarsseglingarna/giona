@@ -35,6 +35,10 @@ class Person < ApplicationRecord
     self.country  ||= 'Sverige'
   end
 
+  def role
+    self.user.role
+  end
+
   def review!
   	self.update_attribute(:review, true)
   end

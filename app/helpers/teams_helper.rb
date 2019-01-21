@@ -1,12 +1,12 @@
 module TeamsHelper
   def team_in_regatta team
-  	out = team.name
-  	unless team.race.nil?
-  	  out += ': ' + team.race.period.to_s + ' timmar'
-  	  unless team.race.regatta.nil?
-  	  	out += ', ' + team.race.regatta.name
-  	  end
-  	 end
+        out = team.name
+        unless team.race.nil?
+          out += ': ' + team.race.period.to_s + ' timmar'
+          unless team.race.regatta.nil?
+                out += ', ' + team.race.regatta.name
+          end
+         end
    end
 
    def i_may_see_links_to team
@@ -49,7 +49,7 @@ module TeamsHelper
      end
    end
 
-   def distance_between( previous_point_number, point_number, terrain)
+   def distance_between(previous_point_number, point_number, terrain)
      previous_point = terrain.points.find_by number: previous_point_number
      point = terrain.points.find_by number: point_number
      leg = terrain.legs.find_by point: previous_point, to_point: point
@@ -59,4 +59,18 @@ module TeamsHelper
        0.0
      end
    end
+
+   def can_register_logbook(team)
+     team.state == 'submitted' || team.state == 'approved'
+   end
+
+   def logbook_link(team)
+     Rails.configuration.web_logbook_url +
+       "?logbook=true" +
+       "&email=#{URI.escape(current_user.email)}" +
+       "&token=#{URI.escape(current_user.authentication_token)}" +
+       "&team=#{team.id}" +
+       "&person=#{current_user.person.id}"
+   end
+
 end

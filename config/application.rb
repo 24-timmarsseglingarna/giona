@@ -15,6 +15,7 @@ module Giona
     config.time_zone = 'Europe/Stockholm'
     config.active_record.time_zone_aware_types = [:datetime]
     config.i18n.default_locale = :sv
+    config.web_logbook_url = 'https://app.24-timmars.nu/web'
     config.middleware.insert_before 0, Rack::Cors, :debug => true,
                                     :logger => Rails.logger do #TODO tighten up
       allow do

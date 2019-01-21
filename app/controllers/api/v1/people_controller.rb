@@ -18,7 +18,7 @@ module Api
         else
           @person = Person.select("id, first_name, last_name").find(params[:id])
         end
-        render :json => @person
+        render 'people/show'
       end
     end
   end
