@@ -217,6 +217,22 @@ class Team < ApplicationRecord
     end
   end
 
+  def skipper_first_name
+    if self.skipper.present?
+      self.skipper.first_name
+    else
+      nil
+    end
+  end
+
+  def skipper_last_name
+    if self.skipper.present?
+      self.skipper.last_name
+    else
+      nil
+    end
+  end
+
   def has_finished_according_to_logbook?
     out = false
     for log in self.logs
