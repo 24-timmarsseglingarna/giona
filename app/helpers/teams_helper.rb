@@ -71,6 +71,7 @@ module TeamsHelper
        "&email=#{URI.escape(current_user.email)}" +
        "&token=#{URI.escape(current_user.authentication_token)}" +
        "&team=#{team.id}" +
+       "&race=#{team.race_id}" +
        "&person=#{current_user.person.id}"
    end
 
