@@ -7,9 +7,9 @@ module PeopleHelper
   end
 
   def my_starts person
-    start_numbers = person.teams.pluck('start_number').uniq
-    start_numbers.delete nil
-    start_numbers.to_sentence
+    start_points = person.teams.pluck('start_point').uniq
+    start_points.delete nil
+    start_points.to_sentence
   end
 
   def user_role person
