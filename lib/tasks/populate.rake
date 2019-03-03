@@ -15,7 +15,7 @@ namespace :scrape do
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = "http://matbrev.svensksegling.se/Home/ApprovedList"
       doc = Nokogiri::HTML(open(srs_table_url))
-      entries = doc.xpath('//tr')
+      entries = doc.xpath('//fieldset//tr')
       first_row = true
       source = "SRS-mätbrev"
       handicaps = Array.new
