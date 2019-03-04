@@ -12,29 +12,29 @@ module Api
       has_scope :not_team
 
       def index
-        @logs = apply_scopes(Log).all.select(:team_id, :time, :user_id, :client, :log_type, :deleted, :point, :gen)
+        @logs = apply_scopes(Log).all.select(:team_id, :time, :user_id, :client, :log_type, :deleted, :point, :gen).order(time: :asc, id: :asc)
         if params[:from_team]
           if user_signed_in?
             team = Team.find params[:from_team].to_i
-            if team.people.include? current_user.person || has_organizer_rights?
+            if (team.people.include? current_user.person) || has_organizer_rights?
               # team members gets all logentries, including "deleted"
-              @logs = apply_scopes(Log).all
+              @logs = apply_scopes(Log).all.order(time: :asc, id: :asc)
               render 'logs/index'
             else
-              @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
+              @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false).order(time: :asc, id: :asc)
               render 'logs/index_filtered'
             end
           else
-            @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
+            @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false).order(time: :asc, id: :asc)
           end
         else
           if user_signed_in? && has_organizer_rights?
             # organizers can view all non-deleted log entries
-            @logs = apply_scopes(Log).all.where(deleted: false)
+            @logs = apply_scopes(Log).all.where(deleted: false).order(time: :asc, id: :asc)
             render 'logs/index'
           else
             # others can (currently) view only type "round"
-            @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false)
+            @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false).order(time: :asc, id: :asc)
             render 'logs/index_filtered'
           end
         end
@@ -44,7 +44,7 @@ module Api
         @log = Log.find params[:id]
         if user_signed_in?
           team = Team.find @log.team_id
-          if team.people.include? current_user.person || has_organizer_rights?
+          if (team.people.include? current_user.person) || has_organizer_rights?
             render 'logs/show'
           else
             @logs = Log.where(log_type: 'round', deleted: false, id: params[:id])
@@ -77,7 +77,7 @@ module Api
         else
           @log = Log.new(log_params)
           team = Team.find @log.team_id
-          if team.people.include? current_user.person || has_organizer_rights?
+          if (team.people.include? current_user.person) || has_organizer_rights?
             if team.is_signed && !has_organizer_rights?
               render json: {
                        error: "Loggen är signerad och kan inte ändras.",
@@ -108,7 +108,7 @@ module Api
         if current_user
           @log = Log.find params[:id]
           team = Team.find @log.team_id
-          if team.people.include? current_user.person || has_organizer_rights?
+          if (team.people.include? current_user.person) || has_organizer_rights?
             if team.is_signed && !has_organizer_rights?
               render json: {
                        error: "Loggen är signerad och kan inte ändras.",

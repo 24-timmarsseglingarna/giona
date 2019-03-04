@@ -270,7 +270,7 @@
   .panel-heading
     Loggbok
   .panel-body
-    -if i_may_see_links_to(@team) && can_register_logbook(@team)
+    -if (i_may_see_links_to(@team) && can_register_logbook(@team) || has_organizer_rights?)
       %p
         %i.fa.fa-plus-circle(aria-hidden='true')
         = link_to 'Registrera loggbok', logbook_link(@team)
