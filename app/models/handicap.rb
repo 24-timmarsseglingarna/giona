@@ -83,7 +83,8 @@ class Handicap < ApplicationRecord
       end
       is_new = cur.nil?
       is_expired = (not h[:expired_at].nil?)
-      has_changed_sxk = (not is_new and cur.sxk != sxk)
+      has_changed = (not is_new and
+                     (cur.sxk != sxk or (not srs.nil? and cur.srs != srs)))
 
       cur_handicaps.delete(cur.id) unless cur.nil?
 
@@ -92,13 +93,13 @@ class Handicap < ApplicationRecord
         next
       end
 
-      if not(is_new) and (has_changed_sxk or is_expired)
+      if not(is_new) and (has_changed or is_expired)
         # we found an existing handicap that has a new sxk rating, or
         # has expired.
         # we need to mark it as expired, and check if there are any
         # active teams that use this handicap.  these teams need to set
         # a new handicap.
-        if has_changed_sxk
+        if has_changed
           puts "Changed rating to #{sxk}: #{cur.description} (#{cur.id})"
         else
           puts "Expired handicap: #{cur.description} (#{cur.id})"
@@ -113,7 +114,7 @@ class Handicap < ApplicationRecord
       end
       # we need to create a new handicap if this is new and not expired,
       # or if this is a changed existing and not expired.
-      if (is_new or has_changed_sxk) and not(is_expired)
+      if (is_new or has_changed) and not(is_expired)
         case type
         when 'SrsKeelboat'
           newh = SrsKeelboat.new
