@@ -63,6 +63,8 @@ Rails.application.routes.draw do
 
   resources :teams
   resources :logs
+  resources :team_logs, controller: 'logs', type: 'TeamLogs'
+  resources :admin_logs, controller: 'logs', type: 'AdminLogs'
 
   resources :races
   resources :regattas

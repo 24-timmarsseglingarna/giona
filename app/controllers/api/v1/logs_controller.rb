@@ -83,6 +83,12 @@ module Api
                        error: "Loggen är signerad och kan inte ändras.",
                        status: :forbidden
                      }, status: :forbidden
+            elsif @log.type == 'AdminLog' && !has_organizer_rights?
+              # "should not happen", but we enforce strict access control
+              render json: {
+                       error: "Du saknar behörighet.",
+                       status: :forbidden
+                     }, status: :forbidden
             else
               @log.user_id = current_user.id if current_user
               respond_to do |format|
@@ -112,6 +118,12 @@ module Api
             if team.is_signed && !has_organizer_rights?
               render json: {
                        error: "Loggen är signerad och kan inte ändras.",
+                       status: :forbidden
+                     }, status: :forbidden
+            elsif @log.type == 'AdminLog' && !has_organizer_rights?
+              # "should not happen", but we enforce strict access control
+              render json: {
+                       error: "Du saknar behörighet.",
                        status: :forbidden
                      }, status: :forbidden
             else
@@ -146,7 +158,13 @@ module Api
       # Never trust parameters from the scary internet, only allow the
       # white list through.
       def log_params
-        params.require(:log).permit(:team_id, :time, :user_id, :client, :log_type, :deleted, :point, :data, :gen)
+        p = params.require(:log).permit(:type, :team_id, :time, :user_id, :client, :log_type, :deleted, :point, :data, :gen)
+        if !p.has_key?(:type)
+          # add the type if not present; this can be from an old app
+          p.merge!({ type: 'TeamLog' })
+        else
+          p
+        end
       end
 
       def authorize_team_member!

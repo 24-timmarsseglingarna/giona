@@ -1,0 +1,2 @@
+class AdminLog < Log
+end

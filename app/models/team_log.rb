@@ -1,0 +1,2 @@
+class TeamLog < Log
+end
