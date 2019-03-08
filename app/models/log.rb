@@ -59,7 +59,10 @@ class Log < ApplicationRecord
   end
 
   def teams
-    unless JSON.parse(self.data)['boats'].blank?
+    if !JSON.parse(self.data)['teams'].blank?
+      regatta = self.team.race.regatta
+      Team.where(id: JSON.parse(self.data)['teams'])
+    elsif !JSON.parse(self.data)['boats'].blank?
       regatta = self.team.race.regatta
       Team.from_regatta(regatta.id).where(start_number: JSON.parse(self.data)['boats'])
     end

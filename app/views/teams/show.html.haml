@@ -321,6 +321,17 @@
                     - unless log.position.blank?
                       = log.position
                       %br
+                    - unless log_entry['teams'].blank?
+                      - regatta = log.team.race.regatta
+                      - teams = Team.where(id: log_entry['teams'])
+                      - for team in teams
+                        %span.badge.alert-success
+                          Startnr
+                          = team.start_number
+                        = team.boat_type_name
+                        = team.boat_sail_number
+                        = team.boat_name
+                        %br
                     - unless log_entry['boats'].blank?
                       - regatta = log.team.race.regatta
                       - teams = Team.from_regatta(regatta.id).where(start_number: log_entry['boats'])
@@ -336,7 +347,10 @@
                       Avbryter seglingen (DNF).
                       %br
                     - if log.log_type == 'protest'
-                      - suspected_team = log.team.race.regatta.teams.find_by( start_number: log_entry['protest']['boat'])
+                      - if log_entry['protest']['team']
+                        - suspected_team = log.team.race.regatta.teams.find_by( id: log_entry['protest']['team'])
+                      - else
+                        - suspected_team = log.team.race.regatta.teams.find_by( start_number: log_entry['protest']['boat'])
                       Protest mot misstänkt regelbrott.
                       %br
                       %span.badge.alert-danger
