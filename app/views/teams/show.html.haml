@@ -299,7 +299,9 @@
                 - log_entry = JSON.parse(log.data)
               - else
                 - log_entry = Hash.new
-              %td= I18n.l(log.time, format: :normal)
+              %td
+                - unless log.type == 'AdminLog'
+                  = I18n.l(log.time, format: :normal)
               %td
                 - unless log.point.blank?
                   %span.badge
@@ -381,8 +383,11 @@
                       = 'Stänger av motor för laddning.' if (log_entry['engine'] == 'off')
                       %br
                     - unless log_entry['comment'].blank?
-                      = log_entry['comment']
-                      %br
+                      - if log.type == 'AdminLog'
+                        %em
+                          = log_entry['comment']
+                      - else
+                        = log_entry['comment']
                 - else
                   - unless log_entry['boats'].blank?
                     - regatta = log.team.race.regatta
