@@ -17,7 +17,7 @@ namespace :scrape do
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//fieldset//tr')
       first_row = true
-      source = "SRS-mätbrev"
+      source = "SRS-mätbrev #{DateTime.now.year.to_s}"
       handicaps = Array.new
       for entry in entries
         unless first_row
@@ -28,6 +28,9 @@ namespace :scrape do
           h[:boat_name] = entry.css('td')[3].text.to_s.strip
           h[:sail_number] = entry.css('td')[5].text.to_i
           h[:srs] = entry.css('td')[8].text.gsub(',', '.').to_f
+          if h[:srs] == 0 # no std srs, use srs w/o "flygande segel"
+            h[:srs] = entry.css('td')[9].text.gsub(',', '.').to_f
+          end
           handicaps << h
         else
           first_row = false
@@ -48,13 +51,16 @@ namespace :scrape do
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      source = "SRS kölbåtar"
+      source = "SRS enskrov #{DateTime.now.year.to_s}"
       handicaps = Array.new
       for entry in entries
         unless first_row
           h = Hash.new
           h[:name] = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
           h[:srs] = entry.css('td')[6].text.gsub(',', '.').to_f
+          if h[:srs] == 0 # no std srs, use srs w/o "flygande segel"
+            h[:srs] = entry.css('td')[7].text.gsub(',', '.').to_f
+          end
           handicaps << h
         else
           first_row = false
@@ -73,7 +79,7 @@ namespace :scrape do
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
-      source = "SRS flerskrov"
+      source = "SRS flerskrov #{DateTime.now.year.to_s}"
       handicaps = Array.new
       for entry in entries
         unless first_row
@@ -99,7 +105,7 @@ namespace :import do
     task :multihull_certificates, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = "http://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
-      source = "SRS-mätbrev flerskrov"
+      source = "SRS-mätbrev flerskrov #{DateTime.now.year.to_s}"
       file = open(srs_table_url)
       json = JSON.parse file.first
       handicaps = Array.new
@@ -112,6 +118,9 @@ namespace :import do
         h[:boat_name] = boat['Boatname'].strip unless boat['Boatname'].blank?
         h[:sail_number] = boat['SailNo']
         h[:srs] = boat['SRS1'].to_f
+        if h[:srs] == 0 # no std srs, use srs w/o "flygande segel"
+          h[:srs] = boat['SRS2'].to_f
+        end
         handicaps << h
       end
       ActiveRecord::Base.transaction do
@@ -128,7 +137,7 @@ namespace :import do
     task :dingies, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
-      source = "SRS jolle"
+      source = "SRS jolle #{DateTime.now.year.to_s}"
       handicaps = Array.new
       CSV.foreach( File.open(File.join(Rails.root, "db", "import", "srs-jolle.csv"), "r"), :headers => true) do |row|
         h = Hash.new

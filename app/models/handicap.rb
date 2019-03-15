@@ -23,18 +23,27 @@ class Handicap < ApplicationRecord
     else
       exp = ""
     end
-    "#{exp}#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}, #{self.source}"
+    "#{exp}#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}, #{Handicap.short_types[self.type]}"
+  end
+
+  def short_description
+    if not self.expired_at.nil?
+      exp = "Utgått #{self.expired_at} - "
+    else
+      exp = ""
+    end
+    "#{exp}#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}"
   end
 
   def self.types
     types = {}
+    types['SxkCertificate'] = 'SXK-mätbrev (för individuell båt)'
+    types['SrsCertificate'] = 'SRS-mätbrev enskrov (för individuell båt)'
+    types['SrsMultihullCertificate'] = 'SRS-mätbrev flerskrov (för individuell båt)'
     types['SrsKeelboat'] = 'Enskrovsbåt enligt SRS-tabellen'
     types['SrsMultihull'] = 'Flerskrovsbåt enligt SRS-tabellen'
     types['SrsDingy'] = 'Jolle enligt SRS-tabellen'
-    types['SrsCertificate'] = 'SRS-mätbrev enskrov (för individuell båt)'
-    types['SrsMultihullCertificate'] = 'SRS-mätbrev flerskrov (för individuell båt)'
     types['SoonSrsCertificate'] = 'Kommer att skaffa SRS-mätbrev'
-    types['SxkCertificate'] = 'SXK-mätbrev (för individuell båt)'
     types['SoonSxkCertificate'] = 'Kommer att skaffa SXK-mätbrev'
 
     types
@@ -42,13 +51,13 @@ class Handicap < ApplicationRecord
 
   def self.short_types
     types = {}
-    types['SrsKeelboat'] = 'SRS Enskrov'
-    types['SrsMultihull'] = 'SRS Flerskrov'
-    types['SrsDingy'] = 'SRS Jolle'
+    types['SxkCertificate'] = 'SXK-mätbrev'
     types['SrsCertificate'] = 'SRS-mätbrev enskrov'
     types['SrsMultihullCertificate'] = 'SRS-mätbrev flerskrov'
+    types['SrsKeelboat'] = 'SRS enskrov'
+    types['SrsMultihull'] = 'SRS flerskrov'
+    types['SrsDingy'] = 'SRS jolle'
     types['SoonSrsCertificate'] = 'Interimistiskt'
-    types['SxkCertificate'] = 'SXK-mätbrev'
     types['SoonSxkCertificate'] = 'Interimistiskt'
 
     types
@@ -70,6 +79,16 @@ class Handicap < ApplicationRecord
         sxk = (srs * 1.22).round(2)
       else
         sxk = h[:sxk]
+      end
+      # safety check
+      if !(sxk > 0)
+        if isCert
+          id = h[:registry_id]
+        else
+          id = h[:name]
+        end
+        puts "Handicap #{id} has sxk #{sxk}, ignoring"
+        next
       end
       # check if a current handicap exists
       if isCert

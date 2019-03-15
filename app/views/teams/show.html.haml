@@ -257,7 +257,7 @@
             - else
               = @team.handicap.name
             enligt
-            = @team.handicap.source
+            #{Handicap.short_types[@team.handicap.type]}
             - if @team.handicap.srs
               (SRS-tal: #{number_with_precision(@team.handicap.srs, precision: 3)} )
           - else
