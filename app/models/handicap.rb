@@ -23,7 +23,17 @@ class Handicap < ApplicationRecord
     else
       exp = ""
     end
-    "#{exp}#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}, #{Handicap.short_types[self.type]}"
+    if not self.boat_name.nil?
+      boatname = " #{self.boat_name}"
+    else
+      boatname = ""
+    if not self.srs.nil?
+      srs = "SRS: #{self.srs}, "
+    else
+      srs = ""
+    end
+    end
+    "#{exp}#{self.name}#{boatname}, #{srs}SXK: #{self.sxk}, #{Handicap.short_types[self.type]}"
   end
 
   def short_description
@@ -32,7 +42,17 @@ class Handicap < ApplicationRecord
     else
       exp = ""
     end
-    "#{exp}#{self.name}, SRS: #{self.srs}, SXK: #{self.sxk}"
+    if not self.boat_name.nil?
+      boatname = " #{self.boat_name}"
+    else
+      boatname = ""
+    end
+    if not self.srs.nil?
+      srs = "SRS: #{self.srs}, "
+    else
+      srs = ""
+    end
+    "#{exp}#{self.name}#{boatname}, #{srs}SXK: #{self.sxk}"
   end
 
   def self.types
