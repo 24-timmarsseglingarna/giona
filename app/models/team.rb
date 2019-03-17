@@ -125,18 +125,18 @@ class Team < ApplicationRecord
     send_email = false
     send_officer_email = false
     case self.state
-    when nil, :draft
+    when nil, "draft"
       reset_handicap = true
       send_email = true
-    when :submitted
+    when "submitted"
       self.state = :draft
       reset_handicap = true
       send_email = true
-    when:approved
+    when "approved"
       self.state = :submitted
       send_email = true
       reset_handicap = true
-    when :reviewed
+    when "reviewed"
       send_officer_email = true
       reset_handicap = true
     end

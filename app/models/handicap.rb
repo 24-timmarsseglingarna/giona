@@ -133,7 +133,7 @@ class Handicap < ApplicationRecord
         else
           puts "Expired handicap: #{cur.description} (#{cur.id})"
         end
-        Team.handicap_changed(cur.id, dryrun)
+        Team.handicap_changed(cur.id, user, dryrun)
         if not is_expired
           cur.expired_at = yesterday
         else
@@ -188,7 +188,7 @@ class Handicap < ApplicationRecord
     for cur_id in cur_handicaps
       cur = Handicap.find(cur_id[0])
       puts "Remove: handicap #{cur.description} (#{cur.id})"
-      Team.handicap_changed(cur.id, dryrun)
+      Team.handicap_changed(cur.id, user, dryrun)
       cur.expired_at = yesterday
       cur.save! unless dryrun
     end
