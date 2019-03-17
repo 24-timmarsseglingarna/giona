@@ -634,9 +634,100 @@ namespace :batch do
   # archived regattas as "incomplete".  their data can not be
   # trusted (e.g., they might not have a log book, or incomplete log
   # book.)
-  task :close_teams => :environment do
+  task :close_teams, [:dryrun] => :environment do |task, args|
+    dryrun = not(args[:dryrun].nil?)
     for team in Team.is_archived(false).joins(race: :regatta).where("regattas.active = ?", false)
-      team.closed!
+      puts "Closing #{team.id}"
+      team.closed! unless dryrun
+    end
+  end
+
+  # this is a run-once task to clean up SXK certs that are active
+  # but imported with partly bad data; specifically if some field had
+  # non-ascii characters, the data was truncated.
+  #
+  # this task find them by comparing with data from the server, and
+  # removes them (marks them as expired).
+  #
+  # after this task is run, task import:sxk:certificates must be run, to
+  # add the new certs.
+  task :del_old_sxk_certs, [:dryrun] => :environment do |task, args|
+    dryrun = not(args[:dryrun].nil?)
+    sxk_table_url = 'https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php'
+    source = "SXK-mätbrev"
+    doc = Nokogiri::XML(open(sxk_table_url), nil, 'utf-8')
+    certificates = doc.xpath("/SXKbrev/brev")
+    handicaps = Array.new
+    certificates.each do |cert|
+      h = Hash.new
+      registry_id = cert.xpath("Regnr").text.strip
+      expired_at = cert.xpath("Utgatt").text.strip
+      sxk = cert.xpath("SXKtal").text.strip.gsub(',', '.')
+      # sanity check
+      if registry_id.blank?
+        puts "Skipping certificate with empty 'Regnr'"
+        next
+      end
+      if sxk.blank? and expired_at.blank?
+        puts "Skipping certificate #{registry_id} with empty 'SXKtal' and no 'Utgatt'"
+        next
+      end
+      h[:registry_id] = registry_id
+      unless expired_at.blank?
+        h[:expired_at] = expired_at.to_date
+      end
+      unless sxk.blank?
+        h[:sxk] = sxk.to_f
+      end
+      name = cert.xpath("Bat").text.strip
+      unless name.blank?
+        h[:name] = name
+      end
+      boat_name = cert.xpath("Batnamn").text.strip
+      unless boat_name.blank?
+        h[:boat_name] = boat_name
+      end
+      owner_name = cert.xpath("Agare").text.strip
+      unless owner_name.blank?
+        h[:owner_name] = owner_name
+      end
+      sail_number = cert.xpath("Segelnr").text.strip
+      unless sail_number.blank?
+        # 'Segelnr' may contain letters; extract the number.
+        # do not match a single zero
+        m = sail_number.match("([1-9][0-9]*)")
+        unless m.nil?
+          h[:sail_number] = m[1].to_i
+        end
+      end
+      handicaps << h
+    end
+    # the bad import comes from the following external_system:
+    badsyst = "http://aws.24-timmars.nu/phpmyadmin"
+    badsyst = "https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php"
+    yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
+    ActiveRecord::Base.transaction do
+      user = User.find_by!(email: 'nobody@24-timmars.nu')
+      for new in handicaps
+        cur = Handicap.find_by(external_system: badsyst,
+                               registry_id: new[:registry_id],
+                               expired_at: nil)
+        if not cur.nil?
+          # this means that we have a potentially bad handicap in the system
+          if ((new[:name] != cur.name) or
+              (new[:boat_name] != cur.boat_name) or
+              (new[:owner_name] != cur.owner_name) or
+              (new[:sail_number] != cur.sail_number) or
+              (new[:sxk] != cur.sxk))
+            puts "Handicap #{cur.id} is different"
+            puts "Cur #{cur.name} #{cur.sxk} #{cur.boat_name} #{cur.owner_name} #{cur.sail_number}"
+            puts "New #{new}"
+            cur.expired_at = yesterday
+            cur.save! unless dryrun
+            Team.handicap_changed(cur.id, user, dryrun)
+          end
+        end
+      end
     end
   end
 
