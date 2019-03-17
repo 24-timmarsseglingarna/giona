@@ -80,16 +80,6 @@ class Handicap < ApplicationRecord
       else
         sxk = h[:sxk]
       end
-      # safety check
-      if !(sxk > 0)
-        if isCert
-          id = h[:registry_id]
-        else
-          id = h[:name]
-        end
-        puts "Handicap #{id} has sxk #{sxk}, ignoring"
-        next
-      end
       # check if a current handicap exists
       if isCert
         cur = Handicap.find_by(type: type,
@@ -131,6 +121,18 @@ class Handicap < ApplicationRecord
         end
         cur.save! unless dryrun
       end
+
+      # safety check
+      if sxk.nil? or not (sxk > 0)
+        if isCert
+          id = h[:registry_id]
+        else
+          id = h[:name]
+        end
+        puts "Handicap #{id} has sxk #{sxk}, ignoring"
+        next
+      end
+
       # we need to create a new handicap if this is new and not expired,
       # or if this is a changed existing and not expired.
       if (is_new or has_changed) and not(is_expired)
