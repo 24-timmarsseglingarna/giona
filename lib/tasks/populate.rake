@@ -704,7 +704,6 @@ namespace :batch do
     end
     # the bad import comes from the following external_system:
     badsyst = "http://aws.24-timmars.nu/phpmyadmin"
-    badsyst = "https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php"
     yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
     ActiveRecord::Base.transaction do
       user = User.find_by!(email: 'nobody@24-timmars.nu')
