@@ -24,7 +24,7 @@ The default starts are not version controlled.
 
 ### Handling existing regattas
 
-Any active regatta that were created before the PoD was imported,
+Any active regatta that was created before the PoD was imported,
 should probably be changed to use the new PoD.  This needs to be done
 manually.
 
@@ -56,6 +56,10 @@ This means that teams that have selected a handicap that is later
 changed need to update their entry in Giona.  When handicaps are
 imported, Giona detects this situation and sends emails to the
 skippers.
+
+NOTE: Before importing handicaps, ensure that no old regattas are
+still active in the system.  If this happens, handicaps may be changed
+for teams on old regattas.
 
 The following commands are used to import handicaps:
 
