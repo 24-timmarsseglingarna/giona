@@ -113,7 +113,9 @@ class Team < ApplicationRecord
   end
 
   def self.handicap_changed(handicap_id, user, dryrun=false)
-    for t in Team.is_archived(false).where("handicap_id = ?", handicap_id)
+    for t in Team.is_archived(false)
+               .where("handicap_id = ?", handicap_id)
+               .joins(race: :regatta).where("regattas.active = ?", true)
       puts "Team #{t.id} uses changed handicap and needs to pick new handicap"
       t.do_handicap_changed(user) unless dryrun
     end
