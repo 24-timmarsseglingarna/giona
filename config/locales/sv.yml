@@ -64,6 +64,7 @@ sv:
       other: ''
       adminDSQ: ogiltig segling
       adminDist: distansavdrag
+      adminTime: tidstillägg
       adminNote: notering
   organizers:
     index:
