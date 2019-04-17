@@ -270,7 +270,7 @@
   .panel-heading
     Loggbok
   .panel-body
-    -if (i_may_see_links_to(@team) && can_register_logbook(@team) || has_organizer_rights?)
+    -if (i_may_see_links_to(@team) && can_register_logbook(@team) || has_organizer_rights? && @team.state != 'draft')
       %p
         %i.fa.fa-plus-circle(aria-hidden='true')
         - if current_user
@@ -383,11 +383,21 @@
                       = 'Startar motor för laddning.' if (log_entry['engine'] == 'on')
                       = 'Stänger av motor för laddning.' if (log_entry['engine'] == 'off')
                       %br
-                    - unless log_entry['comment'].blank?
-                      - if log.type == 'AdminLog'
-                        %em
+                    - if log.type == 'AdminLog'
+                      %em
+                        - if log.log_type == 'adminDist'
+                          = "Distansavdrag: #{log_entry['admin_dist']}M"
+                          %br
+                        - if log.log_type == 'adminTime'
+                          = "Tidstillägg: #{log_entry['admin_time']} minuter"
+                          %br
+                        - if log.log_type == 'adminDSQ'
+                          = 'Ogiltig segling'
+                          %br
+                        - unless log_entry['comment'].blank?
                           = log_entry['comment']
-                      - else
+                    - else
+                      -unless log_entry['comment'].blank?
                         = log_entry['comment']
                 - else
                   - unless log_entry['boats'].blank?
