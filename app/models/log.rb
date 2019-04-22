@@ -47,50 +47,54 @@ class Log < ApplicationRecord
   end
 
   def wind
-    unless JSON.parse(self.data)['wind'].blank?
-      JSON.parse(self.data)['wind']['dir'] + ' ' + JSON.parse(self.data)['wind']['speed']
+    data = JSON.parse(self.data)
+    unless data['wind'].blank?
+      data['wind']['dir'] + ' ' + data['wind']['speed']
     end
   end
 
   def position
-    unless JSON.parse(self.data)['position'].blank?
-      JSON.parse(self.data)['position']
+    data = JSON.parse(self.data)
+    unless data['position'].blank?
+      data['position']
     end
   end
 
   def teams
-    if !JSON.parse(self.data)['teams'].blank?
+    data = JSON.parse(self.data)
+    if !data['teams'].blank?
       regatta = self.team.race.regatta
-      Team.where(id: JSON.parse(self.data)['teams'])
-    elsif !JSON.parse(self.data)['boats'].blank?
+      Team.where(id: data['teams'])
+    elsif !data['boats'].blank?
       regatta = self.team.race.regatta
-      Team.from_regatta(regatta.id).where(start_number: JSON.parse(self.data)['boats'])
+      Team.from_regatta(regatta.id).where(start_number: data['boats'])
     end
   end
 
 
   def sails
     out = ''
-    unless JSON.parse(self.data)['sails'].blank?
-      if JSON.parse(self.data)['sails']['reef']
+    data = JSON.parse(self.data)
+    unless data['sails'].blank?
+      if data['sails']['reef']
         out += 'rev, '
-      elsif JSON.parse(self.data)['sails']['main']
+      elsif data['sails']['main']
         out += 'stor, '
       end
-      if JSON.parse(self.data)['sails']['jib']
+      if data['sails']['jib']
         out += 'fock, '
-      elsif JSON.parse(self.data)['sails']['genoa']
+      elsif data['sails']['genoa']
         out += 'genua, '
       end
-      if JSON.parse(self.data)['sails']['code']
+      if data['sails']['code']
         out += 'code, '
-      elsif JSON.parse(self.data)['sails']['gennaker']
+      elsif data['sails']['gennaker']
         out += 'gennaker, '
-      elsif JSON.parse(self.data)['sails']['spinnaker']
+      elsif data['sails']['spinnaker']
         out += 'spinnaker, '
       end
-      unless JSON.parse(self.data)['sails']['other'].blank?
-        out += JSON.parse(self.data)['sails']['other'] + ', '
+      unless data['sails']['other'].blank?
+        out += data['sails']['other'] + ', '
       end
     end
     out && out.sub(/, $/, '')
