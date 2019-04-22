@@ -1,4 +1,7 @@
-%h1 Dina aktuella deltagaranmälningar
+- unless params[:is_archived]
+  %h1 Dina aktuella deltagaranmälningar
+- else
+  %h1 Dina arkiverade seglingar
 
 %p
 - if current_user
@@ -35,6 +38,9 @@
           = team.state_to_s
   - else
     %p
+    - unless params[:is_archived]
       Du är inte anmäld till någon regatta.
-    %p
-      = link_to 'Anmäl båt och skeppare ...', races_path, class: 'btn btn-primary'
+      %p
+        = link_to 'Anmäl båt och skeppare ...', races_path, class: 'btn btn-primary'
+    - else
+      Du har inga arkiverade seglingar.

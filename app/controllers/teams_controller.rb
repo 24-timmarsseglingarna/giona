@@ -9,6 +9,7 @@ class TeamsController < ApplicationController
   #before_action :interims_authenticate!, :except => [:show, :welcome, :index]
   has_scope :from_regatta, :from_race, :from_boat, :has_person
   has_scope :is_active, :type => :boolean, allow_blank: true
+  has_scope :is_archived, :type => :boolean, allow_blank: true
 
 
   def welcome
@@ -32,7 +33,11 @@ class TeamsController < ApplicationController
     if current_user
       if current_user.person
         if current_user.person.teams.present?
-          @teams = current_user.person.teams.is_archived(false).order created_at: :desc
+          unless params[:is_archived]
+            @teams = current_user.person.teams.is_archived(false).order created_at: :desc
+          else
+            @teams = current_user.person.teams.is_archived(true).order created_at: :desc
+          end
         end
       end
     end
