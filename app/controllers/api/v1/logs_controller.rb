@@ -16,7 +16,7 @@ module Api
         if params[:from_team]
           if user_signed_in?
             team = Team.find params[:from_team].to_i
-            if (team.people.include? current_user.person) || has_organizer_rights?
+            if (team.people.include? current_user.person) || has_officer_rights?
               # team members gets all logentries, including "deleted"
               @logs = apply_scopes(Log).all.order(time: :asc, id: :asc)
               render 'logs/index'
@@ -28,8 +28,8 @@ module Api
             @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false).order(time: :asc, id: :asc)
           end
         else
-          if user_signed_in? && has_organizer_rights?
-            # organizers can view all non-deleted log entries
+          if user_signed_in? && has_officer_rights?
+            # officers can view all non-deleted log entries
             @logs = apply_scopes(Log).all.where(deleted: false).order(time: :asc, id: :asc)
             render 'logs/index'
           else
@@ -44,7 +44,7 @@ module Api
         @log = Log.find params[:id]
         if user_signed_in?
           team = Team.find @log.team_id
-          if (team.people.include? current_user.person) || has_organizer_rights?
+          if (team.people.include? current_user.person) || has_officer_rights?
             render 'logs/show'
           else
             @logs = Log.where(log_type: 'round', deleted: false, id: params[:id])
@@ -77,13 +77,13 @@ module Api
         else
           @log = Log.new(log_params)
           team = Team.find @log.team_id
-          if (team.people.include? current_user.person) || has_organizer_rights?
-            if team.is_signed && !has_organizer_rights?
+          if (team.people.include? current_user.person) || has_officer_rights?
+            if team.is_signed && !has_officer_rights?
               render json: {
                        error: "Loggen är signerad och kan inte ändras.",
                        status: :forbidden
                      }, status: :forbidden
-            elsif @log.type == 'AdminLog' && !has_organizer_rights?
+            elsif @log.type == 'AdminLog' && !has_officer_rights?
               # "should not happen", but we enforce strict access control
               render json: {
                        error: "Du saknar behörighet.",
@@ -114,13 +114,13 @@ module Api
         if current_user
           @log = Log.find params[:id]
           team = Team.find @log.team_id
-          if (team.people.include? current_user.person) || has_organizer_rights?
-            if team.is_signed && !has_organizer_rights?
+          if (team.people.include? current_user.person) || has_officer_rights?
+            if team.is_signed && !has_officer_rights?
               render json: {
                        error: "Loggen är signerad och kan inte ändras.",
                        status: :forbidden
                      }, status: :forbidden
-            elsif @log.type == 'AdminLog' && !has_organizer_rights?
+            elsif @log.type == 'AdminLog' && !has_officer_rights?
               # "should not happen", but we enforce strict access control
               render json: {
                        error: "Du saknar behörighet.",
@@ -179,9 +179,9 @@ module Api
       end
 
       # FIXME: copy-and-pasted from application_helper
-      def has_organizer_rights?
+      def has_officer_rights?
         if current_user
-          if current_user.role == 'organizer' || current_user.role == 'admin'
+          if current_user.role == 'officer' || current_user.role == 'admin'
             true
           else
             false
