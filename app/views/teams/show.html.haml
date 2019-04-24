@@ -274,7 +274,7 @@
       %p
         %i.fa.fa-plus-circle(aria-hidden='true')
         - if current_user
-          = link_to 'Registrera loggbok', logbook_link(@team)
+          = link_to 'Registrera/ändra loggbok', logbook_link(@team)
 
     -logbook = get_logbook(@team, @logs)
     -unless logbook[:entries].blank?
@@ -432,7 +432,7 @@
         %b Tillägg undsättning:
         #{logbook[:compensation_dist].round(1)} M
         %br
-      - if logbook[:state] == :signed
+      - if @team.signed?
         %b Godkänd distans:
         #{logbook[:approved_dist].round(1)} M
       %hr
@@ -443,7 +443,7 @@
       %b Plakettdistans:
       #{logbook[:plaque_dist].round(1)} M
       %br
-      - if logbook[:state] == :unsigned
+      - if !logbook[:signed]
         %em Loggboken är inte signerad
       - if logbook[:state] == :early_finish
         %em För kort segling
@@ -451,6 +451,12 @@
         %em Avbröt seglingen (DNF)
       - if logbook[:state] == :dsq
         %em Seglingen ogiltigförklarad
+
+      - if @team.signed? && has_organizer_rights?
+        %br
+        %p
+        = link_to 'Loggboken granskad', teams_review_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
+
 
 - if current_user && i_may_see_links_to(@team)
   %h5 Ändringar:

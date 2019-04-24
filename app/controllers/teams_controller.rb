@@ -1,8 +1,8 @@
 class TeamsController < ApplicationController
   include ApplicationHelper
-  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :edit_handicap, :update_handicap, :set_handicap, :submit, :draft, :approve]
+  before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :edit_handicap, :update_handicap, :set_handicap, :submit, :draft, :approve, :review]
   before_action :authenticate_user!, :except => [:show, :index, :welcome, :crew]
-  before_action :authorize_organizer!, only: [:approve]
+  before_action :authorize_organizer!, only: [:approve, :review]
   before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome, :crew]
   before_action :check_status!, only: [:show]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create, :crew]
@@ -395,6 +395,16 @@ class TeamsController < ApplicationController
       redirect_to @team, notice: 'Anmälan är godkänd.'
     else
       redirect_to @team, alert: "Det går bara att godkänna en anmälan som är i status 'inskickad'."
+    end
+  end
+
+  def review
+    if @team.signed?
+      @team.reviewed!
+      Note.create(team_id: @team.id, user: current_user, description: "Loggbok granskad av #{current_user.to_s}.")
+      redirect_to @team, notice: 'Loggboken är granskad.'
+    else
+      redirect_to @team, alert: "Det går bara att granska en loggbok som är i status 'inskickad' eller 'godkänd'."
     end
   end
 

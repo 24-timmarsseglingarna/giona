@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   post 'teams/set_handicap'
   post 'teams/draft'
   post 'teams/approve'
+  post 'teams/review'
   get 'teams/edit_boat'
   get 'teams/welcome'
   get 'teams/crew'
