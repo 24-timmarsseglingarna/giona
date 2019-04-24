@@ -20,7 +20,7 @@ class RegattasController < ApplicationController
   # GET /regattas/1.json
   def show
     @races = @regatta.races
-    if has_organizer_rights?
+    if has_officer_rights?
       @teams = @regatta.teams
     else
       @teams = @regatta.teams.where("state > ?", 0)
@@ -112,7 +112,7 @@ class RegattasController < ApplicationController
     end
 
     def authorized?
-      if ! has_organizer_rights?
+      if ! has_officer_rights?
         flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
         redirect_to :back
       end

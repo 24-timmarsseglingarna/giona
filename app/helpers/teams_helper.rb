@@ -92,7 +92,8 @@ module TeamsHelper
      compensation_dist_time = 0
      start_time = 0
      finish_time = 0
-     state = :unsigned
+     signed = false
+     state = nil
      sailed_dist = 0
      sailed_time = 0
      i = 0
@@ -198,7 +199,7 @@ module TeamsHelper
              j += 1
            end
          elsif log.log_type == 'sign'
-           state = :signed
+           signed = true
          elsif log.log_type == 'retire'
            state = :retire
          elsif log.log_type == 'adminDSQ'
@@ -278,13 +279,14 @@ module TeamsHelper
 
      approved_dist = 0
      plaque_dist = 0
-     if state == :signed
+     if signed
        approved_dist = sailed_dist + compensation_dist -
                        (early_start_dist + late_finish_dist)
        plaque_dist = (approved_dist / team.sxk) - admin_dist
      end
 
      { :state => state,
+       :signed => signed,
        :entries => entries,
        :sailed_dist => sailed_dist,
        :early_start_dist => early_start_dist,

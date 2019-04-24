@@ -2,7 +2,7 @@
 .col-lg-12
 %h1 Regattor
 %p
-  - if has_organizer_rights?
+  - if has_officer_rights?
     = link_to 'Skapa ny regatta', new_regatta_path, class: 'btn btn-primary'
 %p
   - if params[:is_active] == 'true'

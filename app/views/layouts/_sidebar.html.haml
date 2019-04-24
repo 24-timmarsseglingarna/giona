@@ -16,6 +16,10 @@
             %i.fa.far.fa-copy(aria-hidden='true')
             Dina aktuella deltagaranmälningar
         %li
+          %a{:href => teams_path(:is_archived => true)}
+            %i.fa.far.fa-copy(aria-hidden='true')
+            Dina arkiverade seglingar
+        %li
           %a{:href => person_path(current_user.person)}
             %i.far.fa-user.fa-fw(aria-hidden='true')
             Dina person- och kontaktuppgifter

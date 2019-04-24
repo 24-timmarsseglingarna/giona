@@ -93,3 +93,19 @@ teams.
 
 In order to solve this, we should have a cron job that imports the SRS
 certificates every night, starting in March perhaps.
+
+## Temporary procedure for team lifecycle
+
+Currently, the full review process is not yet implemented in Giona.
+Until it is done, we must run a special task that close all teams in
+all archived regattas as "incomplete".  Their data can not be trusted
+(e.g., they might not have a log book, or incomplete log book.)
+
+After a regatta is finished, ensure that the admin marks it as
+"archived" (by unchecking the "is open" checkbox).  When this is done,
+run:
+
+    heroku run --app <APP> rake batch:close_teams[dryrun]
+
+Ensure that the result is what you want, and rerun w/o the "dryrun"
+parameter.

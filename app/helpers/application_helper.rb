@@ -39,9 +39,9 @@ module ApplicationHelper
   end
 
 
-  def has_organizer_rights?
+  def has_officer_rights?
     if current_user
-      if current_user.role == 'organizer' || current_user.role == 'admin'
+      if current_user.role == 'officer' || current_user.role == 'admin'
         true
       else
         false
@@ -53,7 +53,7 @@ module ApplicationHelper
 
   def has_assistant_rights?
     if current_user
-      if current_user.role == 'assistant' || current_user.role == 'organizer' || current_user.role == 'admin'
+      if current_user.role == 'assistant' || current_user.role == 'officer' || current_user.role == 'admin'
         true
       else
         false

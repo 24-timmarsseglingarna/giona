@@ -52,7 +52,7 @@
               För att din anmälan ska vara giltig ska du betala in startavgiften. Se arrangörens webbsida och seglingshandlingar hur du betalar den.
             %p
               Du kan dra tillbaka anmälan. Då försvinner båten från startlistan. Anmälan finns kvar med status 'utkast' så du kan återanmäla dig.
-          - if has_organizer_rights?
+          - if has_officer_rights?
             %br
             %p
             = link_to 'Godkänn anmälan', teams_approve_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
@@ -70,7 +70,7 @@
           - elsif @team.submitted?
             = link_to 'Dra tillbaka anmälan, gör den till ett utkast.', teams_draft_path(:id => @team.id), method: :post, :data => {:confirm => "Är du säker på att du vill dra tillbaka deltagaranmälan? Båten kommer att försvinna från startlistan men finnas kvar med status 'utkast'. Du kan skicka in anmälan igen."}
           - elsif @team.approved?
-            - if has_organizer_rights?
+            - if has_officer_rights?
               %p Arrangör: Om något är fel i anmälan kan du ta bort godkännandet och skicka tilbaka den till status 'utkast'. Anmälan försvinner då från startlistan. Du måste själv kommunicera med deltagaren vad hen ska göra för att få den godkänd igen.
               = link_to 'Ta bort godkännande. Åter till utkast.', teams_draft_path(:id => @team.id), method: :post, :class => 'btn btn-danger', :data => {:confirm => "Är du säker på att du vill dra tillbaka deltagaranmälan? Båten kommer att försvinna från startlistan men finnas kvar med status 'utkast'. Deltagaren kan skicka in anmälan igen."}
 
@@ -270,11 +270,11 @@
   .panel-heading
     Loggbok
   .panel-body
-    -if (i_may_see_links_to(@team) && can_register_logbook(@team) || has_organizer_rights? && @team.state != 'draft')
+    -if (i_may_see_links_to(@team) && can_register_logbook(@team) || has_officer_rights? && @team.state != 'draft')
       %p
         %i.fa.fa-plus-circle(aria-hidden='true')
         - if current_user
-          = link_to 'Registrera loggbok', logbook_link(@team)
+          = link_to 'Registrera/ändra loggbok', logbook_link(@team)
 
     -logbook = get_logbook(@team, @logs)
     -unless logbook[:entries].blank?
@@ -432,7 +432,7 @@
         %b Tillägg undsättning:
         #{logbook[:compensation_dist].round(1)} M
         %br
-      - if logbook[:state] == :signed
+      - if @team.signed?
         %b Godkänd distans:
         #{logbook[:approved_dist].round(1)} M
       %hr
@@ -443,7 +443,7 @@
       %b Plakettdistans:
       #{logbook[:plaque_dist].round(1)} M
       %br
-      - if logbook[:state] == :unsigned
+      - if !logbook[:signed]
         %em Loggboken är inte signerad
       - if logbook[:state] == :early_finish
         %em För kort segling
@@ -451,6 +451,12 @@
         %em Avbröt seglingen (DNF)
       - if logbook[:state] == :dsq
         %em Seglingen ogiltigförklarad
+
+      - if @team.signed? && has_officer_rights?
+        %br
+        %p
+        = link_to 'Loggboken granskad', teams_review_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
+
 
 - if current_user && i_may_see_links_to(@team)
   %h5 Ändringar:
