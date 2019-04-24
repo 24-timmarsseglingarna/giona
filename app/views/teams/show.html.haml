@@ -452,7 +452,7 @@
       - if logbook[:state] == :dsq
         %em Seglingen ogiltigförklarad
 
-      - if @team.signed? && has_organizer_rights?
+      - if @team.signed? && has_officer_rights?
         %br
         %p
         = link_to 'Loggboken granskad', teams_review_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
