@@ -730,6 +730,6 @@ sv:
         offshore: Uppfyller båt och besättning reglernas krav för att segla havssträckor?
   role:
     admin: administratör
-    organizer: arrangör
+    officer: funktionär
     assistant: assistent
     user: användare

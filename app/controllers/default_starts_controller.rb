@@ -78,7 +78,7 @@ class DefaultStartsController < ApplicationController
     end
 
     def authorized?
-      if ! has_organizer_rights?
+      if ! has_officer_rights?
         flash[:alert] = 'Du har tyvärr inte tillräckliga behörigheter.'
         redirect_to :back
       end

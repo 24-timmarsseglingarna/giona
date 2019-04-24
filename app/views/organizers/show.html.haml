@@ -37,7 +37,7 @@
       %p
         =@organizer.external_id
 
-    - if has_organizer_rights?
+    - if has_officer_rights?
       %i.fa.fa-trophy(aria-hidden='true')
       = link_to 'Skapa ny regatta', new_regatta_path(:organizer_id => @organizer.id)
       %p

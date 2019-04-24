@@ -2,7 +2,7 @@ class TeamsController < ApplicationController
   include ApplicationHelper
   before_action :set_team, only: [:show, :edit, :update, :check_active!, :destroy, :set_boat, :remove_boat, :add_seaman, :remove_seaman, :set_skipper, :edit_handicap, :update_handicap, :set_handicap, :submit, :draft, :approve, :review]
   before_action :authenticate_user!, :except => [:show, :index, :welcome, :crew]
-  before_action :authorize_organizer!, only: [:approve, :review]
+  before_action :authorize_officer!, only: [:approve, :review]
   before_action :authorize_me!, :except => [:show, :index, :new, :create, :welcome, :crew]
   before_action :check_status!, only: [:show]
   before_action :check_active!, :except => [:show, :welcome, :index, :new, :create, :crew]
@@ -382,7 +382,7 @@ class TeamsController < ApplicationController
       Note.create(team_id: @team.id, user: current_user, description: "Deltagaranmälan återdragen av #{current_user.to_s}.")
       redirect_to @team, notice: 'Anmälan är återdragen. Du kan ändra i den. Skicka in den om du vill vara anmäld.'
     else
-        if has_organizer_rights? && @team.approved?
+        if has_officer_rights? && @team.approved?
           @team.draft!
           Note.create(team_id: @team.id, user: current_user, description: "Deltagaranmälan återdragen av #{current_user.to_s}.")
           redirect_to @team, notice: 'Anmälan är återdragen. Den kan ändras och godkännas igen.'
@@ -447,13 +447,13 @@ class TeamsController < ApplicationController
       end
     end
 
-    def authorize_organizer!
+    def authorize_officer!
       unless current_user
         flash[:alert] = 'Du behöver logga in.'
         redirect_to :back
       else
-        unless has_organizer_rights?
-          flash[:alert] = 'Du behöver ha arrangörsbehörighet.'
+        unless has_officer_rights?
+          flash[:alert] = 'Du behöver ha funktionärsbehörighet.'
           redirect_to :back
         end
       end
