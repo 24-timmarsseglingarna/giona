@@ -1,8 +1,8 @@
 class AgreementsController < ApplicationController
   include ApplicationHelper
   before_action :set_agreement, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, :except => [:show, :index]
-  before_action :authorized?, :except => [:show, :index]
+  before_action :authenticate_user!, :except => [:show, :index, :latest]
+  before_action :authorized?, :except => [:show, :index, :latest]
 
 
   # GET /agreements
@@ -14,6 +14,11 @@ class AgreementsController < ApplicationController
   # GET /agreements/1
   # GET /agreements/1.json
   def show
+  end
+
+  def latest
+    @agreement = Agreement.last
+    render 'show'
   end
 
   # GET /agreements/new
