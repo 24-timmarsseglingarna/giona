@@ -1,5 +1,14 @@
 Rails.application.routes.draw do
   # resources :logs # Don't manage logs from web ui at the moment.
+
+  resources :agreements do
+    collection do
+      get 'latest'
+    end
+    member do
+    end
+  end
+
   resources :agreements
   resources :default_starts
   resources :legs
