@@ -48,9 +48,9 @@ class TeamsController < ApplicationController
   def show
     @status = @team.review
     if params[:notes].present?
-      @notes = @team.notes.reverse
+      @notes = @team.notes.order(created_at: :desc)
     else
-      @notes = @team.notes.last(5).reverse
+      @notes = @team.notes.order(created_at: :desc).first(5)
     end
     if current_user
       # Member of the team or assistant (or higher admin)
