@@ -47,6 +47,10 @@
       %p
         %i.far.fa-file-alt(aria-hidden='true')
         = link_to 'Mejladresser till alla deltagare', email_list_regatta_path(@regatta)
+      %p
+        %i.fas.fa-file-excel(aria-hidden='true')
+        = link_to "Anmälningsrapport (xlsx)", regatta_path(@regatta, format: "xlsx")
+
 
 
     - if has_assistant_rights?
@@ -93,12 +97,6 @@
           %li
             %i.fa.fa-bell(aria-hidden='true')
             = link_to "Period: #{period}", new_race_path(:regatta_id => @regatta.id, :period => period)
-      .legend Rapporter:
-      %p
-        %i.fas.fa-file-excel(aria-hidden='true')
-        = link_to "Deltagarrapport (xlsx)", regatta_path(@regatta, format: "xlsx")
-
-
 
 %h2 Anmälda
 

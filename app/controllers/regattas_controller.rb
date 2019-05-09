@@ -20,7 +20,7 @@ class RegattasController < ApplicationController
   # GET /regattas/1.json
   def show
     @races = @regatta.races
-    if has_officer_rights?
+    if has_assistant_rights?
       @teams = @regatta.teams
     else
       @teams = @regatta.teams.where("state > ?", 0)
