@@ -279,7 +279,7 @@ module TeamsHelper
 
      approved_dist = 0
      plaque_dist = 0
-     if signed
+     if signed and state.nil?
        approved_dist = sailed_dist + compensation_dist -
                        (early_start_dist + late_finish_dist)
        plaque_dist = (approved_dist / team.sxk) - admin_dist
