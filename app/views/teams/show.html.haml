@@ -455,7 +455,7 @@
       - if @team.signed? && has_officer_rights?
         %br
         %p
-        = link_to 'Loggboken granskad', teams_review_path(:id => @team.id), method: :post, class: "btn btn-primary btn-lg"
+        = link_to 'Loggboken granskad', teams_review_path(:id => @team.id), method: :post, class: "btn btn-primary"
 
 
 - if current_user && i_may_see_links_to(@team)
