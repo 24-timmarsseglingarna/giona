@@ -148,7 +148,7 @@ module TeamsHelper
                else
                  leg_status = :too_many_legs
                end
-             elsif leg
+             elsif leg.nil?
                leg_status = :no_leg
              else
                leg_status = :too_many_rounds
