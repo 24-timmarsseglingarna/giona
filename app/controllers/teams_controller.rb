@@ -55,12 +55,12 @@ class TeamsController < ApplicationController
     if current_user
       # Member of the team or assistant (or higher admin)
       if (has_assistant_rights? || (@team.people.include? current_user.person))
-        @logs = @team.logs.order(:time)
+        @logs = @team.logs.order(:time, :id)
       else
-        @logs = @team.logs.where(:log_type => ['round', 'seeOtherTeams', 'seeOtherBoats'], deleted: 'false').select('team_id, time, point, data, log_type, deleted').order(:time)
+        @logs = @team.logs.where(:log_type => ['round', 'seeOtherTeams', 'seeOtherBoats'], deleted: 'false').select('team_id, time, point, data, log_type, deleted').order(:time, :id)
       end
     else
-      @logs = @team.logs.where(:log_type => ['round', 'seeOtherTeams', 'seeOtherBoats'], deleted: 'false').select('team_id, time, point, data, log_type, deleted').order(:time)
+      @logs = @team.logs.where(:log_type => ['round', 'seeOtherTeams', 'seeOtherBoats'], deleted: 'false').select('team_id, time, point, data, log_type, deleted').order(:time, :id)
     end
   end
 

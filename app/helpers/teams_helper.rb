@@ -148,7 +148,7 @@ module TeamsHelper
                else
                  leg_status = :too_many_legs
                end
-             elsif leg
+             elsif leg.nil?
                leg_status = :no_leg
              else
                leg_status = :too_many_rounds
@@ -279,7 +279,7 @@ module TeamsHelper
 
      approved_dist = 0
      plaque_dist = 0
-     if signed
+     if signed and state.nil?
        approved_dist = sailed_dist + compensation_dist -
                        (early_start_dist + late_finish_dist)
        plaque_dist = (approved_dist / team.sxk) - admin_dist
