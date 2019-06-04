@@ -138,7 +138,7 @@ module TeamsHelper
                    # zero-distance leg with time compensation;
                    # add the time to offset, and ignore compensation in
                    # ongoing interrupts
-                   compensation_time += ((log.time -prev.time) / 60)
+                   compensation_time += ((log.time.to_i - prev.time.to_i) / 60)
                  else
                    dist = leg.distance
                    sailed_dist += leg.distance
@@ -178,7 +178,7 @@ module TeamsHelper
                  end
                  if f_log_data['interrupt'] &&
                     f_log_data['interrupt']['type'] == 'done'
-                   interrupt_time = (f.time - log.time) / 60
+                   interrupt_time = (f.time.to_i - log.time.to_i) / 60
                    if log_data['interrupt']['type'] == 'rescue-time'
                      cur_compensation_time += interrupt_time
                    elsif log_data['interrupt']['type'] == 'rescue-dist'
