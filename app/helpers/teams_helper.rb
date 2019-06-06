@@ -160,7 +160,7 @@ module TeamsHelper
              start_time = log.time.to_i
            end
            unless prev.nil?
-             sailed_time += (prev.time.to_i - log.time.to_i) / 60
+             sailed_time += (log.time.to_i - prev.time.to_i) / 60
            end
            prev = log
          elsif log_data['interrupt'] && log_data['interrupt']['type'] != 'done'
