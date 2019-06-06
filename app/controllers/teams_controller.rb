@@ -57,10 +57,10 @@ class TeamsController < ApplicationController
       if (has_assistant_rights? || (@team.people.include? current_user.person))
         @logs = @team.logs.order(:time, :id)
       else
-        @logs = @team.logs.where(:log_type => ['round', 'seeOtherTeams', 'seeOtherBoats'], deleted: 'false').select('team_id, time, point, data, log_type, deleted').order(:time, :id)
+        @logs = @team.logs.where(:log_type => ['round', 'seeOtherTeams', 'seeOtherBoats'], deleted: 'false').order(:time, :id)
       end
     else
-      @logs = @team.logs.where(:log_type => ['round', 'seeOtherTeams', 'seeOtherBoats'], deleted: 'false').select('team_id, time, point, data, log_type, deleted').order(:time, :id)
+      @logs = @team.logs.where(:log_type => ['round', 'seeOtherTeams', 'seeOtherBoats'], deleted: 'false').order(:time, :id)
     end
   end
 
