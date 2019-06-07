@@ -100,7 +100,9 @@ module TeamsHelper
      while i < logs.length do
        log = logs[i]
        unless log.deleted
-         dist = nil
+         leg_dist = nil
+         leg_time = nil
+         leg_speed = nil
          leg_status = nil
          interrupt_status = nil
          prev_point = nil
@@ -114,8 +116,11 @@ module TeamsHelper
            unless npoints[log.point]
              npoints[log.point] = 0
            end
-           if prev
+           if prev.nil?
+             start_time = log.time.to_i
+           else
              prev_point = prev.point
+             leg_time = (log.time.to_i - prev.time.to_i) / 60
              unless log_data['finish'].blank?
                finish_time = log.time.to_i
              else
@@ -125,6 +130,9 @@ module TeamsHelper
                npoints[log.point] = npoints[log.point] + 1
              end
              leg = find_leg(prev.point, log.point, terrain)
+             if leg
+               leg_speed = (60 * leg.distance) / leg_time
+             end
              if leg && npoints[log.point] < 3
                # count this leg
                leg_name = get_leg_name(prev.point, log.point)
@@ -138,10 +146,10 @@ module TeamsHelper
                    # zero-distance leg with time compensation;
                    # add the time to offset, and ignore compensation in
                    # ongoing interrupts
-                   compensation_time += ((log.time.to_i - prev.time.to_i) / 60)
+                   compensation_time += leg_time
                  else
-                   dist = leg.distance
-                   sailed_dist += leg.distance
+                   leg_dist = leg.distance
+                   sailed_dist += leg_dist
                    compensation_time += cur_compensation_time
                    compensation_dist_time += cur_compensation_dist_time
                  end
@@ -153,14 +161,10 @@ module TeamsHelper
              else
                leg_status = :too_many_rounds
              end
+             sailed_time += leg_time
              # reset compensation counters
              cur_compensation_time = 0
              cur_compensation_dist_time = 0
-           else
-             start_time = log.time.to_i
-           end
-           unless prev.nil?
-             sailed_time += (log.time.to_i - prev.time.to_i) / 60
            end
            prev = log
          elsif log_data['interrupt'] && log_data['interrupt']['type'] != 'done'
@@ -211,7 +215,8 @@ module TeamsHelper
          end
          entries.append({:log => log,
                          :log_data => log_data,
-                         :distance => dist,
+                         :distance => leg_dist,
+                         :speed => leg_speed,
                          :leg_status => leg_status,
                          :prev_point => prev_point,
                          :interrupt_status => interrupt_status})
