@@ -5,7 +5,7 @@ class RegattasController < ApplicationController
   has_scope :has_race, :from_organizer
 
   before_action :authenticate_user!, :except => [:show, :start_list, :index]
-  before_action :authorized?, :except => [:show, :start_list, :index]
+  before_action :authorized?, :except => [:show, :start_list, :index, :email_list]
   before_action :authorized_assistant?, :only => [:email_list]
 
   before_action :set_regatta, only: [:show, :start_list, :email_list, :edit, :update, :destroy]
