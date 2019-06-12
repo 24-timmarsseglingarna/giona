@@ -284,6 +284,7 @@
             %th Datum/tid
             %th Punkt
             %th Distans
+            %th Fart
             %th Vind
             %th Notering
             - if params[:rich]
@@ -310,6 +311,9 @@
             %td
               - if log.point
                 = e[:distance]
+            %td
+              - if log.point && !e[:speed].nil?
+                = e[:speed].round(1)
             %td= log.wind
             %td
               - if e[:leg_status] == :too_many_rounds
