@@ -97,7 +97,7 @@ certificates every night, starting in March perhaps.
 ## Temporary procedure for team lifecycle
 
 Currently, the full review process is not yet implemented in Giona.
-Until it is done, we must run a special task that close all teams in
+Until it is done, we must run a special task that closes all teams in
 all archived regattas as "incomplete".  Their data can not be trusted
 (e.g., they might not have a log book, or incomplete log book.)
 
