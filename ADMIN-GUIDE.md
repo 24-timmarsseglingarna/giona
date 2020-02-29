@@ -22,6 +22,23 @@ and change name and publish the new terrain.
 
 The default starts are not version controlled.
 
+### Publish the PoD on S3
+
+The app needs the PoD as JSON, and it will read it from our S3
+bucket.  We have three buckets:
+
+  giona{dev,stage,prod}
+
+Currently this is a manual step.  In the future this will happen
+automatically when a PoD is published.  Note the filename which MUST
+be on the form pod-<TERRAIN-ID>.json.gz.
+
+1. Run ```$ wget https://<HOST>.24-timmars.nu/terrains/NN.json```
+2. Run ```$ cp NN.json terrain-NN.json```
+3. Run ```$ gzip terrain-NN.json```
+4. Run ```$ aws s3 cp terrain-NN.json.gz s3://<BUCKET> --acl public-read \
+          --content-type 'application/json' --content-encoding gzip```
+
 ### Handling existing regattas
 
 Any active regatta that was created before the PoD was imported,

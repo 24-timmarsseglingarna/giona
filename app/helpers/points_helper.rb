@@ -35,4 +35,13 @@ module PointsHelper
     "#{point.number} #{point.name}"
   end
 
+  def is_start point
+    points = DefaultStart.where(number: point.number)
+    if points.blank?
+      false
+    else
+      true
+    end
+  end
+
 end
