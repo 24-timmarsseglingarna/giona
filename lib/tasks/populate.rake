@@ -13,7 +13,7 @@ namespace :scrape do
     # rake scrape:srs:certificates[dryrun]
     task :certificates, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
-      srs_table_url = "http://matbrev.svensksegling.se/Home/ApprovedList"
+      srs_table_url = "https://matbrev.svensksegling.se/Home/ApprovedList"
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//fieldset//tr')
       first_row = true
@@ -47,7 +47,7 @@ namespace :scrape do
   namespace :srs do
     task :keelboats, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
-      srs_table_url = "http://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
+      srs_table_url = "https://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
@@ -75,7 +75,7 @@ namespace :scrape do
 
     task :multihulls, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
-      srs_table_url = "http://matbrev.svensksegling.se/home/srsflerskrovlist"
+      srs_table_url = "https://matbrev.svensksegling.se/home/srsflerskrovlist"
       doc = Nokogiri::HTML(open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
@@ -104,7 +104,7 @@ namespace :import do
   namespace :srs do
     task :multihull_certificates, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
-      srs_table_url = "http://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
+      srs_table_url = "https://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
       source = "SRS-mätbrev flerskrov #{DateTime.now.year.to_s}"
       file = open(srs_table_url)
       json = JSON.parse file.first
