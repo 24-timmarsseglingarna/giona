@@ -31,7 +31,7 @@ bucket.  We have three buckets:
 
 Currently this is a manual step.  In the future this will happen
 automatically when a PoD is published.  Note the filename which MUST
-be on the form pod-<TERRAIN-ID>.json.gz.
+be on the form terrain-<TERRAIN-ID>.json.gz.
 
 1. Run ```$ wget https://<HOST>.24-timmars.nu/terrains/NN.json```
 2. Run ```$ cp NN.json terrain-NN.json```
