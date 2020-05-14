@@ -31,13 +31,21 @@ bucket.  We have three buckets:
 
 Currently this is a manual step.  In the future this will happen
 automatically when a PoD is published.  Note the filename which MUST
-be on the form terrain-<TERRAIN-ID>.json.gz.
+be on the form terrain-<TERRAIN-ID>.json.gz.  Also note that we have a
+file terrain-latest.json.gz which contains the TERRAIN-ID of the
+latest published PoD.  This will be used in the app if no race is
+activated.
 
 1. Run ```$ wget https://<HOST>.24-timmars.nu/terrains/NN.json```
 2. Run ```$ cp NN.json terrain-NN.json```
 3. Run ```$ gzip terrain-NN.json```
 4. Run ```$ aws s3 cp terrain-NN.json.gz s3://<BUCKET> --acl public-read \
           --content-type 'application/json' --content-encoding gzip```
+5. Run ```$ echo "{\"id\": NN}" > terrain-latest.json```
+6. Run ```$ gzip terrain-latest.json```
+7. Run ```$ aws s3 cp terrain-latest.json.gz s3://<BUCKET> --acl public-read \
+          --content-type 'application/json' --content-encoding gzip```
+
 
 ### Handling existing regattas
 
