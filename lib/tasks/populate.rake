@@ -22,7 +22,8 @@ namespace :scrape do
       for entry in entries
         unless first_row
           h = Hash.new
-          h[:registry_id] = CGI::parse((entry.css('td')[0].css('a').map { |link| link['href'] })[0])["rpt"][0].to_s
+#          h[:registry_id] = CGI::parse((entry.css('td')[0].css('a').map { |link| link['href'] })[0])["rpt"][0].to_s
+          h[:registry_id] = entry.css('td')[0].text.to_s.strip
           h[:owner_name] = entry.css('td')[1].text.to_s.strip
           h[:name] = entry.css('td')[2].text.to_s.strip
           h[:boat_name] = entry.css('td')[3].text.to_s.strip
