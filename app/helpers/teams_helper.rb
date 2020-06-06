@@ -205,7 +205,11 @@ module TeamsHelper
          elsif log.log_type == 'sign'
            signed = true
          elsif log.log_type == 'retire'
-           state = :retire
+           if start_time == 0
+             state = :dns
+           else
+             state = :dnf
+           end
          elsif log.log_type == 'adminDSQ'
            state = :dsq
          elsif log.log_type == 'adminDist'

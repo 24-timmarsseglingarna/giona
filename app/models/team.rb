@@ -267,8 +267,10 @@ class Team < ApplicationRecord
       end
     end
 
-    if has_cancelled
+    if has_cancelled && has_started
       self.did_not_finish!
+    elsif has_cancelled
+      self.did_not_start!
     elsif has_finished
       self.finished!
     elsif has_started
