@@ -239,7 +239,7 @@ module TeamsHelper
        elsif start_time < start_from
          # too early start; add penalty, use "start-from" as starttime
          early_start_time = (start_from - start_time) / 60
-         start_time = start_from;
+         start_time = start_from
        end
      end
 
