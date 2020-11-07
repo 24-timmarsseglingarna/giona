@@ -346,7 +346,9 @@
                     = team.boat_sail_number
                     = team.boat_name
                     %br
-                - if log.log_type == 'retire'
+                - if log.log_type == 'retire' && logbook[:state] == :dns
+                  Startar inte (DNS).
+                - if log.log_type == 'retire' && logbook[:state] == :dnf
                   Avbryter seglingen (DNF).
                   %br
                 - if log.log_type == 'protest'
@@ -451,7 +453,9 @@
         %em Loggboken är inte signerad
       - if logbook[:state] == :early_finish
         %em För kort segling
-      - if logbook[:state] == :retire
+      - if logbook[:state] == :dns
+        %em Startade inte (DNS)
+      - if logbook[:state] == :dnf
         %em Avbröt seglingen (DNF)
       - if logbook[:state] == :dsq
         %em Seglingen ogiltigförklarad

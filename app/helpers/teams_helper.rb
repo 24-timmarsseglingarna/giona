@@ -205,7 +205,11 @@ module TeamsHelper
          elsif log.log_type == 'sign'
            signed = true
          elsif log.log_type == 'retire'
-           state = :retire
+           if start_time == 0
+             state = :dns
+           else
+             state = :dnf
+           end
          elsif log.log_type == 'adminDSQ'
            state = :dsq
          elsif log.log_type == 'adminDist'
@@ -235,7 +239,7 @@ module TeamsHelper
        elsif start_time < start_from
          # too early start; add penalty, use "start-from" as starttime
          early_start_time = (start_from - start_time) / 60
-         start_time = start_from;
+         start_time = start_from
        end
      end
 
