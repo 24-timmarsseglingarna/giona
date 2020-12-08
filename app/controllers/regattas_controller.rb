@@ -53,6 +53,22 @@ class RegattasController < ApplicationController
           notes.push("Distansavdrag: #{logbook[:admin_dist].round(1)} M")
         end
         logbook[:notes] = notes
+        route = ""
+        for e in logbook[:entries]
+          if e[:prev_point]
+            route << "&nbsp;&nbsp;-&nbsp; "
+          end
+          if e[:log].point
+            route << e[:log].point.to_s
+            if e[:distance]
+              route << "&nbsp;(#{e[:distance]})"
+            elsif e[:prev_point]
+              # this is an invalid leg
+              route << "&nbsp;(0)"
+            end
+          end
+        end
+        logbook[:route] = route
         # if the regatta is still active (we have a preliminary result), push
         # all logbooks, even incomplete ones
         if (logbook[:plaque_dist] != 0) || !logbook[:state].nil? || @regatta.active

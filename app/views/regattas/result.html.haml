@@ -78,36 +78,6 @@
               - else
                 %td{:colspan => 7, :class => "res-crew-role"}= "Gast: #{crew_member.person.sname}"
 
-- #          %tr
-- #            %td{:colspan => 7}
-- #              %table{:width => "100%"}
-- #                %tr
-- #                  %td
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                %tr
-- #                  %td
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #                  %td -
-- #                  %td 580
-- #
+          %tr{:class => "res-team"}
+            %td{:colspan => 2}
+            %td{:colspan => 5, :class => "res-route"}!= logbook[:route]

@@ -1,5 +1,4 @@
 .res-title-line-1 {
-    padding-top: 40px;
     font-size: 22px;
     font-weight: bold;
 }
@@ -46,6 +45,11 @@
     font-style: italic;
 }
 
+.res-route {
+    font-size: 10px;
+    font-style: italic;
+}
+
 @media print {
     .res-race-header {
         page-break-inside: avoid;
@@ -57,5 +61,7 @@
 }
 
 @page {
-    margin: 0cm; /* needed for weasyprint -p */
+    /* needed for weasyprint -p */
+    margin-left: 0cm;
+    margin-right: 0cm;
 }
