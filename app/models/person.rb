@@ -49,5 +49,8 @@ class Person < ApplicationRecord
     out
   end
 
+  def sname
+    "#{self.first_name} #{self.last_name}"
+  end
 
 end

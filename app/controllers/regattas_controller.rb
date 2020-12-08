@@ -4,11 +4,11 @@ class RegattasController < ApplicationController
   has_scope :is_active, :type => :boolean, allow_blank: true
   has_scope :has_race, :from_organizer
 
-  before_action :authenticate_user!, :except => [:show, :start_list, :index]
-  before_action :authorized?, :except => [:show, :start_list, :index, :email_list]
+  before_action :authenticate_user!, :except => [:show, :start_list, :result, :index]
+  before_action :authorized?, :except => [:show, :start_list, :result, :index, :email_list]
   before_action :authorized_assistant?, :only => [:email_list]
 
-  before_action :set_regatta, only: [:show, :start_list, :email_list, :edit, :update, :destroy]
+  before_action :set_regatta, only: [:show, :start_list, :result, :email_list, :edit, :update, :destroy]
 
   # GET /regattas
   # GET /regattas.json
@@ -36,6 +36,40 @@ class RegattasController < ApplicationController
 
   def start_list
     render 'start_list'
+  end
+
+  def result
+    @rs = []
+    for @race in @regatta.races.order(:start_from)
+      logbooks = []
+      @race.teams.is_visible().each do |team|
+        logbook = helpers.get_logbook(team, team.logs.order(:time, :id))
+        logbook[:team] = team
+        notes = []
+        if (logbook[:compensation_dist] != 0)
+          notes.push("Tillägg undsättning: #{logbook[:compensation_dist].round(1)} M")
+        end
+        if (logbook[:admin_dist] != 0)
+          notes.push("Distansavdrag: #{logbook[:admin_dist].round(1)} M")
+        end
+        logbook[:notes] = notes
+        # if the regatta is still active (we have a preliminary result), push
+        # all logbooks, even incomplete ones
+        if (logbook[:plaque_dist] != 0) || !logbook[:state].nil? || @regatta.active
+          logbooks.push(logbook)
+        end
+      end
+      logbooks = logbooks.sort{ |a,b| -helpers.compare_logbook(a,b) }
+      i = 1
+      for logbook in logbooks
+        logbook[:place] = i
+        i = i + 1
+      end
+      r = { :race => @race,
+            :logbooks => logbooks}
+      @rs.push(r)
+    end
+    render 'result'
   end
 
   def email_list

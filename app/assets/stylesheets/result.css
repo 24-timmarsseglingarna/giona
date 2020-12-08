@@ -1,0 +1,61 @@
+.res-title-line-1 {
+    padding-top: 40px;
+    font-size: 22px;
+    font-weight: bold;
+}
+.res-title-line-2 {
+    padding-bottom: 30px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.res-race-title {
+    padding-top: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.res-race-header {
+    font-size: 16px;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+}
+
+.res-race-row {
+    height: 2em;
+}
+
+.res-space-row {
+    height: 0.6em;
+}
+
+.res-boat-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.res-boat-type {
+    font-weight: bold;
+}
+
+.res-plaque-dist {
+    font-weight: bold;
+}
+
+.res-note {
+    font-style: italic;
+}
+
+@media print {
+    .res-race-header {
+        page-break-inside: avoid;
+        page-break-after: avoid;
+    }
+    .res-team {
+        page-break-before: avoid;
+    }
+}
+
+@page {
+    margin: 0cm; /* needed for weasyprint -p */
+}

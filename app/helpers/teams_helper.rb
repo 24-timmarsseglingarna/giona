@@ -309,4 +309,47 @@ module TeamsHelper
      }
    end
 
+   def wstate(state)
+     # early_finish < dnf < dns < dsq
+     if state == :early_finish
+       4
+     elsif state == :dnf
+       3
+     elsif state == :dns
+       2
+     elsif state == :dsq
+       1
+     else
+       0
+     end
+   end
+
+   def compare_logbook(a, b)
+     if a[:plaque_dist] > 0 && b[:plaque_dist] > 0
+       a[:plaque_dist] <=> b[:plaque_dist]
+     elsif a[:plaque_dist] > 0
+       1
+     elsif b[:plaque_dist] > 0
+       -1
+     else
+       wstate(a[:state]) <=> wstate(b[:state])
+     end
+   end
+
+   def fmt_res_plaque_dist(logbook)
+     if logbook[:plaque_dist] > 0
+       "#{logbook[:plaque_dist].round(1)} M"
+       elsif logbook[:state] == :dnf
+         "DNF"
+       elsif logbook[:state] == :dns
+         "DNS"
+       elsif logbook[:state] == :dsq
+         "DNQ"
+       elsif logbook[:state] == :early_finish
+         "För kort segling"
+       else
+         "Ofullständig"
+     end
+   end
+
 end
