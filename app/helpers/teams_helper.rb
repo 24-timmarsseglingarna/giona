@@ -344,7 +344,7 @@ module TeamsHelper
        elsif logbook[:state] == :dns
          "DNS"
        elsif logbook[:state] == :dsq
-         "DNQ"
+         "DSQ"
        elsif logbook[:state] == :early_finish
          "För kort segling"
        else

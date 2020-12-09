@@ -2,8 +2,11 @@
   = "#{@regatta.name}"
 %p{:class => "res-title-line-2"}
   - if @regatta.active
-    Preliminärt resultat - #{I18n.l @regatta.updated_at, format: :day}
+    -# If the regatta is still active, print with todays date.
+    Preliminärt resultat - #{I18n.l DateTime.now, format: :day}
   - else
+    -# Otherwise, use last modification date; this ensures that the
+    -# report looks the same.
     Resultat - #{I18n.l @regatta.updated_at, format: :day}
 
 %table{:width => "100%", :class => "res-table"}
@@ -26,7 +29,6 @@
           %td Övertid
           %td Avdrag
           %td Plakettdistans
-
 
         - logbooks.each do |logbook|
           - team = logbook[:team]
@@ -54,9 +56,9 @@
                 #{logbook[:late_finish_time].round(1)} min
             %td
               - if logbook[:late_finish_dist] > 0
-                #{logbook[:late_finish_dist].round(1)} M
+                = "-#{logbook[:late_finish_dist].round(1)} M"
             %td{:class => "res-plaque-dist"}= fmt_res_plaque_dist(logbook)
-          %tr{:class => "res-team"}
+          %tr{:class => "res-no-break-before"}
             %td
             %td{:colspan => 3}
               %span{:class => "res-boat-type"}= team.boat_type_name
@@ -67,17 +69,23 @@
               %td{:colspan => 3, :class => "res-note"} #{logbook[:notes][0]}
           - if notes_len > 1
             - for note in logbook[:notes][1..notes_len-1]
-              %tr{:class => "res-team"}
+              %tr{:class => "res-no-break-before"}
                 %td{:colspan => 5}
                 %td{:colspan => 3, :class => "res-note"}= note
           - for crew_member in team.crew_members.order(skipper: :desc)
-            %tr{:class => "res-team"}
+            %tr{:class => "res-no-break-before"}
               %td
               - if crew_member.skipper
                 %td{:colspan => 7, :class => "res-crew-role"}= "Skeppare: #{crew_member.person.sname}"
               - else
                 %td{:colspan => 7, :class => "res-crew-role"}= "Gast: #{crew_member.person.sname}"
 
-          %tr{:class => "res-team"}
+          %tr{:class => "res-no-break-before"}
             %td{:colspan => 2}
             %td{:colspan => 5, :class => "res-route"}!= logbook[:route]
+          - route_notes_len = logbook[:route_notes].length
+          - if route_notes_len > 0
+            - for route_note in logbook[:route_notes]
+              %tr{:class => "res-no-break-before"}
+              %td{:colspan => 2}
+              %td{:colspan => 6, :class => "res-route"}!= route_note

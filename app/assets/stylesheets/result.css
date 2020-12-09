@@ -55,7 +55,8 @@
         page-break-inside: avoid;
         page-break-after: avoid;
     }
-    .res-team {
+    /* set on all rows in a team's result, except the first */
+    .res-no-break-before {
         page-break-before: avoid;
     }
 }
