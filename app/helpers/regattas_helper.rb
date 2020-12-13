@@ -8,4 +8,21 @@ module RegattasHelper
       end
     end
   end
+
+  def fmt_res_plaque_dist(logbook)
+    if logbook[:plaque_dist] > 0
+      "#{logbook[:plaque_dist].round(1)} M"
+    elsif logbook[:state] == :dnf
+      "DNF"
+    elsif logbook[:state] == :dns
+      "DNS"
+    elsif logbook[:state] == :dsq
+      "DSQ"
+    elsif logbook[:state] == :early_finish
+      "För kort segling"
+    else
+      "Ofullständig"
+    end
+  end
+
 end

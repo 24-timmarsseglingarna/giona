@@ -276,7 +276,7 @@
         - if current_user
           = link_to 'Registrera/ändra loggbok', logbook_link(@team)
 
-    -logbook = get_logbook(@team, @logs)
+    -logbook = @team.get_logbook(@logs)
     -unless logbook[:entries].blank?
       %table#giona-logs.table.table-striped.table-bordered.table-hover{:width => "100%"}
         %thead

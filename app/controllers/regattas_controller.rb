@@ -39,70 +39,7 @@ class RegattasController < ApplicationController
   end
 
   def result
-    @rs = []
-    for @race in @regatta.races.order(:start_from)
-      logbooks = []
-      @race.teams.is_visible().each do |team|
-        logbook = helpers.get_logbook(team, team.logs.order(:time, :id))
-        logbook[:team] = team
-        notes = []
-        if logbook[:compensation_dist] != 0
-          notes.push("Tillägg undsättning: #{logbook[:compensation_dist].round(1)} M")
-        end
-        route = ""
-        route_notes = []
-        seen = {}
-        for e in logbook[:entries]
-          if e[:log].log_type == 'adminDSQ'
-            notes.push("Ogiltig segling. #{e[:log_data]['comment']}")
-          elsif e[:log].log_type == 'adminNote'
-            notes.push("#{e[:log_data]['comment']}")
-          elsif e[:log].log_type == 'adminDist'
-            notes.push("Distansavdrag: #{e[:log_data]['admin_dist'].round(1)} M. #{e[:log_data]['comment']}")
-          end
-          if e[:prev_point]
-            route << "&nbsp;&nbsp;-&nbsp; "
-          end
-          if e[:log].point
-            route << e[:log].point.to_s
-            if e[:distance]
-              route << "&nbsp;(#{e[:distance]})"
-            elsif e[:prev_point]
-              # this is an invalid leg
-              leg_name = helpers.get_leg_name(e[:prev_point], e[:log].point)
-              if e[:leg_status] == :too_many_rounds && !seen[e[:log].point]
-                route_notes.push("Punkt #{e[:log].point} har rundats mer än 2 gånger och räknas inte. Se §7.3, §13.1.3 i RR-2018.")
-                seen[e[:log].point] = true
-              elsif e[:leg_status] == :too_many_legs && !seen[leg_name]
-                route_notes.push("Sträckan #{e[:prev_point]} - #{e[:log].point} har seglats mer än 2 gånger och räknas inte. Se §7.5, §13.1.2 i RR-2018.")
-                seen[leg_name] = true
-              elsif e[:leg_status] == :no_leg && !seen[leg_name]
-                route_notes.push("Mellan #{e[:prev_point]} och #{e[:log].point} finns ingen giltig sträcka.")
-                seen[leg_name] = true
-              end
-              route << "&nbsp;(0)"
-            end
-          end
-        end
-        logbook[:notes] = notes
-        logbook[:route] = route
-        logbook[:route_notes] = route_notes
-        # if the regatta is still active (we have a preliminary result), push
-        # all logbooks, even incomplete ones
-        if (logbook[:plaque_dist] != 0) || !logbook[:state].nil? || @regatta.active
-          logbooks.push(logbook)
-        end
-      end
-      logbooks = logbooks.sort{ |a,b| -helpers.compare_logbook(a,b) }
-      i = 1
-      for logbook in logbooks
-        logbook[:place] = i
-        i = i + 1
-      end
-      r = { :race => @race,
-            :logbooks => logbooks}
-      @rs.push(r)
-    end
+    @rs = @regatta.get_races_result
     render 'result'
   end
 
