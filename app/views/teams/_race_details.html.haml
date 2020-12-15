@@ -15,9 +15,17 @@
       = f.inputs do
         = f.input :start_point, :as => :radio, :collection => @team.race.start_places
         = f.input :offshore, :as => :radio
+        - if params[:wizard_next].present?
+          = hidden_field_tag 'wizard_next', params[:wizard_next]
 
       = f.actions do
-        = f.action :submit, :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}
+        - if params[:wizard_next].present?
+          = f.action :submit, :label=>"Nästa", :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}
+        - else
+          = f.action :submit, :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}
 
     %br
-    = link_to 'Tillbaka', @team, :class => :get_back
+    - if params[:wizard_next].present?
+      = link_to 'Avbryt', @team, :class => :get_back
+    - else
+      = link_to 'Tillbaka', @team, :class => :get_back

@@ -30,6 +30,7 @@ class Team < ApplicationRecord
   # have a proper log book and result.
   enum state: [:draft, :submitted, :approved, :signed, :reviewed, :archived, :closed]
   enum sailing_state: [:not_started, :did_not_start, :started, :did_not_finish, :finished]
+
   after_initialize :set_default_state, :if => :new_record?
 
   delegate :minimal, to: :race
@@ -286,6 +287,37 @@ class Team < ApplicationRecord
   def is_signed
     self.state == 'signed' || self.state == 'reviewed' ||
       self.state == 'archived' || self.state == 'closed'
+  end
+
+  def get_known_handicaps
+    # FIXME: create index on team.boat_id
+    # normally, this array contains a single value, or is empty.
+    # get all teams where this boat has participated
+    known_handicaps = Array.new
+    for t in Team.where("boat_id = ?", self.boat_id).order("created_at DESC")
+      h = t.handicap
+      if t.id != self.id and not h.nil?
+        if h.registry_id.nil?
+          # try to find active with same name
+          known_handicaps = Handicap.
+                              where("type = ?", h.type).
+                              where("name = ?", h.name).
+                              active
+        else
+          # try to find active with same registry id
+          known_handicaps = Handicap.
+                              where("type = ?", h.type).
+                              where("registry_id = ?", h.registry_id).
+                              active
+        end
+        if !known_handicaps.empty?
+          # we found a current handicap (or more) for the most recent team,
+          # suggest that to the user
+          break
+        end
+      end
+    end
+    known_handicaps
   end
 
 private

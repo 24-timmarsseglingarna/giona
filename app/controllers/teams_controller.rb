@@ -11,7 +11,6 @@ class TeamsController < ApplicationController
   has_scope :is_active, :type => :boolean, allow_blank: true
   has_scope :is_archived, :type => :boolean, allow_blank: true
 
-
   def welcome
     @races = apply_scopes(Race).all.order(regatta_id: :asc, period: :asc)
     if params[:organizer_id].present?
@@ -116,7 +115,12 @@ class TeamsController < ApplicationController
             Note.create(team_id: @team.id, user: current_user, description: "Anmälan skapad av #{current_user.to_s}.")
             @team.skipper.update_attribute 'skip_validation', false
             TeamMailer.created_team_email(@team).deliver
-            format.html { redirect_to @team, notice: 'Deltagaranmälan skapad. Vi skickar ett mejl med länk till din anmälan. Komplettera nu anmälan och skicka in den.' }
+            # start the "wizard" which takes the user through the necessary
+            # steps.  if the user exits the wizard, or doesn't fill in all
+            # values, the team is incomplete, just as before.
+            # wizard_next informs the view that the wizard is active
+            # and that it must set wizard_next in the next link / submit params
+            format.html { redirect_to edit_team_path(@team, :section=>:race_details, :wizard_next=>'boat'), notice: 'Deltagaranmälan skapad. Vi skickar ett mejl med länk till din anmälan. Komplettera nu anmälan och skicka in den.' }
             format.json { render :show, status: :created, location: @team }
           else
             format.html { render :new }
@@ -139,7 +143,7 @@ class TeamsController < ApplicationController
     old_race = @team.race
     description = ''
     respond_to do |format|
-      if @team.update(team_params)
+      if params[:team].present? && @team.update(team_params)
         if @team.race != old_race
           description += "Segling ändrad till #{@team.race.name} (#{@team.race.id}) av #{current_user.to_s}."
           unless @team.race.starts.include? @team.start_point.to_s
@@ -165,8 +169,14 @@ class TeamsController < ApplicationController
         if description.present?
           Note.create(team_id: @team.id, user: current_user, description: description)
         end
-        format.html { redirect_to @team, notice: 'Deltagaranmälan uppdaterad.' }
-        format.json { render :show, status: :ok, location: @team }
+        if params[:wizard_next] == 'handicap'
+          format.html { redirect_to edit_handicap_team_path(@team, step:1) }
+        elsif params[:wizard_next].present?
+          format.html { redirect_to edit_team_path(@team, :section=>params[:wizard_next], :wizard_next=>next_wizard_step) }
+        else
+          format.html { redirect_to @team, notice: 'Deltagaranmälan uppdaterad.' }
+          format.json { render :show, status: :ok, location: @team }
+        end
       else
         format.html { redirect_to @team, alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.' }
         format.json { render json: @team.errors, status: :unprocessable_entity }
@@ -214,33 +224,7 @@ class TeamsController < ApplicationController
   end
 
   def edit_handicap
-    # FIXME: create index on team.boat_id
-    # normally, this array contains a single value, or is empty.
-    @known_handicaps = Array.new
-    # get all teams where this boat has participated
-    for t in Team.where("boat_id = ?", @team.boat_id).order("created_at DESC")
-      h = t.handicap
-      if t.id != @team.id and not h.nil?
-        if h.registry_id.nil?
-          # try to find active with same name
-          @known_handicaps = Handicap.
-                               where("type = ?", h.type).
-                               where("name = ?", h.name).
-                               active
-        else
-          # try to find active with same registry id
-          @known_handicaps = Handicap.
-                               where("type = ?", h.type).
-                               where("registry_id = ?", h.registry_id).
-                               active
-        end
-        if !@known_handicaps.empty?
-          # we found a current handicap (or more) for the most recent team,
-          # suggest that to the user
-          break
-        end
-      end
-    end
+    @known_handicaps = @team.get_known_handicaps
     render 'edit_handicap'
   end
 
@@ -360,7 +344,11 @@ class TeamsController < ApplicationController
     @team.set_name
     @team.save!
     Note.create(team_id: @team.id, user: current_user, description: "Båt #{boat.name} (#{boat.id}) vald av #{current_user.to_s}.")
-    redirect_to @team, notice: "Båten #{@team.boat.name unless @team.boat.blank?} är nu vald."
+    if params[:wizard_next].present?
+      redirect_to edit_handicap_team_path(@team, :step=>1), notice: "Båten #{@team.boat.name unless @team.boat.blank?} är nu vald."
+    else
+      redirect_to @team, notice: "Båten #{@team.boat.name unless @team.boat.blank?} är nu vald."
+    end
   end
 
   def submit
@@ -481,6 +469,15 @@ class TeamsController < ApplicationController
         else
           flash.now['alert'] = 'Du behöver nu skicka in din anmälan nedan.'
         end
+      end
+    end
+
+    def next_wizard_step
+      case params[:wizard_next]
+      when :race
+        :boat
+      when :boat
+        :handicap
       end
     end
 
