@@ -82,9 +82,8 @@ class Team < ApplicationRecord
   end
 
   def from_same_regatta
-     race.regatta.teams
+    race.regatta.teams
   end
-
 
   def set_defaults
     set_name
@@ -519,6 +518,7 @@ class Team < ApplicationRecord
       :approved_dist => approved_dist,
       :plaque_dist => plaque_dist
     }
+  end
 
   def get_known_handicaps
     # FIXME: create index on team.boat_id
