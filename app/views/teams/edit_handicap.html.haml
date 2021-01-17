@@ -37,11 +37,13 @@
           %br
           = link_to 'Tillbaka', team_path(@team)
 
-      - else
+      - elsif params[:htype].present?
+        %p #{params[:htype]}
         = semantic_form_for @team, url: { action: :update_handicap } do |f|
           = f.inputs do
             = hidden_field_tag 'step', 3
-            = f.input :handicap, :collection => handicap_table(@team.handicap_type), :include_blank => false, :label => Handicap.types[@team.handicap_type]
+            = hidden_field_tag 'htype', params[:htype]
+            = f.input :handicap, :collection => handicap_table(params[:htype]), :include_blank => false, :label => Handicap.types[params[:htype]]
           = f.actions do
             = f.action :submit, :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}, :label => 'Nästa'
         %br
