@@ -44,5 +44,4 @@ module RacesHelper
     out
   end # def race_brief
 
-
 end

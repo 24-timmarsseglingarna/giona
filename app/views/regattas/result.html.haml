@@ -1,0 +1,87 @@
+%p{:class => "res-title-line-1"}
+  = "#{@regatta.name}"
+%p{:class => "res-title-line-2"}
+  - if @regatta.active
+    -# If the regatta is still active, print with todays date.
+    Preliminärt resultat - #{I18n.l DateTime.now, format: :day}
+  - else
+    -# Otherwise, use last modification date; this ensures that the
+    -# report looks the same.
+    Resultat - #{I18n.l @regatta.updated_at, format: :day}
+
+%table{:width => "100%", :class => "res-table"}
+  %tbody
+    - for r in @rs
+      - race = r[:race]
+      - logbooks = r[:logbooks]
+      %tr
+        %td{:colspan => 8, :class => "res-space-row"}
+      %tr
+        %td{:colspan => 8, :class => "res-race-row"}
+          %p{:class => "res-race-title"}= "Segling: #{race.name}"
+      %tr{:class => "res-race-header"}
+        %td Plac
+        %td Båt
+        %td Startpunkt
+        %td SXK-tal
+        %td Seglad distans
+        %td Övertid
+        %td Avdrag
+        %td Plakettdistans
+
+      - logbooks.each do |logbook|
+        - team = logbook[:team]
+        - notes_len = logbook[:notes].length
+        %tr
+          %td{:colspan => 8, :class => "res-space-row"}
+        %tr{:onclick => "window.location.href = '#{team_path(team)}';", :style => "cursor: pointer;"}
+          %td= logbook[:place]
+          %td{:class => "res-boat-name"}
+            =team.boat_name
+          %td
+            = team.start_point
+            -# FIXME: print name of start point?
+            -#= name_by_number(@regatta.terrain, team.start_point) unless team.start_point.blank?
+          %td
+            = number_with_precision(team.sxk, precision: 2)
+          %td
+            - if logbook[:sailed_dist] > 0
+              #{logbook[:sailed_dist].round(1)} M
+          %td
+            - if logbook[:late_finish_time] > 0
+              #{logbook[:late_finish_time].round(1)} min
+          %td
+            - if logbook[:late_finish_dist] > 0
+              = "-#{logbook[:late_finish_dist].round(1)} M"
+          %td{:class => "res-plaque-dist"}= fmt_res_plaque_dist(logbook)
+        %tr{:class => "res-no-break-before"}
+          %td
+          %td{:colspan => 3}
+            %span{:class => "res-boat-type"}= team.boat_type_name
+          -# FIXME: print sail number?  more noise than signal?
+          -#  = team.boat_sail_number
+          - if notes_len > 0
+            %td{:colspan => 1}
+            %td{:colspan => 3, :class => "res-note"} #{logbook[:notes][0]}
+        - if notes_len > 1
+          - for note in logbook[:notes][1..notes_len-1]
+            %tr{:class => "res-no-break-before"}
+              %td{:colspan => 5}
+              %td{:colspan => 3, :class => "res-note"}= note
+        - for crew_member in team.crew_members.order(skipper: :desc)
+          %tr{:class => "res-no-break-before"}
+            %td
+            - if crew_member.skipper
+              %td{:colspan => 7, :class => "res-crew-role"}= "Skeppare: #{crew_member.person.sname}"
+            - else
+              %td{:colspan => 7, :class => "res-crew-role"}= "Gast: #{crew_member.person.sname}"
+
+        %tr{:class => "res-no-break-before"}
+          %td{:colspan => 2}
+          %td{:colspan => 5, :class => "res-route"}!= logbook[:route]
+        - route_notes_len = logbook[:route_notes].length
+        - if route_notes_len > 0
+          - for route_note in logbook[:route_notes]
+            %tr{:class => "res-no-break-before"}
+            %td{:colspan => 2}
+            %td{:colspan => 6, :class => "res-route"}!= route_note

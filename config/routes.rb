@@ -67,6 +67,7 @@ Rails.application.routes.draw do
     member do
       get 'start_list'
       get 'email_list'
+      get 'result'
     end
   end
 

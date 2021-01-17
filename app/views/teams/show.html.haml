@@ -276,7 +276,7 @@
         - if current_user
           = link_to 'Registrera/ändra loggbok', logbook_link(@team)
 
-    -logbook = get_logbook(@team, @logs)
+    -logbook = @team.get_logbook(@logs)
     -unless logbook[:entries].blank?
       %table#giona-logs.table.table-striped.table-bordered.table-hover{:width => "100%"}
         %thead
@@ -324,7 +324,7 @@
                   %br
               - if e[:leg_status] == :too_many_legs
                 %em
-                  Sträckan #{e[:prev_point]}-#{log.point} har seglats mer än 2 gånger.
+                  Sträckan mellan #{e[:prev_point]} och #{log.point} har seglats mer än 2 gånger.
                   %br
                   Sträckan räknas därför inte. Se §7.5, §13.1.2 i RR-2018.
                   %br

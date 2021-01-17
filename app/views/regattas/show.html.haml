@@ -43,6 +43,12 @@
       %i.far.fa-file-alt(aria-hidden='true')
       = link_to 'Startlista (direkt uppdaterad av deltagarna)', start_list_regatta_path(@regatta)
 
+      -# FIXME: only show link when we have a result, OR has_assistant_rights?
+    %p
+      %i.far.fa-file-alt(aria-hidden='true')
+      = link_to 'Resultat', result_regatta_path(@regatta)
+
+
     - if has_assistant_rights?
       %p
         %i.far.fa-file-alt(aria-hidden='true')
