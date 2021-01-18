@@ -4,11 +4,11 @@ class RegattasController < ApplicationController
   has_scope :is_active, :type => :boolean, allow_blank: true
   has_scope :has_race, :from_organizer
 
-  before_action :authenticate_user!, :except => [:show, :start_list, :index]
-  before_action :authorized?, :except => [:show, :start_list, :index, :email_list]
+  before_action :authenticate_user!, :except => [:show, :start_list, :result, :index]
+  before_action :authorized?, :except => [:show, :start_list, :result, :index, :email_list]
   before_action :authorized_assistant?, :only => [:email_list]
 
-  before_action :set_regatta, only: [:show, :start_list, :email_list, :edit, :update, :destroy]
+  before_action :set_regatta, only: [:show, :start_list, :result, :email_list, :edit, :update, :destroy]
 
   # GET /regattas
   # GET /regattas.json
@@ -36,6 +36,11 @@ class RegattasController < ApplicationController
 
   def start_list
     render 'start_list'
+  end
+
+  def result
+    @rs = @regatta.get_races_result
+    render 'result'
   end
 
   def email_list

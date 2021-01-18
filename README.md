@@ -3,19 +3,49 @@
 =======
 # giona
 
-Version 1.11.1
+Version 1.12.0
 
 =======
 
 Development environment:
 https://railsbox.io/boxes/8a394717f6ed
 
+# Ubuntu
+
+install postgres
+
+create unix user giona w/o password:
+`$ adduser --disabled-password giona`
+
+edit `pg_hba.conf` with:
+```
+-local   all             all                                     peer
++local   all             all                                     md5
+```
+
+restart postgressql server
+
+create postgres user giona:
+`$ createuser -d -s -P -e giona`
+(use password giona)
+
+
+# Create Database
+
 createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona_development
+
 
 # Populate
 rake db:migrate
-# DO: Create first user
-rake batch:admin                    # Set admin rights
+rake batch:agreement                # At least one end user agreement must exist.
+
+start server:
+bin/rails server
+
+go to: http://127.0.0.1:3000 and register a user
+
+rake batch:admin                    # Set admin rights on this user
+
 rake batch:add_nobody               # User with no specific permissions
 
 rake scrape:srs:keelboats
@@ -27,10 +57,12 @@ rake import:srs:dingies             # First, manually copy from pdf and paste in
 
 rake batch:pod:organizers
 rake import:pod:terrain
-# DO: Approve/publish PoD/terrain
+
+bin/rails server
+go to: http://127.0.0.1:3000/terrains and Approve/publish PoD/terrain
+
 rake import:pod:default_starts
 
-rake batch:agreement                # At least one end user agreement must exist.
 
 # Set environment variable DEFAULT_URL='whatever.domain'
 # Defaults to 'segla.24-timmars.nu'

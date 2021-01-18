@@ -134,3 +134,10 @@ run:
 
 Ensure that the result is what you want, and rerun w/o the "dryrun"
 parameter.
+
+
+# FIXME - Result
+
+(wkhtmltopdf http://localhost:3000/regattas/1/result r1.pdf)
+weasyprint http://localhost:3000/regattas/47/result r2.pdf
+weasyprint http://localhost:3000/regattas/34/result r3.pdf
