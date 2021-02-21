@@ -351,7 +351,7 @@
                 - if log.log_type == 'retire' && logbook[:state] == :dnf
                   Avbryter seglingen (DNF).
                   %br
-                - if log.log_type == 'protest'
+                - if log.log_type == 'protest' && log_data['protest']
                   - if log_data['protest']['team']
                     - suspected_team = log.team.race.regatta.teams.find_by( id: log_data['protest']['team'])
                   - else
