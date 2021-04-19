@@ -84,6 +84,9 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  # disable SQL debugging
+  config.active_record.logger = nil
+
   # Link in mails to application.
   if ENV["DEFAULT_URL"].present?
     config.action_mailer.default_url_options = { host: ENV["DEFAULT_URL"], protocol: 'https' }
