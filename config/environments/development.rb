@@ -62,4 +62,7 @@ Rails.application.configure do
 
   config.web_console.whitelisted_ips = [ '192.168.0.0/16', '10.0.0.0/8' ]
 
+  # disable SQL debugging
+  config.active_record.logger = nil
+
 end
