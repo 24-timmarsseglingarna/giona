@@ -19,7 +19,7 @@
         - for regatta in @regattas
           - if regatta.organizer_id == organizer.id
             - regattas << regatta
-        - for regatta in regattas.sort_by{|r| r.races.order(:start_from).first.start_from}.reverse
+        - for regatta in regattas.sort_by{|r| r.races.order(:start_from).reverse.first.start_from}
           %li
             %i.fa.fa-trophy(aria-hidden='true')
             = regatta.name
