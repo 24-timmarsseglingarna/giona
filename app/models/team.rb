@@ -476,12 +476,18 @@ class Team < ApplicationRecord
     if finish_time > 0
       early_start_dist = (2 * sailed_dist * early_start_time) /
                          (team.race.period * 60)
+      # this value is presented to the user with 1 decimal; use the rounded
+      # value in subsequent calculations
+      early_start_dist = early_start_dist.round(1)
     end
 
     late_finish_dist = 0
     if late_finish_time > 0
       late_finish_dist = (2 * sailed_dist * late_finish_time) /
                          (team.race.period * 60)
+      # this value is presented to the user with 1 decimal; use the rounded
+      # value in subsequent calculations
+      late_finish_dist = late_finish_dist.round(1)
     end
 
     average_speed = 0
