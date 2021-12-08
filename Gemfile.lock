@@ -317,7 +317,7 @@ DEPENDENCIES
   web-console
 
 RUBY VERSION
-   ruby 2.7.4
+   ruby 2.7.5
 
 BUNDLED WITH
    1.17.1
