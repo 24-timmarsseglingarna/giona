@@ -14,7 +14,7 @@ namespace :scrape do
     task :certificates, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = "https://matbrev.svensksegling.se/Home/ApprovedList"
-      doc = Nokogiri::HTML(open(srs_table_url))
+      doc = Nokogiri::HTML(URI.open(srs_table_url))
       entries = doc.xpath('//fieldset//tr')
       first_row = true
       source = "SRS-mätbrev #{DateTime.now.year.to_s}"
@@ -49,7 +49,7 @@ namespace :scrape do
     task :keelboats, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = "https://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
-      doc = Nokogiri::HTML(open(srs_table_url))
+      doc = Nokogiri::HTML(URI.open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
       source = "SRS enskrov #{DateTime.now.year.to_s}"
@@ -77,7 +77,7 @@ namespace :scrape do
     task :multihulls, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = "https://matbrev.svensksegling.se/home/srsflerskrovlist"
-      doc = Nokogiri::HTML(open(srs_table_url))
+      doc = Nokogiri::HTML(URI.open(srs_table_url))
       entries = doc.xpath('//tr')
       first_row = true
       source = "SRS flerskrov #{DateTime.now.year.to_s}"
@@ -107,7 +107,7 @@ namespace :import do
       dryrun = not(args[:dryrun].nil?)
       srs_table_url = "https://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
       source = "SRS-mätbrev flerskrov #{DateTime.now.year.to_s}"
-      file = open(srs_table_url)
+      file = URI.open(srs_table_url)
       json = JSON.parse file.first
       handicaps = Array.new
       for boat in json['Data']
@@ -159,7 +159,7 @@ namespace :import do
       dryrun = not(args[:dryrun].nil?)
       sxk_table_url = 'https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php'
       source = "SXK-mätbrev"
-      doc = Nokogiri::XML(open(sxk_table_url), nil, 'utf-8')
+      doc = Nokogiri::XML(URI.open(sxk_table_url), nil, 'utf-8')
       certificates = doc.xpath("/SXKbrev/brev")
       handicaps = Array.new
       certificates.each do |cert|
@@ -218,7 +218,7 @@ namespace :import do
   namespace :pod do
     task :terrain => :environment do
       print "Getting PoD from server..."
-      doc = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
+      doc = Nokogiri::XML(URI.open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
                            nil, 'utf-8')
       puts " ok"
 
@@ -336,7 +336,7 @@ namespace :import do
 
     task :default_starts => :environment do
       print "Getting PoD from server..."
-      doc = Nokogiri::XML(open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
+      doc = Nokogiri::XML(URI.open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
                            nil, 'ISO-8859-1')
       puts " ok"
 
@@ -656,7 +656,7 @@ namespace :batch do
     dryrun = not(args[:dryrun].nil?)
     sxk_table_url = 'https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php'
     source = "SXK-mätbrev"
-    doc = Nokogiri::XML(open(sxk_table_url), nil, 'utf-8')
+    doc = Nokogiri::XML(URI.open(sxk_table_url), nil, 'utf-8')
     certificates = doc.xpath("/SXKbrev/brev")
     handicaps = Array.new
     certificates.each do |cert|
