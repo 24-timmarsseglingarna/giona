@@ -235,15 +235,6 @@ class Team < ApplicationRecord
     end
   end
 
-  def has_finished_according_to_logbook?
-    out = false
-    for log in self.logs
-      if JSON.parse(log.data)['finish'].present?
-        out = (JSON.parse(log.data)['finish'] == 'true')
-      end
-    end
-  end
-
   def set_sailing_state!
     # states:
     # not_started
@@ -258,7 +249,7 @@ class Team < ApplicationRecord
     for log in self.logs.where(deleted: false)
       jsondata = JSON.parse(log.data)
       if jsondata['finish'].present?
-        if jsondata['finish'] == 'true'
+        unless jsondata['finish'].blank?
           has_finished = true
         end
       end
