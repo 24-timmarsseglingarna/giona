@@ -58,4 +58,11 @@ class TeamMailer < ApplicationMailer
     mail(to: officers, subject: "Det valda handikappet i #{team.race.regatta.name} har gått ut." )
   end
 
+  def logbook_signed_officer_email(team)
+    officers = team.race.regatta.email_to.split(',')
+    @team = team
+    # mail from the default address; segla@24-timmars.nu
+    mail(to: officers, subject: "Det valda handikappet i #{team.race.regatta.name} har gått ut." )
+  end
+
 end
