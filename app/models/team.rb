@@ -278,7 +278,7 @@ class Team < ApplicationRecord
     else
       self.not_started!
     end
-    if not self.is_signed && is_signed
+    if is_signed && (not self.is_signed)
       self.signed!
       TeamMailer.logbook_signed_officer_email(self).deliver
     end
