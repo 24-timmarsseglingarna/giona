@@ -1,7 +1,19 @@
-- unless params[:is_archived]
-  %h1 Dina aktuella deltagaranmälningar
+- if not params[:has_person]
+  - unless params[:is_archived]
+    %h1 Dina aktuella deltagaranmälningar
+  - else
+    %h1 Dina arkiverade seglingar
+- elsif not @person.blank?
+  - unless params[:is_archived]
+    %h1 Aktuella deltagaranmälningar för #{@person.name}
+  - else
+    %h1 Arkiverade seglingar för #{@person.name}
 - else
-  %h1 Dina arkiverade seglingar
+  - unless params[:is_archived]
+    %h1 Aktuella deltagaranmälningar
+  - else
+    %h1 Arkiverade seglingar
+
 
 %p
 - if current_user
@@ -36,6 +48,13 @@
           %br
           Status på anmälan:
           = team.state_to_s
+  - elsif params[:has_person]
+    - if @person.blank?
+      %p
+        Deltagaren finns inte
+    - else
+      %p
+        Hittade inga anmälningar
   - else
     %p
     - unless params[:is_archived]
