@@ -92,10 +92,14 @@
       %p
         %br
       =link_to 'Ändra', edit_regatta_path(@regatta), class: "btn btn-primary"
-
       %p
         %br
+      - if @regatta.active
+        %p=link_to 'Arkivera loggböcker',
+        regattas_archive_path(:id => @regatta.id), :method => :post, :data => { :confirm => "Vill du arkivera alla loggböcker i #{@regatta.name}?" }
+
       %p= link_to 'Radera', @regatta, :method => :delete, :data => { :confirm => "Vill du radera #{@regatta.name}?" }
+      %br
 
       .legend Lägg till en segling:
       %ul
