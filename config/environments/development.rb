@@ -65,4 +65,6 @@ Rails.application.configure do
   # disable SQL debugging
   config.active_record.logger = nil
 
+  config.web_logbook_url = 'http://4668.se/24h/devel'
+
 end

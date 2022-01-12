@@ -30,7 +30,19 @@ class TeamsController < ApplicationController
   def index
     @teams = nil
     if current_user
-      if current_user.person
+      if params[:has_person].present?
+        @person = nil
+        if has_assistant_rights?
+          @person = Person.find_by(id: params[:has_person])
+          if not @person.blank?
+            unless params[:is_archived]
+              @teams = @person.teams.is_archived(false).order created_at: :desc
+            else
+              @teams = @person.teams.is_archived(true).order created_at: :desc
+            end
+          end
+        end
+      elsif current_user.person
         if current_user.person.teams.present?
           unless params[:is_archived]
             @teams = current_user.person.teams.is_archived(false).order created_at: :desc

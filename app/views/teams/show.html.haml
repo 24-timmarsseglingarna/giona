@@ -61,6 +61,14 @@
           %p Du kan ändra alla uppgifter i anmälan men om du byter skeppare, båt eller handikapp så behöver du uttryckligen skicka in den igen.
           %p För att din anmälan ska vara giltig ska du betala in startavgiften. Se arrangörens webbsida och seglingshandlingar hur du betalar den.
           %p Om du får förhinder och inte startar eller avbryter seglingen så ska du anmäla det till arrangören.
+        - elsif @team.signed?
+          Signerad
+        - elsif @team.reviewed?
+          Granskad
+        - elsif @team.archived?
+          Arkiverad
+        - elsif @team.closed?
+          Stängd
 
         - if i_may_see_links_to( @team )
           %br

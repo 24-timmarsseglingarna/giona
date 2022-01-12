@@ -38,6 +38,12 @@
       - if authorized? || has_assistant_rights?
         = link_to 'Redigera', edit_person_path(@person), class: "btn btn-primary"
     %p
+      - if has_officer_rights?
+        = link_to 'Aktuella deltagaranmälningar', teams_path(:has_person => @person.id)
+    %p
+      - if has_officer_rights?
+        = link_to 'Arkiverade seglingar', teams_path(:is_archived => true, :has_person => @person.id)
+    %p
       - if has_admin_rights?
         = link_to 'Radera', @person, :method => :delete, :data => { :confirm => "Vill du plocka bort #{@person.name}?" }
     %p Bekräftade användaravtal:
