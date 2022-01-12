@@ -8,7 +8,7 @@ class RegattasController < ApplicationController
   before_action :authorized?, :except => [:show, :start_list, :result, :index, :email_list]
   before_action :authorized_assistant?, :only => [:email_list]
 
-  before_action :set_regatta, only: [:show, :start_list, :result, :email_list, :edit, :update, :destroy]
+  before_action :set_regatta, only: [:show, :start_list, :result, :email_list, :edit, :update, :destroy, :archive ]
 
   # GET /regattas
   # GET /regattas.json
@@ -102,6 +102,22 @@ class RegattasController < ApplicationController
     respond_to do |format|
       format.html { redirect_to regattas_url, notice: 'Regattan är raderad.' }
       format.json { head :no_content }
+    end
+  end
+
+  def archive
+    if @regatta.active
+      # 0: draft, 1: submitted, 2: approved, 3: signed, 4: reviewed, 5: archived, 6: closed
+      if not @regatta.teams.where.not(state: [0,4,5,6]).empty?
+        redirect_to @regatta, alert: 'Alla loggböcker måste vara granskade för att kunna arkiveras.'
+      else
+        for team in @regatta.teams.where(state: [0,4])
+          team.archived!
+        end
+        @regatta.active = false
+        @regatta.save!
+        redirect_to @regatta, notice: 'Regattan är arkiverad.'
+      end
     end
   end
 
