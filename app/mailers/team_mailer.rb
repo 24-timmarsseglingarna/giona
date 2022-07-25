@@ -62,7 +62,7 @@ class TeamMailer < ApplicationMailer
     officers = team.race.regatta.email_to.split(',')
     @team = team
     # mail from the default address; segla@24-timmars.nu
-    mail(to: officers, subject: "Det valda handikappet i #{team.race.regatta.name} har gått ut." )
+    mail(to: officers, subject: "En loggbok i #{team.race.regatta.name} har signerats." )
   end
 
 end
