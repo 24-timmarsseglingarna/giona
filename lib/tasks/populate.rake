@@ -158,7 +158,7 @@ namespace :import do
     task :certificates, [:dryrun] => :environment do |task, args|
       dryrun = not(args[:dryrun].nil?)
       #sxk_table_url = 'https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php'
-      sxk_table_url = 'https://voxaurora.se/PoD/SXK-tal/apiSXKtal.php'
+      sxk_table_url = 'https://24-timmars.se/SXK-tal/apiSXKtal.php'
       source = "SXK-mätbrev"
       doc = Nokogiri::XML(URI.open(sxk_table_url), nil, 'utf-8')
       certificates = doc.xpath("/SXKbrev/brev")
