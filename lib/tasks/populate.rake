@@ -219,8 +219,9 @@ namespace :import do
   namespace :pod do
     task :terrain => :environment do
       print "Getting PoD from server..."
-      doc = Nokogiri::XML(URI.open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
-                           nil, 'utf-8')
+      #pod_url = 'https://dev.24-timmars.nu/PoD/xmlapi_app.php'
+      pod_url = 'https://24-timmars.se/PoD/xmlapi_app.php'
+      doc = Nokogiri::XML(URI.open(pod_url), nil, 'utf-8')
       puts " ok"
 
       # points number 9000 and above are not real points; they are used to mark
