@@ -20,7 +20,7 @@ class TeamMailer < ApplicationMailer
     sender_with_name = %("#{team.race.regatta.name_from}" <#{team.race.regatta.email_from}>)
     officers = team.race.regatta.email_to.split(',')
     @team = team
-    mail(to: officers, from: skipper_with_name, subject: "Deltagaranmälan till #{team.race.regatta.name}" )
+    mail(to: officers, from: sender_with_name, subject: "Deltagaranmälan till #{team.race.regatta.name}" )
   end
 
   def added_crew_member_email(team, person)
