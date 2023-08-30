@@ -2,7 +2,7 @@
 module Api
   module V1
     class LogsController < ApiController
-      acts_as_token_authentication_handler_for User
+      acts_as_token_authentication_handler_for User, fallback: :none
       has_scope :has_team
       has_scope :from_team
       has_scope :from_regatta
