@@ -1,0 +1,37 @@
+wb = xlsx_package.workbook
+
+sheet_header = Hash.new
+sheet_header = [  'Förnamn',
+                  'Efternamn',
+                  'Födelsedatum',
+                  'Båtnamn',
+                  'Båttyp',
+                  'Seglad distans',
+                  'Plakettdistans']
+
+wb.add_worksheet(name: "Deltagare") do |sheet|
+  sheet.add_row sheet_header
+
+  for r in @rs
+    race = r[:race]
+    for logbook in r[:logbooks]
+      team = logbook[:team]
+      if logbook[:plaque_dist] > 0
+        for person in team.people
+          sheet.add_row [ person.first_name,
+                          person.last_name,
+                          if person.birthday.blank?
+                            ''
+                          else
+                            l(person.birthday, format: :day)
+                          end,
+                          team.boat_name,
+                          team.boat_type_name,
+                          logbook[:sailed_dist].round(1),
+                          logbook[:plaque_dist].round(1)
+                          ]
+        end
+      end
+    end
+  end
+end
