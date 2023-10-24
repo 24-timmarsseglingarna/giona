@@ -733,6 +733,30 @@ namespace :batch do
     end
   end
 
+  task :strip_whitespace_people => :environment do
+    for p in Person.all
+      modified = false
+      if p.first_name.strip != p.first_name
+        puts "Strip '#{p.first_name}' #{p.last_name}"
+        p.first_name = p.first_name.strip
+        modified = true
+      end
+      if p.last_name.strip != p.last_name
+        puts "Strip #{p.first_name} '#{p.last_name}'"
+        p.last_name = p.last_name.strip
+        modified = true
+      end
+      if p.email.strip != p.email
+        puts "Strip '#{p.email}'"
+        p.email = p.email.strip
+        modified = true
+      end
+      if modified
+        p.save!
+      end
+    end
+  end
+
 end
 
 
