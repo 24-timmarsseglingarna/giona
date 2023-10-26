@@ -14,6 +14,9 @@ class Person < ApplicationRecord
   scope :has_team, ->(t_id) { joins(:teams).where("teams.id = ?", t_id) }
   scope :has_user, ->(u_id) { joins(:user).where("users.id = ?", u_id) }
 
+
+  before_validation :strip_whitespace
+
   acts_as_paranoid( :column => 'deleted_at', :column_type => 'time')
 
   validates_presence_of :first_name, :last_name, :country
@@ -25,10 +28,19 @@ class Person < ApplicationRecord
                         :zip,
                         :city, unless: Proc.new { |a| a.skip_validation? }
 
-  validates :phone, telephone_number: {country: proc{|record| record.country}}, unless: Proc.new { |a| a.skip_validation? }
+  ## This doesn't work properly - unclear which format to use, and no feedback
+  ## on error.
+#  validates :phone, telephone_number: {country: proc{|record| record.country}}, unless: Proc.new { |a| a.skip_validation? }
 
   after_initialize :set_defaults, unless: :persisted?
   # The set_defaults will only work if the object is new
+
+
+  def strip_whitespace
+    self.first_name = self.first_name.strip unless self.first_name.nil?
+    self.last_name = self.last_name.strip unless self.last_name.nil?
+    self.email = self.email.strip unless self.email.nil?
+  end
 
 
   def set_defaults
@@ -40,7 +52,7 @@ class Person < ApplicationRecord
   end
 
   def review!
-  	self.update_attribute(:review, true)
+    self.update_attribute(:review, true)
   end
 
   def name

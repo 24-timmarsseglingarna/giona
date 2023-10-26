@@ -56,8 +56,9 @@
       %p
         %i.fas.fa-file-excel(aria-hidden='true')
         = link_to "Anmälningsrapport (xlsx)", regatta_path(@regatta, format: "xlsx")
-
-
+      %p
+        %i.fas.fa-file-excel(aria-hidden='true')
+        = link_to "Resultat (xlsx)", result_regatta_path(@regatta, format: "xlsx")
 
     - if has_assistant_rights?
       .legend Version av Punkt- & distanstabell:
