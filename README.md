@@ -1,14 +1,10 @@
 # README
 
 =======
+
 # giona
 
 Version 1.14.2
-
-=======
-
-Development environment:
-https://railsbox.io/boxes/8a394717f6ed
 
 # Ubuntu
 
@@ -34,6 +30,41 @@ create postgres user giona:
 
 createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona_development
 
+
+# Install Ruby
+
+We're using a rather old version of ruby, and old versions of many
+packages.  Hence, we need to install that old ruby version locally.  I
+use `rbenv` for this.
+
+## Install `rbenv`
+
+See https://github.com/rbenv/rbenv
+
+For Ubuntu, I did:
+
+```shell
+git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+echo 'eval "$(~/.rbenv/bin/rbenv init - bash)"' >> ~/.bashrc
+```
+
+restart bash, then
+
+```shell
+# install our ruby version
+rbenv install 2.7.5
+```
+
+Then in giona's top directory do:
+
+```
+# use 2.7.5 for this project
+rbenv local 2.7.5
+# install the bundler we use
+gem install bundler:1.17.1
+# install all dependencies
+bundle install
+```
 
 # Populate
 rake db:migrate
