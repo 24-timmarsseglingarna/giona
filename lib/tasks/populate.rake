@@ -733,6 +733,86 @@ namespace :batch do
     end
   end
 
+  task :strip_whitespace_people => :environment do
+    for p in Person.all
+      modified = false
+      if p.first_name.strip != p.first_name
+        puts "Strip '#{p.first_name}' #{p.last_name}"
+        p.first_name = p.first_name.strip
+        modified = true
+      end
+      if p.last_name.strip != p.last_name
+        puts "Strip #{p.first_name} '#{p.last_name}'"
+        p.last_name = p.last_name.strip
+        modified = true
+      end
+      if p.email.strip != p.email
+        puts "Strip '#{p.email}'"
+        p.email = p.email.strip
+        modified = true
+      end
+      if modified
+        p.save!
+      end
+    end
+  end
+
+  task :destroy_zombie_people => :environment do
+    for person in Person.all
+      if CrewMember.find_by(person_id: person.id).blank? && person.user.nil?
+        puts "#{person.birthday},#{person.id},#{person.first_name},#{person.last_name},#{p}"
+        person.destroy!
+      end
+    end
+  end
+
+end
+
+namespace :query do
+  task :all_people => :environment do
+    for person in Person.all
+      puts "#{person.birthday},#{person.id},#{person.first_name},#{person.last_name},#{person.created_at}"
+    end
+  end
+
+  task :zombie_people => :environment do
+    for person in Person.all
+      if CrewMember.find_by(person_id: person.id).blank? && person.user.nil?
+        puts "#{person.birthday},#{person.id},#{person.first_name},#{person.last_name},#{p}"
+      end
+    end
+  end
+
+  task :duplicate_people => :environment do
+    for p in Person.all
+      for dp in Person.where("birthday = ? AND first_name = ? AND id != ?", p.birthday, p.first_name, p.id)
+        if p.user.nil? and not CrewMember.find_by(person_id: p.id).blank?
+          puts "#{p.id},#{p.first_name},#{p.last_name} does not have a user but result"
+        elsif not p.user.nil? and CrewMember.find_by(person_id: p.id).blank?
+          puts "#{p.id},#{p.first_name},#{p.last_name} does not have result but user #{p.user.id}"
+        else
+          puts "#{p.id},#{p.first_name},#{p.last_name},#{p.email} is duplicate of #{dp.id} #{dp.first_name},#{dp.last_name},#{dp.email}"
+        end
+      end
+    end
+  end
+
+  task :vk_people => :environment do
+    for p in Person.all
+      vk = false
+      other = false
+      for t in p.teams
+        if t.race.regatta.organizer_id == 1 and (
+            t.sailing_state == 'finished' or t.sailing_state == 'started')
+          vk = true
+        elsif t.sailing_state == 'finished' or t.sailing_state == 'started'
+          other = true
+        end
+      end
+      puts "#{p.birthday},#{p.id},#{p.first_name},#{p.last_name},#{vk},#{other}"
+    end
+  end
+
 end
 
 
