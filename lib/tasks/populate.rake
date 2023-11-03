@@ -336,7 +336,7 @@ namespace :import do
       end
     end
 
-    task :default_starts => :environment do
+    task :old_default_starts => :environment do
       print "Getting PoD from server..."
       doc = Nokogiri::XML(URI.open("https://dev.24-timmars.nu/PoD/xmlapi_app.php"),
                            nil, 'ISO-8859-1')
@@ -350,6 +350,34 @@ namespace :import do
           unless extid.blank?
             organizer.default_starts.destroy_all
             doc.xpath("/PoD/kretsar/krets[name='#{extid}']/startpoints/number").
+              each do |number|
+              point_number = number.text.to_i
+              unless Point.where("number = ?", point_number).blank?
+                default_start = DefaultStart.find_or_create_by(
+                  organizer_id: organizer.id, number: point_number)
+                default_start.save!
+              end
+            end
+          end
+        end
+        puts " ok"
+      end
+    end
+
+    task :default_starts => :environment do
+      print "Getting PoD from server..."
+      doc = Nokogiri::XML(URI.open("https://24-timmars.se/PoD/xmlapi_app2.php"),
+                           nil, 'ISO-8859-1')
+      puts " ok"
+
+      print "Setting default start points..."
+      # set default starts
+      ActiveRecord::Base.transaction do
+        for organizer in Organizer.all
+          extid = organizer.external_id
+          unless extid.blank?
+            organizer.default_starts.destroy_all
+            doc.xpath("/PoD/startpoints/point[user='#{extid}']/number").
               each do |number|
               point_number = number.text.to_i
               unless Point.where("number = ?", point_number).blank?
