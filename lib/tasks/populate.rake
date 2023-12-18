@@ -668,7 +668,7 @@ namespace :batch do
   task :close_teams, [:dryrun] => :environment do |task, args|
     dryrun = not(args[:dryrun].nil?)
     for team in Team.is_archived(false).joins(race: :regatta).where("regattas.active = ?", false)
-      puts "Closing #{team.id}"
+      puts "Closing #{team.id} #{team.name} #{team.race.regatta.name}"
       team.closed! unless dryrun
     end
   end
