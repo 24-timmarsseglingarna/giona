@@ -4,7 +4,7 @@
 
 # giona
 
-Version 1.15.1
+Version 1.16.0
 
 # Ubuntu
 
@@ -17,7 +17,7 @@ edit `pg_hba.conf` with:
 ```
 -local   all             all                                     peer
 +local   all             all                                     md5
-```
+``` <!--  -->
 
 restart postgressql server
 
