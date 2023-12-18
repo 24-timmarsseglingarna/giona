@@ -112,12 +112,24 @@ class Team < ApplicationRecord
     new_skipper.save!
   end
 
-  def self.handicap_changed(handicap_id, user, dryrun=false)
+  def self.handicap_changed(handicap_id, new_id, user, dryrun=false)
     for t in Team.is_archived(false)
                .where("handicap_id = ?", handicap_id)
                .joins(race: :regatta).where("regattas.active = ?", true)
-      puts "Team #{t.id} uses changed handicap and needs to pick new handicap"
-      t.do_handicap_changed(user) unless dryrun
+      if new_id == -1
+        puts "Team #{t.id} uses expired handicap and needs to pick new handicap"
+        t.do_handicap_changed(user) unless dryrun
+      else
+        puts "The handicap used by Team #{t.id} has changed"
+        if not dryrun
+          Note.create(team_id: t.id,
+                      user: user,
+                      description: "Det valda handikappet (#{handicap_id}) har ändrats, det nya är #{new_id}")
+          t.handicap_id = new_id
+          # the handicap_type is guaranteed to be the same
+          t.save!
+        end
+      end
     end
   end
 

@@ -17,7 +17,9 @@ namespace :testdata do
     handicaps << h
     source = "SRS"
     srs_table_url = "urn:test"
-    Handicap.import('SrsCertificate', source, srs_table_url, handicaps, dryrun)
+    do_expire = false
+    Handicap.import('SrsCertificate', source, srs_table_url,
+                    handicaps, do_expire, dryrun)
 
   end
 

@@ -96,7 +96,7 @@
       %p
         %br
       - if @regatta.active
-        %p=link_to 'Arkivera loggböcker',
+        %p=link_to 'Arkivera regattan',
         regattas_archive_path(:id => @regatta.id), :method => :post, :data => { :confirm => "Vill du arkivera alla loggböcker i #{@regatta.name}?" }
 
       %p= link_to 'Radera', @regatta, :method => :delete, :data => { :confirm => "Vill du radera #{@regatta.name}?" }

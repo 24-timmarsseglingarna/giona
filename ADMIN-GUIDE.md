@@ -77,10 +77,11 @@ Giona never changes existing handicaps in the database during import,
 but instead existing handicaps are marked as expired, and new
 handicaps are created.
 
-This means that teams that have selected a handicap that is later
-changed need to update their entry in Giona.  When handicaps are
-imported, Giona detects this situation and sends emails to the
-skippers.
+If a team has selected a handicap that is later changed, Giona
+automatically updates the team to the new handicap, if a new handicap
+is found.  Otherwise, if no new handicap is found, or the current
+handicap is expired, the team needs to update their entry in Giona.
+In this situation Giona sends emails to the skippers.
 
 NOTE: Before importing handicaps, ensure that no old regattas are
 still active in the system.  If this happens, handicaps may be changed
@@ -108,26 +109,41 @@ Importing the SRS tables (srs:keelboats and srs:multihullls) can be
 done as soon as the tables are published.  Running the same command
 again is a no-op.
 
-When the SRS certificates are imported, all existing SRS certificates
-of that type that no longer exists are marked as expired.  This means
-that if the SRS certificates are imported early, lets say in March,
-not all certificates have been renewed yet.  The result is that the
-few certificates that have been renewed are imported, and all the
-existing ones are marked as expired and can no longer be selected by
-teams.
+Importing SRS certificates can also be done at any time, but note that
+if the SRS certificates are imported early, lets say in March, not all
+certificates have been renewed yet.  Pre 2024, Giona used to mark all
+non-renewed certificates as expired, but that doesn't happen anymore,
+in order to get a better user experience (avoid having to go back and
+pick a new handicap).
 
-In order to solve this, we should have a cron job that imports the SRS
-certificates every night, starting in March perhaps.
+At some point we need to mark old non-renewed SRS certificates as
+expired though.  This is done with the calls
+
+    heroku run --app <APP> rake scrape:srs:certificates[expire]
+    heroku run --app <APP> rake import:srs:multihull_certificates[expire]
+
+dryrun can also be used:
+
+    heroku run --app <APP> rake scrape:srs:certificates[expire,dryrun]
+
+Run this command a couple of weeks before the first regatta (mid May).
+
+
+TODO: we should have a cron job that imports the SRS certificates
+every night, starting in March perhaps (we have this in staging).
 
 ## Temporary procedure for team lifecycle
 
-Currently, the full review process is not yet implemented in Giona.
-Until it is done, we must run a special task that closes all teams in
+Currently, not all organizers use the full review procees in Giona.
+The correct way is to review all teams, then mark the regatta as
+"archived".
+
+For other organizers, we must run a special task that closes all teams in
 all archived regattas as "incomplete".  Their data can not be trusted
 (e.g., they might not have a log book, or incomplete log book.)
 
 After a regatta is finished, ensure that the admin marks it as
-"archived" (by unchecking the "is open" checkbox).  When this is done,
+"closed" (by unchecking the "is open" checkbox).  When this is done,
 run:
 
     heroku run --app <APP> rake batch:close_teams[dryrun]

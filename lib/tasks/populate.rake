@@ -11,8 +11,9 @@ namespace :scrape do
   namespace :srs do
     # rake scrape:srs:certificates
     # rake scrape:srs:certificates[dryrun]
-    task :certificates, [:dryrun] => :environment do |task, args|
-      dryrun = not(args[:dryrun].nil?)
+    task :certificates => :environment do |task, args|
+      dryrun = args.extras.include? 'dryrun'
+      do_expire = args.extras.include? 'expire'
       srs_table_url = "https://matbrev.svensksegling.se/Home/ApprovedList"
       doc = Nokogiri::HTML(URI.open(srs_table_url))
       entries = doc.xpath('//fieldset//tr')
@@ -40,14 +41,14 @@ namespace :scrape do
       ActiveRecord::Base.transaction do
         user = User.find_by!(email: 'nobody@24-timmars.nu')
         Handicap.import('SrsCertificate', source, srs_table_url,
-                        handicaps, user, dryrun)
+                        handicaps, user, do_expire, dryrun)
       end
     end
   end
 
   namespace :srs do
-    task :keelboats, [:dryrun] => :environment do |task, args|
-      dryrun = not(args[:dryrun].nil?)
+    task :keelboats => :environment do |task, args|
+      dryrun = args.extras.include? 'dryrun'
       srs_table_url = "https://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
       doc = Nokogiri::HTML(URI.open(srs_table_url))
       entries = doc.xpath('//tr')
@@ -69,13 +70,14 @@ namespace :scrape do
       end
       ActiveRecord::Base.transaction do
         user = User.find_by!(email: 'nobody@24-timmars.nu')
+        do_expire = true
         Handicap.import('SrsKeelboat', source, srs_table_url,
-                        handicaps, user, dryrun)
+                        handicaps, user, do_expire, dryrun)
       end
     end
 
-    task :multihulls, [:dryrun] => :environment do |task, args|
-      dryrun = not(args[:dryrun].nil?)
+    task :multihulls => :environment do |task, args|
+      dryrun = args.extras.include? 'dryrun'
       srs_table_url = "https://matbrev.svensksegling.se/home/srsflerskrovlist"
       doc = Nokogiri::HTML(URI.open(srs_table_url))
       entries = doc.xpath('//tr')
@@ -94,8 +96,9 @@ namespace :scrape do
       end
       ActiveRecord::Base.transaction do
         user = User.find_by!(email: 'nobody@24-timmars.nu')
+        do_expire = true
         Handicap.import('SrsMultihull', source, srs_table_url,
-                        handicaps, user, dryrun)
+                        handicaps, user, do_expire, dryrun)
       end
     end
   end
@@ -103,8 +106,9 @@ end
 
 namespace :import do
   namespace :srs do
-    task :multihull_certificates, [:dryrun] => :environment do |task, args|
-      dryrun = not(args[:dryrun].nil?)
+    task :multihull_certificates => :environment do |task, args|
+      dryrun = args.extras.include? 'dryrun'
+      do_expire = args.extras.include? 'expire'
       srs_table_url = "https://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
       source = "SRS-mätbrev flerskrov #{DateTime.now.year.to_s}"
       file = URI.open(srs_table_url)
@@ -127,7 +131,7 @@ namespace :import do
       ActiveRecord::Base.transaction do
         user = User.find_by!(email: 'nobody@24-timmars.nu')
         Handicap.import('SrsMultihullCertificate', source, srs_table_url,
-                        handicaps, user, dryrun)
+                        handicaps, user, do_expire, dryrun)
       end
     end
 
@@ -135,8 +139,8 @@ namespace :import do
     #   this task needs a file 'srs-jolle.csv' with a header row
     #   and each row on the form:
     #     <boat-type-name>;<srs>
-    task :dingies, [:dryrun] => :environment do |task, args|
-      dryrun = not(args[:dryrun].nil?)
+    task :dingies => :environment do |task, args|
+      dryrun = args.extras.include? 'dryrun'
       srs_table_url = 'http://www.svensksegling.se/globalassets/svenska-seglarforbundet/for-batagare/srs/srs-tabellen-for-jollar.pdf'
       source = "SRS jolle #{DateTime.now.year.to_s}"
       handicaps = Array.new
@@ -148,15 +152,16 @@ namespace :import do
       end
       ActiveRecord::Base.transaction do
         user = User.find_by!(email: 'nobody@24-timmars.nu')
+        do_expire = true
         Handicap.import('SrsDingy', source, srs_table_url,
-                        handicaps, user, dryrun)
+                        handicaps, user, do_expire, dryrun)
       end
     end
   end
 
   namespace :sxk do
-    task :certificates, [:dryrun] => :environment do |task, args|
-      dryrun = not(args[:dryrun].nil?)
+    task :certificates => :environment do |task, args|
+      dryrun = args.extras.include? 'dryrun'
       #sxk_table_url = 'https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php'
       sxk_table_url = 'https://24-timmars.se/SXK-tal/apiSXKtal.php'
       source = "SXK-mätbrev"
@@ -208,9 +213,9 @@ namespace :import do
         handicaps << h
       end
       ActiveRecord::Base.transaction do
-        user = User.find_by!(email: 'nobody@24-timmars.nu')
+        do_expire = true
         Handicap.import('SxkCertificate', source, sxk_table_url,
-                        handicaps, user, dryrun)
+                        handicaps, user, do_expire, dryrun)
       end
     end
 
@@ -668,7 +673,7 @@ namespace :batch do
   task :close_teams, [:dryrun] => :environment do |task, args|
     dryrun = not(args[:dryrun].nil?)
     for team in Team.is_archived(false).joins(race: :regatta).where("regattas.active = ?", false)
-      puts "Closing #{team.id}"
+      puts "Closing #{team.id} #{team.name} #{team.race.regatta.name}"
       team.closed! unless dryrun
     end
   end
