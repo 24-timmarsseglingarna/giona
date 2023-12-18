@@ -134,13 +134,16 @@ every night, starting in March perhaps (we have this in staging).
 
 ## Temporary procedure for team lifecycle
 
-Currently, the full review process is not yet implemented in Giona.
-Until it is done, we must run a special task that closes all teams in
+Currently, not all organizers use the full review procees in Giona.
+The correct way is to review all teams, then mark the regatta as
+"archived".
+
+For other organizers, we must run a special task that closes all teams in
 all archived regattas as "incomplete".  Their data can not be trusted
 (e.g., they might not have a log book, or incomplete log book.)
 
 After a regatta is finished, ensure that the admin marks it as
-"archived" (by unchecking the "is open" checkbox).  When this is done,
+"closed" (by unchecking the "is open" checkbox).  When this is done,
 run:
 
     heroku run --app <APP> rake batch:close_teams[dryrun]

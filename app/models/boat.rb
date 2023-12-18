@@ -1,5 +1,5 @@
 class Boat < ApplicationRecord
-  has_many :teams, dependent: :destroy
+  has_many :teams
   default_scope { order 'name, boat_type_name' }
 
   # scope :from_boat_class, ->(b_id) {joins(:boat_class).where("boat_classes.id = ?", b_id) } #TODO
