@@ -83,12 +83,17 @@ class Handicap < ApplicationRecord
     types
   end
 
-  def self.import(type, source, external_system, handicaps, user, dryrun=false)
+  def self.import(type, source, external_system, handicaps, user,
+                  do_expire, dryrun)
     yesterday = DateTime.now.in_time_zone.end_of_day - 1.day
-    # keep track of all active handicaps
-    cur_handicaps = Hash.new
-    for h in Handicap.active.where("type = ?", type)
-      cur_handicaps[h.id] = true
+
+    if do_expire
+      # keep track of all active handicaps of this type, so that we can
+      # expire the ones that no longer exist
+      cur_handicaps = Hash.new
+      for h in Handicap.active.where("type = ?", type)
+        cur_handicaps[h.id] = true
+      end
     end
     isCert = (type == 'SrsCertificate' ||
               type == 'SrsMultihullCertificate' ||
@@ -115,31 +120,13 @@ class Handicap < ApplicationRecord
       has_changed = (not is_new and
                      (cur.sxk != sxk or (not srs.nil? and cur.srs != srs)))
 
-      cur_handicaps.delete(cur.id) unless cur.nil?
+      if do_expire
+        cur_handicaps.delete(cur.id) unless cur.nil?
+      end
 
       if is_new and is_expired
         # skip expired handicaps that we don't have as current
         next
-      end
-
-      if not(is_new) and (has_changed or is_expired)
-        # we found an existing handicap that has a new sxk rating, or
-        # has expired.
-        # we need to mark it as expired, and check if there are any
-        # active teams that use this handicap.  these teams need to set
-        # a new handicap.
-        if has_changed
-          puts "Changed rating to #{sxk}: #{cur.description} (#{cur.id})"
-        else
-          puts "Expired handicap: #{cur.description} (#{cur.id})"
-        end
-        Team.handicap_changed(cur.id, user, dryrun)
-        if not is_expired
-          cur.expired_at = yesterday
-        else
-          cur.expired_at = h[:expired_at]
-        end
-        cur.save! unless dryrun
       end
 
       # safety check
@@ -155,6 +142,7 @@ class Handicap < ApplicationRecord
 
       # we need to create a new handicap if this is new and not expired,
       # or if this is a changed existing and not expired.
+      newid = -1
       if (is_new or has_changed) and not(is_expired)
         case type
         when 'SrsKeelboat'
@@ -182,15 +170,40 @@ class Handicap < ApplicationRecord
         newh.expired_at = h[:expired_at]
         puts "Add handicap: #{newh.description}"
         newh.save! unless dryrun
+        newid = newh.id
       end
+
+      if not(is_new) and (has_changed or is_expired)
+        # we found an existing handicap that has a new sxk rating, or
+        # has expired.
+        # we need to mark it as expired, and check if there are any
+        # active teams that use this handicap.  these teams need to set
+        # a new handicap.
+        if has_changed
+          puts "Changed rating to #{sxk}: #{cur.description} (#{cur.id})"
+        else
+          puts "Expired handicap: #{cur.description} (#{cur.id})"
+        end
+        Team.handicap_changed(cur.id, newid, user, dryrun)
+        if not is_expired
+          cur.expired_at = yesterday
+        else
+          cur.expired_at = h[:expired_at]
+        end
+        cur.save! unless dryrun
+      end
+
     end
+
     # cur_handicaps now contains handicaps that need to be expired
-    for cur_id in cur_handicaps
-      cur = Handicap.find(cur_id[0])
-      puts "Remove: handicap #{cur.description} (#{cur.id})"
-      Team.handicap_changed(cur.id, user, dryrun)
-      cur.expired_at = yesterday
-      cur.save! unless dryrun
+    if do_expire
+      for cur_id in cur_handicaps
+        cur = Handicap.find(cur_id[0])
+        puts "Remove: handicap #{cur.description} (#{cur.id})"
+        Team.handicap_changed(cur.id, -1, user, dryrun)
+        cur.expired_at = yesterday
+        cur.save! unless dryrun
+      end
     end
   end
 
