@@ -213,6 +213,7 @@ namespace :import do
         handicaps << h
       end
       ActiveRecord::Base.transaction do
+        user = User.find_by!(email: 'nobody@24-timmars.nu')
         do_expire = true
         Handicap.import('SxkCertificate', source, sxk_table_url,
                         handicaps, user, do_expire, dryrun)
