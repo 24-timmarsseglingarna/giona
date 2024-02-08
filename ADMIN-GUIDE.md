@@ -1,5 +1,9 @@
 # Admin Guide for Giona
 
+## Heroku apps
+
+giona, giona-stage
+
 ## Importing the PoD
 
 The PoD is defined in a separate database.  It needs to be imported
