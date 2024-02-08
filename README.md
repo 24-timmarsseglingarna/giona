@@ -4,7 +4,7 @@
 
 # giona
 
-Version 1.16.0
+Version 1.16.1
 
 # Ubuntu
 
