@@ -1,5 +1,11 @@
 <h2><%= t('.forgot_your_password') %></h2>
 
+<p>
+  Om du har ett konto sedan tidigare men inte kommer ihåg vilken
+  epostadress du använt, eller om du inte har tillgång till den
+  epostadressen du använt, kontakta info@24-timmars.nu.
+</p>
+
 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
   <%= devise_error_messages! %>
 
@@ -12,11 +18,5 @@
     <%= f.submit t('.send_me_reset_password_instructions') %>
   </div>
 <% end %>
-
-<p>
-  Om du har ett konto sedan tidigare men inte kommer ihåg vilken
-  epostadress du använt, eller om du inte har tillgång till den
-  epostadressen du använt, kontakta info@24-timmars.nu.
-</p>
 
 <%= render "devise/shared/links" %>
