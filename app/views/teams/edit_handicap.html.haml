@@ -38,7 +38,14 @@
           = link_to 'Tillbaka', team_path(@team)
 
       - elsif params[:htype].present?
-        %p #{params[:htype]}
+        %hr
+        - if params[:htype] == 'SxkCertificate'
+          %p Välj din båt i listan nedan.  Om din båt inte finns med i listan, men du har fått ett utfärdat SXK-mätbrev, så kan det dröja upp till ett dygn innan båten dyker upp.
+        - elsif params[:htype] == 'SrsCertificate' || params[:htype] == 'SrsMultihullCertificate'
+          %p Välj din båt i listan nedan.  Om din båt inte finns med i listan, men du har fått ett utfärdat SRS-mätbrev, så kan det dröja upp till ett dygn innan båten dyker upp.
+        - else
+          %p Välj din båtmodell i listan nedan.
+
         = semantic_form_for @team, url: { action: :update_handicap } do |f|
           = f.inputs do
             = hidden_field_tag 'step', 3
