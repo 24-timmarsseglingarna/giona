@@ -21,11 +21,11 @@ module Api
               @logs = apply_scopes(Log).all.order(time: :asc, id: :asc)
               render 'logs/index'
             else
-              @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false).order(time: :asc, id: :asc)
+              @logs = apply_scopes(Log).all.where(log_type: ['round','retire'], deleted: false).order(time: :asc, id: :asc)
               render 'logs/index_filtered'
             end
           else
-            @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false).order(time: :asc, id: :asc)
+            @logs = apply_scopes(Log).all.where(log_type: ['round','retire'], deleted: false).order(time: :asc, id: :asc)
           end
         else
           if user_signed_in? && has_officer_rights?
@@ -34,7 +34,7 @@ module Api
             render 'logs/index'
           else
             # others can (currently) view only type "round"
-            @logs = apply_scopes(Log).all.where(log_type: 'round', deleted: false).order(time: :asc, id: :asc)
+            @logs = apply_scopes(Log).all.where(log_type: ['round','retire'], deleted: false).order(time: :asc, id: :asc)
             render 'logs/index_filtered'
           end
         end
@@ -47,7 +47,7 @@ module Api
           if (team.people.include? current_user.person) || has_officer_rights?
             render 'logs/show'
           else
-            @logs = Log.where(log_type: 'round', deleted: false, id: params[:id])
+            @logs = Log.where(log_type: ['round','retire'], deleted: false, id: params[:id])
             respond_to do |format|
               if @logs.present?
                 log = @logs.take
@@ -58,7 +58,7 @@ module Api
             end #/respond_to
           end
         else
-          @logs = Log.where(log_type: 'round', deleted: false, id: params[:id])
+          @logs = Log.where(log_type: ['round','retire'], deleted: false, id: params[:id])
           respond_to do |format|
             if @logs.present?
               log = @logs.take
