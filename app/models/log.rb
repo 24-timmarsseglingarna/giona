@@ -16,7 +16,8 @@ class Log < ApplicationRecord
   }
 
   scope :has_type, ->(t) {
-    where("logs.log_type = ?", t)
+    # use "," to OR types. "has_type=round,retire" for example
+    where(log_type:  t.split(","))
   }
 
   scope :not_client, ->(t) {
