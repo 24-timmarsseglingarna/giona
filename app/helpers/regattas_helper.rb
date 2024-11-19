@@ -25,4 +25,8 @@ module RegattasHelper
     end
   end
 
+  def tracker_link(regatta)
+    Rails.configuration.web_logbook_url + "?regatta=#{regatta.id}"
+  end
+
 end
