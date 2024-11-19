@@ -32,6 +32,9 @@
       %i.fas.fa-globe(aria-hidden='true')
       =link_to( @regatta.web_page, @regatta.web_page ) unless @regatta.web_page.blank?
 
+    %p
+      %i.fas.fa-globe(aria-hidden='true')
+      = link_to 'Leaderboard och tracker (uppdateras under seglingen)', tracker_link(@regatta)
 
     .legend Kontaktperson:
     %p

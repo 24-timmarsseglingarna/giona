@@ -59,7 +59,7 @@ bara ett fel om personen har seglat en regatta i en krets som vi fått
 rådata från.  Detta skulle kunna automatiseras.
 
 Om personen finns i maratontabellen, uppdatera personens
-`marathon_id`.
+`marathon_people_id`.`
 
 ## Uppdatera maratontabellen automatiskt
 
@@ -115,6 +115,15 @@ Man kan också tänka sig att vi inte sätter denna, utan mailar admin.
 
 Framförallt accenter, dubbelnamn med eller utan bindestreck etc.
 
+### Dubletter
+
+Det finns redan idag dubbla konton för en del personer.  De kanske har
+glömt sin gamla mailadress, eller inte längre kommer åt den.
+
+Det kan förstås också skapas dubbla konton i framtiden också!
+
+Å andra sidan gör det kanske inget - flera personer pekar på samma
+maraton-person.  Det är ok.
 
 
 # FRÅGOR TILL STEFAN
