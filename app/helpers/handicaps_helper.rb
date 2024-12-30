@@ -1,10 +1,10 @@
 module HandicapsHelper
 
   def handicap_table(type)
-    handicap_array  = {}
-    handicap_array['Välj'] = nil
+    handicap_array  = []
+    handicap_array << ['Välj', nil]
     for handicap in Handicap.where(type: type).active
-      handicap_array[handicap.short_description] = handicap.id
+      handicap_array << [handicap.short_description, handicap.id]
     end
     handicap_array
   end

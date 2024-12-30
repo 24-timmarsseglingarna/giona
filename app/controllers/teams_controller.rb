@@ -295,7 +295,7 @@ class TeamsController < ApplicationController
           redirect_to edit_handicap_team_path(@team, step: 1), alert: 'Nu blev det fel. Uppgiften som du precis lämnade var inte komplett och sparades inte. Det är inte ditt fel. Pröva igen.'
         end
       else
-        redirect_to edit_handicap_team_path(@team, step: 2), alert: 'Du behöver välja handikapp.'
+        redirect_to edit_handicap_team_path(@team, step: 1), alert: 'Du behöver välja handikapp.'
       end
     else
       redirect_to edit_handicap_team_path(@team, step: 1), notice: "Vilken typ av handikapp ska du använda?"

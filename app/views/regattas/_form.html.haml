@@ -1,19 +1,19 @@
-= semantic_form_for @regatta do |f|
-  = f.inputs do
-    = f.input :name
-    = f.input :description
-    = f.input :organizer, input_html: { disabled: true }
-    = f.input :organizer_id, :as => :hidden
-    = f.input :web_page
-    = f.input :email_from
-    = f.input :name_from
-    = f.input :email_to
-    = f.input :confirmation
-    = f.input :terrain, :collection => Terrain.select_terrain
-    = f.input :active, :as => :boolean
+= bootstrap_form_for @regatta do |f|
+  = f.text_field :name
+  = f.text_field :description
+  = f.text_field :organizer, :disabled => true, :value => @regatta.organizer.name
+  = f.hidden_field :organizer_id
+  = f.text_field :web_page
+  = f.email_field :email_from
+  = f.text_field :name_from
+  = f.text_field :email_to
+  = f.text_field :confirmation
+  = f.select :terrain_id, Terrain.select_terrain
+  = f.check_box :active
 
-  = f.actions do
-    = f.action :submit, :as => :input
-    = f.action :cancel, :as => :link
+  = f.submit "Spara", class: "btn"
+
+
+
 %p
 %br

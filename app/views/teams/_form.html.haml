@@ -1,16 +1,14 @@
-= semantic_form_for @team do |f|
-  = f.inputs do
-    = f.input :race
-    = f.input :name
-    = f.input :boat_name
-    = f.input :boat_type_name
-    = f.input :boat_sail_number
-    = f.input :start_point
-    = f.input :finish_point
-    = f.input :start_number
-    = #f.input :handicap
-    = f.input :plaque_distance
-    = f.input :active
+= bootstrap_form_for @team do |f|
+  = f.text_field :race
+  = f.text_field :name
+  = f.text_field :boat_name
+  = f.text_field :boat_type_name
+  = f.text_field :boat_sail_number
+  = f.text_field :start_point
+  = f.text_field :finish_point
+  = f.text_field :start_number
+  = #f.text_field :handicap
+  = f.text_field :plaque_distance
+  = f.text_field :active
 
-  = f.actions do
-    = f.action :submit, :as => :input
+  = f.submit "Spara", class: "btn"

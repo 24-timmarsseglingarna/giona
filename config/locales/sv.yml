@@ -159,6 +159,87 @@ sv:
         restrict_dependent_destroy:
           has_one: Kan inte ta bort post då beroende %{record} finns
           has_many: Kan inte ta bort poster då beroende %{record} finns
+    attributes:
+      boat:
+        name: Namn
+        boat_type_name: Båttyp/klass
+        sail_number: Segelnummer
+        vhf_call_sign: Anropssignal VHF ombord
+        ais_mmsi: MMSI-nummer för AIS ombord
+      organizer:
+        name: Namn
+        email_from: Mejlavsändare
+        web_page: Länk till webbsida
+        name_from: Avsändarnamn
+        email_to: Informera om anmälan
+        confirmation: Mejlbekräftelse
+        external_id: Arrangörsbeteckning i PoD
+      person:
+        first_name: Förnamn
+        last_name: Efternamn
+        birthday: Födelsedatum
+        email: Mejladress
+        phone: Telefonnummer
+        co: c/o
+        street: Gatuadress
+        zip: Postnummer
+        city: Ort
+        country: Land
+        external_id: Id i annat system
+        external_system: Annat system
+      race:
+        description: Kort beskrivning
+        start_from: Startperiodens början
+        start_to: Startperiodens slut
+        period: Seglingsperiod
+        common_finish: Gemensam målgång (punkt)
+        starts: Startplatser
+      regatta:
+        name: Namn
+        description: Beskrivning
+        organizer: Arrangör
+        web_page: Länk till webbsida
+        email_from: Mejlavsändare
+        name_from: Avsändarnamn
+        email_to: Informera om anmälan
+        confirmation: Mejlbekräftelse
+        active: Aktiv
+        terrain: Punkt- & distanstabell
+      team:
+        race: Segling
+        start_point: Startplats
+        finish_point: Målgång
+        offshore: Havssträckor
+        people: Personer
+        vacancies: Lediga gastplatser
+        boat: Båt
+        handicap_type: Typ av handikapp
+    help:
+      person:
+        phone: Det nummer som är lättast att nå dig på, gärna mobilen.
+        email: "Du ändrar din mejladress under \"Mitt konto\"."
+      race:
+        description: Endast om det är något speciellt med den som behöver särskiljas från andra seglingar i samma regatta. T.ex. single/double handed eller för skutor.
+      boat:
+        sail_number: Ange endast siffrorna i segelnumret, inte nationsbeteckningen.
+      organizer:
+        email_from: När mejl skickas till deltagare, vilken mejladress ska då stå som avsändare? Här fyller du i standardvärden. I den specifika regattan kan du ändra.
+        name_from: När mejl skickas till deltagare, vilket namn (förnamn efternamn) ska då stå som avsändare? Här fyller du i standardvärden. I den specifika regattan kan du ändra.
+        email_to: Mejladress till de funktionärer som ska få mejl när något viktigt händer i en regatta. Här fyller du i standardvärden. I den specifika regattan kan du ändra. Om det är flera mejladresser ska de separeras med kommateckan.
+        web_page: Adress till arrangörens webbsida.
+        confirmation: Mall för texten i de mejl som skickas till deltagare. Du kan anpassa texten för den specifika regattan. Mejlen inleds med neutral information om status på anmälan. Sedan kommer den text som du skriver in här. Så du kan avsluta med en hälsning och eventuell kontaktinformation.
+      regatta:
+        name: Namnet på regattan behöver vara unikt, så att deltagaren förstår vad hen anmäler sig till. Seglingsområde och årtal kan ingå, t.ex. Vårregattan 2018 i Blekinge.
+        description: Visas på sidan om regattan, synlig för alla. Kan innehålla information om betalning av avgifter, kringarrangemang och sådant. Starttider och seglingsperioder behöver du inte skriva in, de visas för varje segling som ingår i regattan.
+        email_to: Vilka funktionärer ska informeras om inskickade anmälningar? En rad mejladresser, separerade med kommatecken.
+        email_from: Avsändarmejladress för mejl som skickas till deltagare.
+        name_from: Namn på avsändaren för mejl som skickas till deltagare.
+        active: Det går att anmäla sig och segla.
+        confirmation: Texten i de mejl som skickas till deltagare. Mejlen inleds med neutral information om status på anmälan. Sedan kommer den text som du skriver in här. Så du kan avsluta med en hälsning och eventuell kontaktinformation.
+        terrain: Vilken version av punkt- och distanstabellen ska användas? En administratör kan ladda all data från PoD-databasen till det här systemet och frysa den versionen. Om du byter version av PoD på en regatta kan du manuellt behöva kontrollera om någon startplats tillkommit eller försvunit.
+      team:
+        vacancies: Berätta kort hur många gastar du behöver och vilka krav du ställer. Intresserade kan se dina anmälningsuppgifter om båt, startplats och kontaktuppgifter, så det behöver du inte skriva. Ta bort texten om du inte söker fler gastar.
+        offshore: Uppfyller båt och besättning reglernas krav för att segla havssträckor?
   date:
     abbr_day_names:
     - sön
