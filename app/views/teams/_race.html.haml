@@ -11,16 +11,14 @@
       %i.fas.fa-university(aria-hidden='true')
       = @team.race.regatta.organizer.name
 
-    = semantic_form_for @team do |f|
-      = f.inputs do
-        = f.input :race, :as => :radio, :collection => @races
+    = bootstrap_form_for @team do |f|
+      = f.collection_radio_buttons :race, @races.all.order(:period), :id, :name
 
       %p
         - if @races.count > 1
           Om du byter segling så kan det betyda att en del andra val i anmälan ändras. Det kan vara olika startplatser/målgång för olika seglingar. Så efter byte av segling bör du kolla igenom hela anmälan.
 
-      = f.actions do
-        = f.action :submit
+      = f.submit "Spara", class: "btn"
 
     %br
     = link_to 'Tillbaka', @team, :class => :get_back

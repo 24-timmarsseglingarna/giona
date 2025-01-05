@@ -45,11 +45,9 @@
       %i.fa.fa-bell(aria-hidden='true')
       = race_brief(@race)
 
-    = semantic_form_for @team do |f|
-      = f.inputs do
-        = f.input :race_id, :as => :hidden
-      = f.actions do
-        = f.action :submit, :as => :input, class: "btn btn-primary"
+    = bootstrap_form_for @team do |f|
+      = f.hidden_field :race_id
+      = f.submit "Spara", class: "btn btn-primary"
 
     %br
     = link_to 'Tillbaka', :back

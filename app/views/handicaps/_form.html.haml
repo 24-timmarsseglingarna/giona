@@ -1,17 +1,15 @@
-= semantic_form_for @handicap do |f|
-  = f.inputs do
-    = f.input :name
-    = f.input :sxk
-    = f.input :expired_at
-    = f.input :source
-    = f.input :srs
-    = f.input :registry_id
-    = f.input :sail_number
-    = f.input :boat_name
-    = f.input :owner_name
-    = f.input :external_system
-    = f.input :external_id
-    = f.input :type
+= boostrap_form_for @handicap do |f|
+  = f.text_field :name
+  = f.text_field :sxk
+  = f.text_field :expired_at
+  = f.text_field :source
+  = f.text_field :srs
+  = f.text_field :registry_id
+  = f.text_field :sail_number
+  = f.text_field :boat_name
+  = f.text_field :owner_name
+  = f.text_field :external_system
+  = f.text_field :external_id
+  = f.text_field :type
 
-  = f.actions do
-    = f.action :submit, :as => :input
+  = f.submit "Spara", class: "btn"

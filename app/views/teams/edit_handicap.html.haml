@@ -27,13 +27,12 @@
       #{@team.boat_name} | #{@team.boat_type_name} | Segelnummer: #{@team.boat_sail_number}
 
       - if params[:step] == '1'
-        = semantic_form_for @team, url: { action: :update_handicap } do |f|
-          = f.inputs do
-            = f.input :handicap_type, :as => :radio, :collection => Handicap.types.invert
-            = f.input :id, :as => :hidden  ### TODO
-            = hidden_field_tag 'step', 2
-          = f.actions do
-            = f.action :submit, :label => 'Nästa'
+        = bootstrap_form_for @team, url: { action: :update_handicap } do |f|
+          = f.collection_radio_buttons :handicap_type, Handicap.types.invert, :last, :first
+          = hidden_field_tag 'id', @team.id
+          = hidden_field_tag 'step', 2
+
+          = f.submit "Nästa", class: "btn"
           %br
           = link_to 'Tillbaka', team_path(@team)
 
@@ -46,12 +45,10 @@
         - else
           %p Välj din båtmodell i listan nedan.
 
-        = semantic_form_for @team, url: { action: :update_handicap } do |f|
-          = f.inputs do
-            = hidden_field_tag 'step', 3
-            = hidden_field_tag 'htype', params[:htype]
-            = f.input :handicap, :collection => handicap_table(params[:htype]), :include_blank => false, :label => Handicap.types[params[:htype]]
-          = f.actions do
-            = f.action :submit, :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}, :label => 'Nästa'
+        = bootstrap_form_for @team, url: { action: :update_handicap } do |f|
+          = hidden_field_tag 'step', 3
+          = hidden_field_tag 'htype', params[:htype]
+          = f.select :handicap_id, handicap_table(params[:htype]), :include_blank => false, :label => Handicap.types[params[:htype]]
+          = f.submit "Nästa", class: "btn btn-group"
         %br
         = link_to 'Tillbaka', :back

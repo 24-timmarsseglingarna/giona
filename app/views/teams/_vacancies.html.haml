@@ -11,9 +11,7 @@
       %i.fas.fa-university(aria-hidden='true')
       = @team.race.regatta.organizer.name
 
-    = semantic_form_for @team do |f|
-      = f.inputs do
-        = f.input :vacancies
+    = bootstrap_form_for @team do |f|
+      = f.text_field :vacancies
 
-      = f.actions do
-        = f.action :submit, :as => :input
+      = f.submit "Spara", class: "btn"

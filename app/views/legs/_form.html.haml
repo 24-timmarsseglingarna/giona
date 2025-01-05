@@ -1,10 +1,8 @@
-= semantic_form_for @leg do |f|
-  = f.inputs do
-    = f.input :point_id
-    = f.input :to_point_id
-    = f.input :distance
-    = f.input :offshore
-    = f.input :version
+= bootstrap_form_for @leg do |f|
+  = f.text_field :point_id
+  = f.text_field :to_point_id
+  = f.text_field :distance
+  = f.text_field :offshore
+  = f.text_field :version
 
-  = f.actions do
-    = f.action :submit, :as => :input
+  = f.submit "Spara", class: "btn"

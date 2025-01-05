@@ -1,13 +1,11 @@
-= semantic_form_for @organizer do |f|
-  = f.inputs do
-    = f.input :name
-    = f.input :email_from
-    = f.input :name_from
-    = f.input :email_to
-    = f.input :web_page
-    = f.input :confirmation
-    - if has_admin_rights?
-      = f.input :external_id
+= bootstrap_form_for @organizer do |f|
+  = f.text_field :name
+  = f.text_field :email_from
+  = f.text_field :name_from
+  = f.text_field :email_to
+  = f.text_field :web_page
+  = f.text_field :confirmation
+  - if has_admin_rights?
+    = f.text_field :external_id
 
-  = f.actions do
-    = f.action :submit, :as => :input
+  = f.submit "Spara", class: "btn"
