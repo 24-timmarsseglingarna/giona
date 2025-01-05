@@ -109,7 +109,7 @@ GEM
     execjs (2.10.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    ffi (1.17.0-x86_64-linux-gnu)
+    ffi (1.17.1-x86_64-linux-gnu)
     font-awesome-rails (4.7.0.9)
       railties (>= 3.2, < 9.0)
     globalid (1.2.1)
@@ -326,7 +326,7 @@ DEPENDENCIES
   web-console
 
 RUBY VERSION
-   ruby 3.1.6
+   ruby 3.2.6
 
 BUNDLED WITH
    2.4.10
