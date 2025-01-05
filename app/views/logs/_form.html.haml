@@ -1,14 +1,12 @@
-= semantic_form_for @log do |f|
-  = f.inputs do
-    = f.input :team_id
-    = f.input :time
-    = f.input :user_id
-    = f.input :client
-    = f.input :log_type
-    = f.input :point
-    = f.input :data
-    = f.input :deleted
-    = f.input :gen
+= boostrap_form_for @log do |f|
+  = f.text_field :team_id
+  = f.text_field :time
+  = f.text_field :user_id
+  = f.text_field :client
+  = f.text_field :log_type
+  = f.text_field :point
+  = f.text_field :data
+  = f.text_field :deleted
+  = f.text_field :gen
 
-  = f.actions do
-    = f.action :submit, :as => :input
+  = f.submit "Spara", class: "btn"

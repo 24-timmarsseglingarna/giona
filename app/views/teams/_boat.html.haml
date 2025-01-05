@@ -37,12 +37,15 @@
     3. Nej, båten finns inte här, lägg till den.
   .panel-body
     - @boat = Boat.new
-    = semantic_form_for @team do |f|
-      = f.semantic_fields_for :boat do |boat|
-        = boat.inputs :name, :boat_type_name, :sail_number, :vhf_call_sign, :ais_mmsi
+    = bootstrap_form_for @team do |f|
+      = f.fields_for :boat do |boat|
+        = boat.text_field :name
+        = boat.text_field :boat_type_name
+        = boat.text_field :sail_number
+        = boat.text_field :vhf_call_sign
+        = boat.text_field :ais_mmsi
         = hidden_field_tag 'wizard_next', 'handicap'
-      = f.actions do
-        = f.action :submit, :as => :input, :label => 'Spara'
+      = f.submit "Spara", class: "btn"
 
 :javascript
   $(document).ready(function() {

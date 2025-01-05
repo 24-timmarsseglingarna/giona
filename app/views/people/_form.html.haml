@@ -1,29 +1,29 @@
+= bootstrap_form_for @person do |f|
+  = f.text_field :first_name
+  = f.text_field :last_name
+  - if current_user
+    - if has_assistant_rights
+      = f.email_field :email
+    - else
+      = f.email_field :email, :input_html => { :readonly => true }
 
-= semantic_form_for @person do |f|
-  = f.inputs do
-    = f.input :first_name
-    = f.input :last_name
-    - if current_user
-      - if has_assistant_rights
-        = f.input :email
-      - else
-        = f.input :email, :input_html => { :readonly => true }
+  = f.text_field :phone
+  = f.date_select :birthday, :start_year => Date.today.year-100, :end_year => Date.today.year
+  = f.text_field :co
+  = f.text_field :street
+  = f.text_field :zip
+  = f.text_field :city
+  %label Land *
+  %br
+  = f.country_select :country, priority_countries: ["Sweden"]
 
+  %p
+  Jag godkänner användaravtalet.
+  %p= @agreement.name
+  %p= @agreement.description
+  %p Publicerad
+  %p= I18n.l(@agreement.created_at, :normal)
 
-    = f.input :phone
-    = f.input :birthday, :start_year => Date.today.year-100, :end_year => Date.today.year
-    = f.input :co
-    = f.input :street
-    = f.input :zip
-    = f.input :city
-    = f.input :country, :priority_countries => ["Sweden", "Denmark", "Finland", "Luxembourg", "Norway", "Poland", "Germany" ]
-
-    Jag godkänner användaravtalet.
-    %p= @agreement.name
-    %p= @agreement.description
-    %p Publicerad
-    %p= I18n.l(@agreement.created_at, :normal)
-  = f.actions do
-    = f.action :submit, :as => :button
+  = f.submit "Spara", class: "btn"
 
 = hidden_field_tag :add_me

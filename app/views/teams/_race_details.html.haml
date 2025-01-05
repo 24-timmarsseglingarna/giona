@@ -11,18 +11,16 @@
       %i.fa.fa-bell(aria-hidden='true')
       = @team.race.name
 
-    = semantic_form_for @team do |f|
-      = f.inputs do
-        = f.input :start_point, :as => :radio, :collection => @team.race.start_places
-        = f.input :offshore, :as => :radio
-        - if params[:wizard_next].present?
-          = hidden_field_tag 'wizard_next', params[:wizard_next]
+    = bootstrap_form_for @team do |f|
+      = f.collection_radio_buttons :start_point, @team.race.start_places, :last, :first
+      = f.collection_radio_buttons :offshore, [[true, "Ja"], [false, "Nej"]], :first, :last
+      - if params[:wizard_next].present?
+        = hidden_field_tag 'wizard_next', params[:wizard_next]
 
-      = f.actions do
-        - if params[:wizard_next].present?
-          = f.action :submit, :label=>"Nästa", :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}
-        - else
-          = f.action :submit, :as => :input, :input_html => {:class => 'btn', :class => 'btn-group'}
+      - if params[:wizard_next].present?
+        = f.submit "Nästa", class: "btn btn-group"
+      - else
+        = f.submit "Spara", class: "btn btn-group"
 
     %br
     - if params[:wizard_next].present?

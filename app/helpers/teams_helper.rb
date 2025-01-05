@@ -56,9 +56,9 @@ module TeamsHelper
   def logbook_link(team)
     Rails.configuration.web_logbook_url +
       "?logbook=true" +
-      "&url=#{URI.escape(request.protocol + request.host_with_port)}" +
-      "&email=#{URI.escape(current_user.email)}" +
-      "&token=#{URI.escape(current_user.authentication_token)}" +
+      "&url=#{CGI.escape(request.protocol + request.host_with_port)}" +
+      "&email=#{CGI.escape(current_user.email)}" +
+      "&token=#{CGI.escape(current_user.authentication_token)}" +
       "&team=#{team.id}" +
       "&race=#{team.race_id}" +
       "&person=#{current_user.person.id}"

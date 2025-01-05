@@ -13,12 +13,17 @@
  *= require_tree .
  *= require_self
  *= require bootstrap_sb_admin_base_v2
- *= require formtastic-bootstrap
  *= require bootstrap-datetimepicker
+ *= require rails_bootstrap_forms
  */
 
+        
 .alert {
 	margin-top: 20px;
+}
+
+label.required:after {
+  content:" *";
 }
 
 .error{

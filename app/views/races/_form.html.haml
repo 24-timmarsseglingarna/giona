@@ -1,38 +1,33 @@
 %p
   %b Arrangör:
   =@race.regatta.organizer.name unless @race.regatta.nil?
-= semantic_form_for @race do |f|
-  = f.inputs do
-    = f.input :regatta, input_html: { disabled: true }
-    = f.input :description
-    = f.input :start_from, :as => :string
-    = f.input :start_to, :as => :string
-    = f.input :period, :as => :radio, :collection => Race.periods
+= bootstrap_form_for @race do |f|
+  = f.text_field :regatta, :disabled => true, :value => @race.regatta.name
+  = f.text_field :description
+  = f.text_field :start_from, :as => :string
+  = f.text_field :start_to, :as => :string
+  = f.collection_radio_buttons :period, Race.periods, :to_s, :to_s
 
-    .check_boxes.input.optional.form-group#race_starts_input
-      %span.form-label
-        %label.control-label
-          Startplatser
-      %span.form-wrapper
-        %input#race_starts_none{:type => "hidden", :name => "race[starts][]", :value => ""}
-        - for start in @race.regatta.organizer.default_starts
-          .checkbox
-            %label.choice{:for => "race_starts_#{start.number}"}
-              - if @race.starts.include? start.number.to_s
-                %input{:id => "race_starts_#{start.number}", :type => :checkbox, :checked => true, :name => 'race[starts][]', :value =>"#{start.number}"}
-              - else
-                %input{:id => "race_starts_#{start.number}", :type => :checkbox, :name => 'race[starts][]', :value =>"#{start.number}"}
-              = "#{start.number} #{name_by_number @race.regatta.terrain, start.number.to_i}"
-
+  .check_boxes.input.optional.form-group#race_starts_input
+    %span.form-label
+      %label.control-label
+        Startplatser
+    %span.form-wrapper
+      %input#race_starts_none{:type => "hidden", :name => "race[starts][]", :value => ""}
+      - for start in @race.regatta.organizer.default_starts
+        .checkbox
+          %label.choice{:for => "race_starts_#{start.number}"}
+            - if @race.starts.include? start.number.to_s
+              %input{:id => "race_starts_#{start.number}", :type => :checkbox, :checked => true, :name => 'race[starts][]', :value =>"#{start.number}"}
+            - else
+              %input{:id => "race_starts_#{start.number}", :type => :checkbox, :name => 'race[starts][]', :value =>"#{start.number}"}
+            = "#{start.number} #{name_by_number @race.regatta.terrain, start.number.to_i}"
 
 
-    = f.input :common_finish, :as => :select, :collection => @race.finish_places, :include_blank => false, :label => 'Målgång'
-    = f.input :regatta_id, :as => :hidden
+  = f.select :common_finish, @race.finish_places, :include_blank => false, :label => 'Målgång'
+  = f.hidden_field :regatta_id
 
-  = f.actions do
-    = f.action :submit, :as => :button
-    = f.action :cancel, :as => :link
-
+  = f.submit "Spara", class: "btn"
 
 :javascript
   $(function () {
