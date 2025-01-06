@@ -4,7 +4,7 @@
   = f.text_field :name_from
   = f.text_field :email_to
   = f.text_field :web_page
-  = f.text_area :confirmation
+  = f.text_area :confirmation, rows: 10
   - if has_admin_rights?
     = f.text_field :external_id
 
