@@ -6,6 +6,7 @@ module RegattasHelper
       if starts.count > 1
         out += ' - ' + starts.last.to_date.to_s
       end
+      out
     end
   end
 
