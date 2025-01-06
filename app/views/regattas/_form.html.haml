@@ -1,13 +1,13 @@
 = bootstrap_form_for @regatta do |f|
   = f.text_field :name
-  = f.text_area :description
+  = f.text_area :description, rows: 10
   = f.text_field :organizer, :disabled => true, :value => @regatta.organizer.name
   = f.hidden_field :organizer_id
   = f.text_field :web_page
   = f.email_field :email_from
   = f.text_field :name_from
   = f.text_field :email_to
-  = f.text_area :confirmation
+  = f.text_area :confirmation, rows: 10
   = f.select :terrain_id, Terrain.select_terrain
   = f.check_box :active
 
