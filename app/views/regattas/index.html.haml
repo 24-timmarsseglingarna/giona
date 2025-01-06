@@ -34,7 +34,7 @@
             = race.period
         %td
           - if regatta.races.count > 0
-            = l(regatta.races.first.start_from, format: :long)
+            = l(regatta.races.first.start_from, format: "%Y-%m-%d %H:%M:%S")
         %td= "ja" if regatta.active
 
 :javascript
