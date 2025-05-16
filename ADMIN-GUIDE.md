@@ -26,12 +26,9 @@ and change name and publish the new terrain.
 
 The default starts are not version controlled.
 
-### Publish the PoD on S3
+### Publish the PoD to app.24-timmars.nu
 
-The app needs the PoD as JSON, and it will read it from our S3
-bucket.  We have three buckets:
-
-  giona{dev,stage,prod}
+The app needs the PoD as JSON, and it will read it from app.24-timmars.nu.
 
 Currently this is a manual step.  In the future this will happen
 automatically when a PoD is published.  Note the filename which MUST
@@ -43,12 +40,9 @@ activated.
 1. Run ```$ wget https://<HOST>.24-timmars.nu/terrains/NN.json```
 2. Run ```$ cp NN.json terrain-NN.json```
 3. Run ```$ gzip terrain-NN.json```
-4. Run ```$ aws s3 cp terrain-NN.json.gz s3://<BUCKET> --acl public-read \
-          --content-type 'application/json' --content-encoding gzip```
-5. Run ```$ echo "{\"id\": NN}" > terrain-latest.json```
-6. Run ```$ gzip terrain-latest.json```
-7. Run ```$ aws s3 cp terrain-latest.json.gz s3://<BUCKET> --acl public-read \
-          --content-type 'application/json' --content-encoding gzip```
+4. Run ```$ echo "{\"id\": NN}" > terrain-latest.json```
+5. Run ```$ gzip terrain-latest.json```
+6. Copy the gzipped files to the folder domains/app.24-timmars.nu/public_html/data/
 
 
 ### Handling existing regattas
