@@ -33,8 +33,8 @@ createdb -E utf8 -U giona -O giona -T template0 --lc-collate="sv_SE.UTF-8" giona
 
 # Install Ruby
 
-We're using a rather old version of ruby, and old versions of many
-packages.  Hence, we need to install that old ruby version locally.  I
+We're using a specific version of ruby, and specific versions of many
+packages.  Hence, we need to install that specific ruby version locally.  I
 use `rbenv` for this.
 
 ## Install `rbenv`
@@ -52,16 +52,16 @@ restart bash, then
 
 ```shell
 # install our ruby version
-rbenv install 2.7.5
+rbenv install 3.2.6
 ```
 
 Then in giona's top directory do:
 
 ```
-# use 2.7.5 for this project
-rbenv local 2.7.5
+# use 3.2.6 for this project
+rbenv local 3.2.6
 # install the bundler we use
-gem install bundler:1.17.1
+gem install bundler:2.4.10
 # install all dependencies
 bundle install
 ```
