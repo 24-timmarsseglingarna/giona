@@ -9,6 +9,10 @@
   = f.text_field :email_to
   = f.text_area :confirmation, rows: 10
   = f.select :terrain_id, Terrain.select_terrain
+  - if @regatta.active?
+    - if not @regatta.teams.where.not(state: [0,5,6]).empty?
+      %p NOTERA: Regattan har loggböcker som inte är arkiverade och skall därför inte avaktiveras här, utan istället arkiveras.  Om den görs inaktiv här blir inte resultatet fastställt korrekt.
+
   = f.check_box :active
 
   = f.submit "Spara", class: "btn"
