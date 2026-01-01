@@ -49,8 +49,10 @@
       -# FIXME: only show link when we have a result, OR has_assistant_rights?
     %p
       %i.far.fa-file-alt(aria-hidden='true')
-      = link_to 'Resultat', result_regatta_path(@regatta)
-
+      - if @regatta.active or not @regatta.teams.where.not(state: [0,4,5,6]).empty?
+        = link_to 'Preliminärt resultat', result_regatta_path(@regatta)
+      - else
+        = link_to 'Resultat', result_regatta_path(@regatta)
 
     - if has_assistant_rights?
       %p
@@ -99,8 +101,10 @@
       %p
         %br
       - if @regatta.active
-        %p=link_to 'Arkivera regattan',
+        .legend När alla loggböcker är granskade skall regattan arkiveras för att fastställa resultatet.
+        =link_to 'Arkivera regattan',
         regattas_archive_path(:id => @regatta.id), :method => :post, :data => { :confirm => "Vill du arkivera alla loggböcker i #{@regatta.name}?" }
+        %p
 
       %p= link_to 'Radera', @regatta, :method => :delete, :data => { :confirm => "Vill du radera #{@regatta.name}?" }
       %br
