@@ -4,7 +4,7 @@
 
 # giona
 
-Version 1.17.6
+Version 1.17.7
 
 # Ubuntu
 
