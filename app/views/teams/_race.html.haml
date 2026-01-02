@@ -12,7 +12,7 @@
       = @team.race.regatta.organizer.name
 
     = bootstrap_form_for @team do |f|
-      = f.collection_radio_buttons :race, @races.all.order(:period), :id, :name
+      = f.collection_radio_buttons :race_id, @races.all.order(:period), :id, :name
 
       %p
         - if @races.count > 1
