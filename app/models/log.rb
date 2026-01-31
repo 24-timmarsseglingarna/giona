@@ -101,4 +101,47 @@ class Log < ApplicationRecord
     out && out.sub(/, $/, '')
   end
 
+  # Find teams that have two consecutive 'round' log entries between points A and B
+  # The two 'round' entries must be consecutive when ordered by time, but there may be
+  # other log_types between them. The order can be either A->B or B->A.
+  def self.find_teams_with_dist(point_a, point_b)
+    # Find all teams that have both points in their round logs
+    teams_with_point_a = joins(:team)
+      .where(log_type: 'round', deleted: false, point: point_a)
+      .pluck(:team_id)
+      .uniq
+
+    teams_with_point_b = joins(:team)
+      .where(log_type: 'round', deleted: false, point: point_b)
+      .pluck(:team_id)
+      .uniq
+
+    # Teams that have both points
+    candidate_teams = teams_with_point_a & teams_with_point_b
+
+    result_teams = []
+
+    candidate_teams.each do |team_id|
+      # Get all round logs for this team, ordered by time
+      round_logs = where(team_id: team_id, log_type: 'round', deleted: false)
+                    .order(:time)
+                    .select(:id, :time, :point)
+
+      # Check for consecutive A-B or B-A patterns
+      (0...round_logs.length - 1).each do |i|
+        current_log = round_logs[i]
+        next_log = round_logs[i + 1]
+
+        # Check if we have A->B or B->A pattern
+        if (current_log.point == point_a && next_log.point == point_b) ||
+           (current_log.point == point_b && next_log.point == point_a)
+          result_teams << team_id
+          break # Found what we need for this team
+        end
+      end
+    end
+
+    Team.where(id: result_teams)
+  end
+
 end
