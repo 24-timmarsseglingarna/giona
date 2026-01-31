@@ -847,6 +847,21 @@ namespace :query do
     end
   end
 
+  # invoke as `rake query:find_teams_with_dist[550,522]`
+  task :find_teams_with_dist, [:a, :b] => :environment do |task, args|
+    point_a = args[:a].to_i
+    point_b = args[:b].to_i
+    if point_a == 0 or point_b == 0
+      puts "must pass a and b"
+      return
+    end
+    teams = Log.find_teams_with_dist(point_a, point_b)
+    puts("#{teams.length} teams found for #{point_a}-#{point_b}")
+    for t in teams
+      puts("team: #{t.id}")
+    end
+  end
+
 end
 
 
