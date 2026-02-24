@@ -1,8 +1,7 @@
 wb = xlsx_package.workbook
 
-sheet_header = ['#', 'Förnamn', 'Efternamn', 'Födelsedag',
-                'Dist. i år (M)', 'Dist. tidigare (M)', 'Total plakettdist. (M)',
-                'Timglas']
+sheet_header = ['Plats', 'Förnamn', 'Efternamn', 'Senaste båt', 'Senaste båttyp',
+                'Seglad distans', 'Plakettdistans', 'Senaste år', 'Krets', 'Ny plakett i år']
 
 wb.add_worksheet(name: "Maratonlistan") do |sheet|
   sheet.add_row sheet_header
@@ -13,11 +12,13 @@ wb.add_worksheet(name: "Maratonlistan") do |sheet|
       idx + 1,
       mp.first_name,
       mp.last_name,
-      mp.birthday.present? ? l(mp.birthday, format: :day) : '',
-      row[:dist_this_year].round(1),
-      row[:dist_prev_years].round(1),
+      row[:latest_boat_name],
+      row[:latest_boat_type],
+      row[:total_sailed_dist].round(1),
       row[:total_plaque_dist].round(1),
-      mp.hourglass
+      row[:latest_year],
+      row[:latest_organizer]&.name,
+      row[:new_plaques].map { |p| "#{p[:plaque]} #{p[:series]}" }.join(', ')
     ]
   end
 end

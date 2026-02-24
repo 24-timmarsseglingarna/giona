@@ -25,35 +25,31 @@
     %table#giona-marathon.table.table-striped.table-bordered.table-hover{width: '100%'}
       %thead
         %tr
-          %th #
-          %th Namn
-          - if has_officer_rights?
-            %th Födelsedag
-          - if @year
-            %th Dist. i år (M)
-            %th Dist. tidigare (M)
-          %th Total plakettdist. (M)
-          %th Aktuell plakett
-          %th Timglas
-          - if @year
+          %th Plats
+          %th Förnamn
+          %th Efternamn
+          %th Senaste båt
+          %th Senaste båttyp
+          %th Seglad distans
+          %th Plakettdistans
+          %th Senaste år
+          %th Krets
+          - if has_officer_rights? && @year
             %th Ny plakett i år
       %tbody
         - @rows.each_with_index do |row, idx|
           - mp = row[:marathon_person]
-          %tr{class: row[:new_plaques].any? ? 'success' : ''}
+          %tr{class: (has_officer_rights? && row[:new_plaques].any?) ? 'success' : ''}
             %td= idx + 1
-            %td= mp.full_name
-            - if has_officer_rights?
-              %td= mp.birthday.present? ? l(mp.birthday, format: :day) : ''
-            - if @year
-              %td= row[:dist_this_year].round(1)
-              %td= row[:dist_prev_years].round(1)
+            %td= mp.first_name
+            %td= mp.last_name
+            %td= row[:latest_boat_name]
+            %td= row[:latest_boat_type]
+            %td= row[:total_sailed_dist].round(1)
             %td= row[:total_plaque_dist].round(1)
-            %td
-              - if row[:current_plaque]
-                = "#{row[:current_plaque][:plaque]} (#{row[:current_plaque][:series]})"
-            %td= mp.hourglass
-            - if @year
+            %td= row[:latest_year]
+            %td= row[:latest_organizer]&.name
+            - if has_officer_rights? && @year
               %td
                 - row[:new_plaques].each do |p|
                   %span.label.label-success= "#{p[:plaque]} #{p[:series]}"
