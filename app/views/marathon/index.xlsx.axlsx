@@ -1,0 +1,23 @@
+wb = xlsx_package.workbook
+
+sheet_header = ['#', 'Förnamn', 'Efternamn', 'Födelsedag',
+                'Dist. i år (M)', 'Dist. tidigare (M)', 'Total plakettdist. (M)',
+                'Timglas']
+
+wb.add_worksheet(name: "Maratonlistan") do |sheet|
+  sheet.add_row sheet_header
+
+  @rows.each_with_index do |row, idx|
+    mp = row[:marathon_person]
+    sheet.add_row [
+      idx + 1,
+      mp.first_name,
+      mp.last_name,
+      mp.birthday.present? ? l(mp.birthday, format: :day) : '',
+      row[:dist_this_year].round(1),
+      row[:dist_prev_years].round(1),
+      row[:total_plaque_dist].round(1),
+      mp.hourglass
+    ]
+  end
+end

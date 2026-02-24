@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_12_21_143627) do
+ActiveRecord::Schema.define(version: 2026_02_24_000003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -114,6 +114,30 @@ ActiveRecord::Schema.define(version: 2024_12_21_143627) do
     t.index ["updated_at"], name: "index_logs_on_updated_at"
   end
 
+  create_table "marathon_logs", force: :cascade do |t|
+    t.integer "marathon_person_id", null: false
+    t.integer "team_id"
+    t.float "sailed_dist", null: false
+    t.float "plaque_dist", null: false
+    t.string "boat_type"
+    t.string "boat_name"
+    t.integer "year", null: false
+    t.integer "organizer_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["marathon_person_id", "team_id"], name: "index_marathon_logs_on_marathon_person_id_and_team_id", unique: true, where: "(team_id IS NOT NULL)"
+  end
+
+  create_table "marathon_people", force: :cascade do |t|
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.date "birthday"
+    t.integer "hourglass"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["birthday", "last_name", "first_name"], name: "index_marathon_people_on_birthday_and_last_name_and_first_name"
+  end
+
   create_table "notes", id: :serial, force: :cascade do |t|
     t.string "description"
     t.integer "user_id"
@@ -133,6 +157,7 @@ ActiveRecord::Schema.define(version: 2024_12_21_143627) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "web_page"
+    t.boolean "marathon_eligible", default: false, null: false
   end
 
   create_table "people", id: :serial, force: :cascade do |t|
@@ -153,6 +178,7 @@ ActiveRecord::Schema.define(version: 2024_12_21_143627) do
     t.time "deleted_at"
     t.boolean "review", default: false
     t.boolean "skip_validation", default: true
+    t.integer "marathon_person_id"
   end
 
   create_table "points", id: :serial, force: :cascade do |t|
@@ -204,6 +230,7 @@ ActiveRecord::Schema.define(version: 2024_12_21_143627) do
     t.integer "terrain_id"
     t.string "web_page"
     t.text "description"
+    t.boolean "marathon_eligible", default: false, null: false
   end
 
   create_table "teams", id: :serial, force: :cascade do |t|
@@ -263,4 +290,8 @@ ActiveRecord::Schema.define(version: 2024_12_21_143627) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "marathon_logs", "marathon_people"
+  add_foreign_key "marathon_logs", "organizers", on_delete: :nullify
+  add_foreign_key "marathon_logs", "teams", on_delete: :nullify
+  add_foreign_key "people", "marathon_people", on_delete: :nullify
 end

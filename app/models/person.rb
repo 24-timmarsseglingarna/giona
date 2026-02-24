@@ -7,6 +7,7 @@ class Person < ApplicationRecord
   has_many :agreements, through: :consents
   has_many :friends, -> { distinct }, :through => :teams, :source => :people
   has_many :boats, -> { distinct }, :through => :teams
+  belongs_to :marathon_person, optional: true
 
 
   default_scope { order 'last_name, first_name' }
@@ -34,6 +35,8 @@ class Person < ApplicationRecord
 
   after_initialize :set_defaults, unless: :persisted?
   # The set_defaults will only work if the object is new
+
+  after_create :try_link_marathon_person
 
 
   def strip_whitespace
@@ -63,6 +66,25 @@ class Person < ApplicationRecord
 
   def sname
     "#{self.first_name} #{self.last_name}"
+  end
+
+  def initials
+    "#{self.first_name.first.upcase}#{self.last_name.first.upcase}"
+  end
+
+  private
+
+  def try_link_marathon_person
+    return if self.birthday.blank?
+    candidates = MarathonPerson.where(birthday: self.birthday)
+                               .select { |mp| mp.initials == self.initials }
+    if candidates.length == 1
+      update_column(:marathon_person_id, candidates.first.id)
+    elsif candidates.length > 1
+      MarathonMailer.multiple_matches_email(self, candidates).deliver
+    else
+      MarathonMailer.no_match_email(self).deliver
+    end
   end
 
 end

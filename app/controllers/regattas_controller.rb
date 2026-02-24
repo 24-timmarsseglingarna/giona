@@ -8,7 +8,7 @@ class RegattasController < ApplicationController
   before_action :authorized?, :except => [:show, :start_list, :result, :index, :email_list]
   before_action :authorized_assistant?, :only => [:email_list]
 
-  before_action :set_regatta, only: [:show, :start_list, :result, :email_list, :edit, :update, :destroy, :archive ]
+  before_action :set_regatta, only: [:show, :start_list, :result, :email_list, :edit, :update, :destroy, :archive, :confirm_marathon]
 
   # GET /regattas
   # GET /regattas.json
@@ -111,6 +111,70 @@ class RegattasController < ApplicationController
     end
   end
 
+  def confirm_marathon
+    unless has_officer_rights?
+      redirect_to @regatta, alert: 'Du har tyvärr inte tillräckliga behörigheter.'
+      return
+    end
+
+    if @regatta.active
+      redirect_to @regatta, alert: 'Regattan måste vara arkiverad innan maratonresultatet kan fastställas.'
+      return
+    end
+
+    unless @regatta.marathon_eligible?
+      redirect_to @regatta, alert: 'Regattan är inte markerad som maratonberättigad.'
+      return
+    end
+
+    created_count = 0
+    updated_count = 0
+    unlinked_names = []
+
+    ActiveRecord::Base.transaction do
+      @regatta.races.each do |race|
+        race.teams.is_archived.each do |team|
+          logbook = team.get_logbook(team.logs.order(:time, :id))
+          next if logbook[:plaque_dist] == 0
+
+          year = race.period&.year || @regatta.updated_at.year
+
+          team.people.each do |person|
+            unless person.marathon_person_id
+              unlinked_names << person.sname
+              next
+            end
+
+            ml = MarathonLog.find_or_initialize_by(
+              marathon_person_id: person.marathon_person_id,
+              team_id: team.id
+            )
+            new_record = ml.new_record?
+            ml.sailed_dist  = logbook[:sailed_dist].to_f
+            ml.plaque_dist  = logbook[:plaque_dist].to_f
+            ml.boat_type    = team.boat_type_name
+            ml.boat_name    = team.boat_name
+            ml.year         = year
+            ml.organizer_id = @regatta.organizer_id
+            ml.save!
+
+            if new_record
+              created_count += 1
+            else
+              updated_count += 1
+            end
+          end
+        end
+      end
+    end
+
+    notice = "Maratonresultat fastställt: #{created_count} skapade, #{updated_count} uppdaterade."
+    if unlinked_names.any?
+      notice += " Varning: följande besättningsmedlemmar saknar maratonkoppling: #{unlinked_names.uniq.join(', ')}."
+    end
+    redirect_to @regatta, notice: notice
+  end
+
   def archive
     if @regatta.active
       # 0: draft, 1: submitted, 2: approved, 3: signed, 4: reviewed, 5: archived, 6: closed
@@ -135,7 +199,7 @@ class RegattasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def regatta_params
-      params.require(:regatta).permit(:name, :description, :terrain_id,  :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :web_page, :external_id, :external_system)
+      params.require(:regatta).permit(:name, :description, :terrain_id, :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :web_page, :external_id, :external_system, :marathon_eligible)
     end
 
     def authorized?

@@ -63,6 +63,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'marathon', to: 'marathon#index', as: :marathon
+
   resources :regattas do
   	collection do
     end
@@ -70,6 +72,7 @@ Rails.application.routes.draw do
       get 'start_list'
       get 'email_list'
       get 'result'
+      post 'confirm_marathon'
     end
   end
   post 'regattas/archive'

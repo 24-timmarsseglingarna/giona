@@ -1,0 +1,13 @@
+Hej,
+
+En ny seglare skapades i Giona som matchar flera poster i maratontabellen.
+
+Ny seglare: #{@person.sname} (#{@person.birthday})
+
+Matchande maratonposter:
+- @candidates.each do |mp|
+  \- #{mp.full_name} (#{mp.birthday}) [id: #{mp.id}]
+
+Åtgärd krävs: Länka seglaren manuellt till rätt maratonpost via admin-gränssnittet.
+
+-- Giona
