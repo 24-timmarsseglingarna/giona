@@ -39,5 +39,7 @@
 
 :javascript
   $(document).ready(function() {
-  $('#giona-regattas').DataTable();
-  } );
+    $('#giona-regattas').DataTable({
+      order: [[3, "desc"]]
+    });
+  })
