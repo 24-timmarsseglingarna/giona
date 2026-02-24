@@ -126,18 +126,7 @@ Det kan förstås också skapas dubbla konton i framtiden också!
 maraton-person.  Det är ok.
 
 
-# FRÅGOR TILL STEFAN
-
-
-- Använd bin/rails generate model för att skapa ny tabell?
-
-  A: Ja!
-
-- Hur göra med vår gamla ruby och gamla rails...?
-
-- Nackdel med hostad miljö - bara dålig erfarenhet av skakig drift?
-
----------
+# FRÅGOR
 
 - många konstiga dubletter, hur hantera??
 

@@ -63,7 +63,9 @@ GEM
     acts_as_paranoid (0.10.3)
       activerecord (>= 6.1, < 8.1)
       activesupport (>= 6.1, < 8.1)
+    base64 (0.3.0)
     bcrypt (3.1.20)
+    bigdecimal (4.0.1)
     bindex (0.8.1)
     bootstrap3-datetimepicker-rails (4.17.47)
       momentjs-rails (>= 2.8.1)
@@ -94,6 +96,7 @@ GEM
     country_select (10.0.0)
       countries (> 5.0, < 8.0)
     crass (1.0.6)
+    csv (3.3.5)
     date (3.4.1)
     devise (4.9.4)
       bcrypt (~> 3.0)
@@ -109,7 +112,7 @@ GEM
     execjs (2.10.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    ffi (1.17.3-x86_64-linux-gnu)
+    ffi (1.17.3)
     font-awesome-rails (4.7.0.9)
       railties (>= 3.2, < 9.0)
     globalid (1.2.1)
@@ -155,9 +158,11 @@ GEM
     marcel (1.0.4)
     method_source (1.1.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.9)
     minitest (5.25.4)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
+    mutex_m (0.3.0)
     net-imap (0.5.4)
       date
       net-protocol
@@ -168,7 +173,8 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.5)
-    nokogiri (1.19.1-x86_64-linux-gnu)
+    nokogiri (1.19.1)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     pg (1.5.9)
@@ -284,6 +290,8 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_paranoid
+  base64
+  bigdecimal
   bootstrap3-datetimepicker-rails (~> 4.17.43)
   bootstrap_form (~> 2.7)
   bootstrap_sb_admin_base_v2
@@ -292,6 +300,7 @@ DEPENDENCIES
   caxlsx_rails
   coffee-rails (~> 4.2)
   country_select
+  csv
   devise
   devise-i18n
   email_address
@@ -305,6 +314,7 @@ DEPENDENCIES
   jquery-rails
   listen (~> 3.0.5, < 3.2)
   momentjs-rails (>= 2.9.0)
+  mutex_m
   pg (~> 1.1)
   puma (~> 7.2.0)
   pundit
