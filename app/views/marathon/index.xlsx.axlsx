@@ -15,8 +15,8 @@ wb.add_worksheet(name: "Maratonlistan") do |sheet|
       mp.hourglass,
       row[:latest_boat_name],
       row[:latest_boat_type],
-      row[:total_sailed_dist].round(1),
-      row[:total_plaque_dist].round(1),
+      row[:total_sailed_dist].round(),
+      row[:total_plaque_dist].round(),
       row[:latest_year],
       row[:latest_organizer]&.name,
       row[:new_plaques].map { |p| "#{p[:plaque]} #{p[:series]}" }.join(', ')

@@ -655,6 +655,71 @@ namespace :batch do
     end
   end
 
+  # rake batch:marathon_testdata
+  task :marathon_testdata => :environment do
+    organizer = Organizer.first
+
+    people = [
+      { first_name: 'Anna',    last_name: 'Andersson', birthday: '1968-03-12',
+        logs: [
+          { year: 2019, sailed: 312.4, plaque: 290.1, boat_name: 'Vinddrake',  boat_type: 'J/24'  },
+          { year: 2021, sailed: 280.0, plaque: 255.3, boat_name: 'Vinddrake',  boat_type: 'J/24'  },
+          { year: 2023, sailed: 510.8, plaque: 480.2, boat_name: 'Vinddrake',  boat_type: 'J/24'  },
+        ],
+        hourglass: nil },
+
+      { first_name: 'Bertil',  last_name: 'Bengtsson', birthday: '1955-07-04',
+        logs: [
+          { year: 2010, sailed: 920.0, plaque: 880.0, boat_name: 'Sövestjärnan', boat_type: 'Albin Vega' },
+          { year: 2015, sailed: 840.5, plaque: 800.0, boat_name: 'Sövestjärnan', boat_type: 'Albin Vega' },
+          { year: 2020, sailed: 610.0, plaque: 590.0, boat_name: 'Sövestjärnan', boat_type: 'Albin Vega' },
+          { year: 2023, sailed: 730.2, plaque: 710.5, boat_name: 'Sövestjärnan', boat_type: 'Albin Vega' },
+        ],
+        hourglass: 2018 },
+
+      { first_name: 'Cecilia', last_name: 'Carlsson', birthday: '1972-11-29',
+        logs: [
+          { year: 2022, sailed: 195.0, plaque: 180.0, boat_name: 'Pelikanen', boat_type: 'X-35'  },
+          { year: 2024, sailed: 210.5, plaque: 198.0, boat_name: 'Pelikanen', boat_type: 'X-35'  },
+        ],
+        hourglass: nil },
+
+      { first_name: 'David',   last_name: 'Davidsson', birthday: '1983-05-15',
+        logs: [
+          { year: 2024, sailed: 88.5,  plaque: 75.0,  boat_name: 'Snabben',  boat_type: 'Beneteau First 36.7' },
+        ],
+        hourglass: nil },
+    ]
+
+    people.each do |data|
+      mp = MarathonPerson.find_or_initialize_by(
+        first_name: data[:first_name],
+        last_name:  data[:last_name],
+        birthday:   data[:birthday]
+      )
+      mp.hourglass = data[:hourglass]
+      mp.save!
+
+      data[:logs].each do |log|
+        ml = MarathonLog.find_or_initialize_by(
+          marathon_person_id: mp.id,
+          team_id:            nil,
+          year:               log[:year],
+          organizer_id:       organizer&.id
+        )
+        ml.sailed_dist = log[:sailed]
+        ml.plaque_dist = log[:plaque]
+        ml.boat_name   = log[:boat_name]
+        ml.boat_type   = log[:boat_type]
+        ml.save!
+      end
+
+      puts "#{mp.full_name}: #{data[:logs].length} log entries, hourglass: #{mp.hourglass.inspect}"
+    end
+
+    puts "\nDone. #{people.length} marathon people created/updated."
+  end
+
   task :destroy_zombie_people => :environment do
     for person in Person.all
       if CrewMember.find_by(person_id: person.id).blank? && person.user.nil?

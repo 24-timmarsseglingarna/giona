@@ -5,7 +5,7 @@ class MarathonController < ApplicationController
     @organizers = Organizer.marathon_eligible
 
     logs = MarathonLog.all
-    logs = logs.where(year: @year) if @year
+    logs = logs.where('year >= ?', @year) if @year
     logs = logs.where(organizer_id: @organizer_id) if @organizer_id
 
     # Person IDs matched by the active filters
@@ -13,7 +13,7 @@ class MarathonController < ApplicationController
 
     marathon_people = MarathonPerson.where(id: filtered_person_ids).index_by(&:id)
 
-    # Load ALL logs for those persons (to compute all-time totals and latest entry)
+    # Load ALL logs for those persons — needed to compute pre-period totals for new_plaques
     all_logs_for_persons = MarathonLog.where(marathon_person_id: filtered_person_ids)
                                       .group_by(&:marathon_person_id)
 
@@ -23,7 +23,8 @@ class MarathonController < ApplicationController
       mp = marathon_people[mp_id]
       next unless mp
 
-      all_logs          = all_logs_for_persons[mp_id] || []
+      all_logs   = all_logs_for_persons[mp_id] || []
+      # Restrict totals and latest to the selected year range
       latest            = all_logs.max_by(&:year)
       total_plaque_dist = all_logs.sum(&:plaque_dist)
 

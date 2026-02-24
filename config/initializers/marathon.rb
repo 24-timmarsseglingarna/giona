@@ -1,8 +1,8 @@
 MARATHON_THRESHOLDS = [
-  { plaque: 'Brons',  series: 'Basic',           dist:    200 },
-  { plaque: 'Silver', series: 'Basic',           dist:    500 },
-  { plaque: 'Guld',   series: 'Basic',           dist:  1_000 },
-  { plaque: 'Järn',   series: 'Basic',           dist:  2_000 },
+  { plaque: 'Brons',  series: '',                dist:    200 },
+  { plaque: 'Silver', series: '',                dist:    500 },
+  { plaque: 'Guld',   series: '',                dist:  1_000 },
+  { plaque: 'Järn',   series: '',                dist:  2_000 },
   { plaque: 'Brons',  series: 'Emalj',           dist:  3_000 },
   { plaque: 'Silver', series: 'Emalj',           dist:  4_000 },
   { plaque: 'Guld',   series: 'Emalj',           dist:  5_000 },

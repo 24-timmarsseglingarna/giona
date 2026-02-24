@@ -6,7 +6,7 @@
   .panel-body
     = form_tag marathon_path, method: :get, class: 'form-inline' do
       .form-group
-        = label_tag :year, 'År:'
+        = label_tag :year, 'Från år:'
         = select_tag :year,
             options_for_select([['-', '']] + (2000..Date.today.year).to_a.reverse.map { |y| [y, y] }, @year),
             class: 'form-control', onchange: 'this.form.submit()'
@@ -40,16 +40,16 @@
         - @rows.each_with_index do |row, idx|
           - mp = row[:marathon_person]
           %tr{class: (has_officer_rights? && row[:new_plaques].any?) ? 'success' : ''}
-            %td= idx + 1
+            %td{style: 'white-space: nowrap'}
+              = idx + 1
+              - if mp.hourglass
+                %i.fa.fa-hourglass.pull-right{'aria-hidden' => 'true', title: "Timglas #{mp.hourglass}"}
             %td= mp.first_name
             %td= mp.last_name
-            %td
-              - if mp.hourglass
-                %i.fa.fa-hourglass(aria-hidden='true', title="Timglas #{mp.hourglass}")
-              = row[:latest_boat_name]
+            %td= row[:latest_boat_name]
             %td= row[:latest_boat_type]
-            %td= row[:total_sailed_dist].round(1)
-            %td= row[:total_plaque_dist].round(1)
+            %td= row[:total_sailed_dist].round()
+            %td= row[:total_plaque_dist].round()
             %td= row[:latest_year]
             %td= row[:latest_organizer]&.name
             - if has_officer_rights? && @year
