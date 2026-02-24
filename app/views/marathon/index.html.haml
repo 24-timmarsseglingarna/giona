@@ -43,7 +43,10 @@
             %td= idx + 1
             %td= mp.first_name
             %td= mp.last_name
-            %td= row[:latest_boat_name]
+            %td
+              - if mp.hourglass
+                %i.fa.fa-hourglass(aria-hidden='true', title="Timglas #{mp.hourglass}")
+              = row[:latest_boat_name]
             %td= row[:latest_boat_type]
             %td= row[:total_sailed_dist].round(1)
             %td= row[:total_plaque_dist].round(1)
