@@ -18,7 +18,7 @@ default: &default
   adapter: postgresql
   encoding: utf8
   collation: sv_SE.UTF-8
-  template: template0  
+  template: template0
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
@@ -62,6 +62,8 @@ development:
 test:
   <<: *default
   database: giona_test
+  username: giona
+  password: giona
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is

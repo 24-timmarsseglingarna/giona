@@ -17,6 +17,8 @@ class User < ApplicationRecord
 
   acts_as_paranoid( :column => 'deleted_at', :column_type => 'time')
 
+  after_update :sync_email_to_person, if: :saved_change_to_email?
+
   def set_default_role
     self.role = :user
   end
@@ -29,5 +31,10 @@ class User < ApplicationRecord
     self.email
   end
 
+  private
+
+  def sync_email_to_person
+    person.update_column(:email, email) if person
+  end
 
 end
