@@ -5,7 +5,7 @@ class MarathonController < ApplicationController
     @organizers = Organizer.marathon_eligible
 
     logs = MarathonLog.all
-    logs = logs.where('year >= ?', @year) if @year
+    logs = logs.where('date >= ?', Date.new(@year, 1, 1)) if @year
     logs = logs.where(organizer_id: @organizer_id) if @organizer_id
 
     # Person IDs matched by the active filters
@@ -25,11 +25,11 @@ class MarathonController < ApplicationController
 
       all_logs   = all_logs_for_persons[mp_id] || []
       # Restrict totals and latest to the selected year range
-      latest            = all_logs.max_by(&:year)
+      latest            = all_logs.max_by(&:date)
       total_plaque_dist = all_logs.sum(&:plaque_dist)
 
       if @year
-        prev_total = all_logs.select { |l| l.year < @year }.sum(&:plaque_dist)
+        prev_total = all_logs.select { |l| l.date.year < @year }.sum(&:plaque_dist)
         new_p      = MarathonThresholds.new_plaques(prev_total, total_plaque_dist)
       else
         new_p = []
@@ -41,7 +41,7 @@ class MarathonController < ApplicationController
         total_plaque_dist: total_plaque_dist,
         latest_boat_name:  latest&.boat_name,
         latest_boat_type:  latest&.boat_type,
-        latest_year:       latest&.year,
+        latest_year:       latest&.date&.year,
         latest_organizer:  organizers_by_id[latest&.organizer_id],
         new_plaques:       new_p
       }

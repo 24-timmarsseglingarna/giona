@@ -704,7 +704,7 @@ namespace :batch do
         ml = MarathonLog.find_or_initialize_by(
           marathon_person_id: mp.id,
           team_id:            nil,
-          year:               log[:year],
+          date:               Date.new(log[:year], 12, 31),
           organizer_id:       organizer&.id
         )
         ml.sailed_dist = log[:sailed]

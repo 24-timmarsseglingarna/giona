@@ -89,7 +89,7 @@ namespace :marathon do
 
       # Create or update the log entry (team_id = nil for historical imports)
       ml = MarathonLog.find_or_initialize_by(marathon_person_id: mp.id, team_id: nil,
-                                             year: year, organizer_id: organizer_id)
+                                             date: Date.new(year, 12, 31), organizer_id: organizer_id)
       ml.sailed_dist = sailed_dist
       ml.plaque_dist = plaque_dist
       ml.boat_type   = boat_type

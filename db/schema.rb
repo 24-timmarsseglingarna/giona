@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_02_24_000003) do
+ActiveRecord::Schema.define(version: 2026_02_24_000005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 2026_02_24_000003) do
     t.float "plaque_dist", null: false
     t.string "boat_type"
     t.string "boat_name"
-    t.integer "year", null: false
+    t.date "date", null: false
     t.integer "organizer_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

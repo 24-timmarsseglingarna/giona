@@ -2,7 +2,7 @@ log_anna_2023:
   marathon_person: anna
   sailed_dist: 250.5
   plaque_dist: 220.0
-  year: 2023
+  date: 2023-12-31
   boat_name: Svanen
   boat_type: J/24
 
@@ -10,7 +10,7 @@ log_anna_2024:
   marathon_person: anna
   sailed_dist: 300.0
   plaque_dist: 280.0
-  year: 2024
+  date: 2024-12-31
   boat_name: Svanen
   boat_type: J/24
 
@@ -18,6 +18,6 @@ log_bertil_2024:
   marathon_person: bertil
   sailed_dist: 600.0
   plaque_dist: 550.0
-  year: 2024
+  date: 2024-12-31
   boat_name: Vindpinat
   boat_type: X-35

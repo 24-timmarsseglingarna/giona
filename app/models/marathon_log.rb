@@ -3,7 +3,7 @@ class MarathonLog < ApplicationRecord
   belongs_to :team, optional: true
   belongs_to :organizer, optional: true
 
-  validates :year, presence: true, numericality: { only_integer: true, greater_than: 1900 }
+  validates :date, presence: true
   validates :sailed_dist, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :plaque_dist, presence: true, numericality: { greater_than_or_equal_to: 0 }
 end

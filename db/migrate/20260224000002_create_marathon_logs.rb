@@ -7,7 +7,7 @@ class CreateMarathonLogs < ActiveRecord::Migration[6.1]
       t.float   :plaque_dist, null: false
       t.string  :boat_type
       t.string  :boat_name
-      t.integer :year, null: false
+      t.date "date", null: false
       t.integer :organizer_id
 
       t.timestamps

@@ -137,8 +137,6 @@ class RegattasController < ApplicationController
           logbook = team.get_logbook(team.logs.order(:time, :id))
           next if logbook[:plaque_dist] == 0
 
-          year = race.period&.year || @regatta.updated_at.year
-
           team.people.each do |person|
             unless person.marathon_person_id
               unlinked_names << person.sname
@@ -154,7 +152,7 @@ class RegattasController < ApplicationController
             ml.plaque_dist  = logbook[:plaque_dist].to_f
             ml.boat_type    = team.boat_type_name
             ml.boat_name    = team.boat_name
-            ml.year         = year
+            ml.date         = race.start_to&.to_date
             ml.organizer_id = @regatta.organizer_id
             ml.save!
 
