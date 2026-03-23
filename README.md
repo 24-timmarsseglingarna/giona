@@ -4,7 +4,7 @@
 
 # giona
 
-Version 1.17.9
+Version 1.18.0
 
 # Ubuntu
 
@@ -52,16 +52,16 @@ restart bash, then
 
 ```shell
 # install our ruby version
-rbenv install 3.2.6
+rbenv install 3.3.10
 ```
 
 Then in giona's top directory do:
 
 ```
-# use 3.2.6 for this project
-rbenv local 3.2.6
+# use 3.3.10 for this project
+rbenv local 3.3.10
 # install the bundler we use
-gem install bundler:2.4.10
+gem install bundler:2.5.23
 # install all dependencies
 bundle install
 ```
