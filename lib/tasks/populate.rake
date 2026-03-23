@@ -55,13 +55,24 @@ namespace :scrape do
       first_row = true
       source = "SRS enskrov #{DateTime.now.year.to_s}"
       handicaps = Array.new
+      srs_index = 6 # default
       for entry in entries
+        if first_row
+          # try to be adaptive for the column layout...
+          th = entry.css('th')
+          for i in 0..th.length
+            if th[i].text == 'SRS'
+              srs_index = i
+              break
+            end
+          end
+        end
         unless first_row
           h = Hash.new
           h[:name] = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
-          h[:srs] = entry.css('td')[6].text.gsub(',', '.').to_f
+          h[:srs] = entry.css('td')[srs_index].text.gsub(',', '.').to_f
           if h[:srs] == 0 # no std srs, use srs w/o "flygande segel"
-            h[:srs] = entry.css('td')[7].text.gsub(',', '.').to_f
+            h[:srs] = entry.css('td')[srs_index+1].text.gsub(',', '.').to_f
           end
           handicaps << h
         else

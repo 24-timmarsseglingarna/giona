@@ -180,7 +180,11 @@ class Handicap < ApplicationRecord
         # active teams that use this handicap.  these teams need to set
         # a new handicap.
         if has_changed
-          puts "Changed rating to #{sxk}: #{cur.description} (#{cur.id})"
+          puts "Changed rating to #{sxk} Old: #{cur.description} (#{cur.id})"
+          if cur.srs and newh.srs
+            d = newh.srs - cur.srs
+            puts("SRS change: #{d.round(3)} for #{newh.short_description}")
+          end
         else
           puts "Expired handicap: #{cur.description} (#{cur.id})"
         end
