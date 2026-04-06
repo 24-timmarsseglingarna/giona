@@ -12,6 +12,8 @@
     %span.form-label
       %label.control-label
         Startplatser
+      %button.btn.btn-xs.btn-default#starts_select_all{type: :button} Markera alla
+      %button.btn.btn-xs.btn-default#starts_deselect_all{type: :button} Avmarkera alla
     %span.form-wrapper
       %input#race_starts_none{:type => "hidden", :name => "race[starts][]", :value => ""}
       - for start in @race.regatta.organizer.default_starts
@@ -24,6 +26,19 @@
             = "#{start.number} #{name_by_number @race.regatta.terrain, start.number.to_i}"
 
 
+  .form-group#additional_starts_section
+    .form-label
+      %label.control-label Ytterligare startplatser
+    %div#additional_starts_list
+      - default_start_numbers = @race.regatta.organizer.default_starts.map { |d| d.number.to_s }
+      - for start in @race.starts.reject { |s| s.blank? || default_start_numbers.include?(s.to_s) }
+        .additional-start-item
+          %input{type: :hidden, name: 'race[starts][]', value: start}
+          %span.additional-start-label= "#{start} #{name_by_number @race.regatta.terrain, start.to_i}"
+          = " "
+          %button.btn.btn-xs.btn-danger.remove-additional-start{type: :button} ✕
+    = select_tag 'additional_start_select', options_for_select(@race.additional_start_places), include_blank: '-- Välj plats --', class: 'form-control'
+
   = f.select :common_finish, @race.finish_places, :include_blank => false, :label => 'Målgång'
   = f.hidden_field :regatta_id
 
@@ -33,4 +48,6 @@
   $(function () {
       var guessStartFrom = "#{@guessStartFrom}";
       setup_race_new_view(guessStartFrom);
+      setup_default_starts();
+      setup_additional_starts();
   });
