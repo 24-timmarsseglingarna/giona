@@ -80,6 +80,14 @@ class Race < ApplicationRecord
     finish_hash
   end
 
+  def additional_start_places
+    point_hash = {}
+    for point in regatta.terrain.points do
+      point_hash["#{point.number} #{point.name}"] = point.number
+    end
+    point_hash
+  end
+
   def start_places
     start_hash = Hash.new
     for start in self.starts do
