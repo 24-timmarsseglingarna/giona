@@ -1,3 +1,49 @@
+function setup_default_starts() {
+    $('#starts_select_all').on('click', function() {
+        $('#race_starts_input input[type=checkbox]').prop('checked', true);
+    });
+    $('#starts_deselect_all').on('click', function() {
+        $('#race_starts_input input[type=checkbox]').prop('checked', false);
+    });
+}
+
+function setup_additional_starts() {
+    // Disable options that are default starts (handled by checkboxes above)
+    $('#race_starts_input input[type=checkbox]').each(function() {
+        $('#additional_start_select option[value="' + $(this).val() + '"]').prop('disabled', true);
+    });
+
+    // Disable options already present in the list on page load
+    $('#additional_starts_list .additional-start-item').each(function() {
+        var val = $(this).find('input[type=hidden]').val();
+        $('#additional_start_select option[value="' + val + '"]').prop('disabled', true);
+    });
+
+    $('#additional_start_select').on('change', function() {
+        var select = $(this);
+        var val = select.val();
+        var text = select.find('option:selected').text();
+        if (!val) return;
+
+        var item = $('<div class="additional-start-item"></div>');
+        item.append($('<input type="hidden" name="race[starts][]">').val(val));
+        item.append($('<span class="additional-start-label"></span>').text(text));
+        item.append(' ');
+        item.append($('<button type="button" class="btn btn-xs btn-danger remove-additional-start">\u2715</button>'));
+        $('#additional_starts_list').append(item);
+
+        select.find('option[value="' + val + '"]').prop('disabled', true);
+        select.val('');
+    });
+
+    $(document).on('click', '.remove-additional-start', function() {
+        var item = $(this).closest('.additional-start-item');
+        var val = item.find('input[type=hidden]').val();
+        $('#additional_start_select option[value="' + val + '"]').prop('disabled', false);
+        item.remove();
+    });
+}
+
 function setup_race_new_view(guessStartFrom) {
     var icons = {
         time: 'fa fa-clock-o',

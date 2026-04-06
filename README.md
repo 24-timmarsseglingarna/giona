@@ -4,7 +4,7 @@
 
 # giona
 
-Version 1.18.0
+Version 1.18.1
 
 # Ubuntu
 
