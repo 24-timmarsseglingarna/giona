@@ -4,8 +4,26 @@ class HandicapsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorized?, :except => [:show, :index]
 
+  IMPORT_TYPES = %w[SrsKeelboat SrsMultihull SrsCertificate SrsMultihullCertificate SxkCertificate].freeze
+
   before_action :set_handicap, only: [:show, :edit, :update, :destroy]
   before_action :set_type
+
+  def import
+  end
+
+  def run_import
+    type = params[:import_type]
+    unless IMPORT_TYPES.include?(type)
+      redirect_to import_handicaps_path, alert: "Okänd importtyp."
+      return
+    end
+    user = User.find_by!(email: 'nobody@24-timmars.nu')
+    HandicapImporter.public_send(type.underscore.pluralize, user)
+    redirect_to import_handicaps_path, notice: "Import av #{type} klar."
+  rescue => e
+    redirect_to import_handicaps_path, alert: "Import misslyckades: #{e.message}"
+  end
 
   # GET /handicaps
   # GET /handicaps.json

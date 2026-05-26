@@ -11,139 +11,44 @@ namespace :scrape do
   namespace :srs do
     # rake scrape:srs:certificates
     # rake scrape:srs:certificates[dryrun]
+    # rake scrape:srs:certificates[expire]
     task :certificates => :environment do |task, args|
       dryrun = args.extras.include? 'dryrun'
       do_expire = args.extras.include? 'expire'
-      srs_table_url = "https://matbrev.svensksegling.se/Home/ApprovedList"
-      doc = Nokogiri::HTML(URI.open(srs_table_url))
-      entries = doc.xpath('//fieldset//tr')
-      first_row = true
-      source = "SRS-mätbrev #{DateTime.now.year.to_s}"
-      handicaps = Array.new
-      for entry in entries
-        unless first_row
-          h = Hash.new
-#          h[:registry_id] = CGI::parse((entry.css('td')[0].css('a').map { |link| link['href'] })[0])["rpt"][0].to_s
-          h[:registry_id] = entry.css('td')[0].text.to_s.strip
-          h[:owner_name] = entry.css('td')[1].text.to_s.strip
-          h[:name] = entry.css('td')[2].text.to_s.strip
-          h[:boat_name] = entry.css('td')[3].text.to_s.strip
-          h[:sail_number] = entry.css('td')[5].text.to_i
-          h[:srs] = entry.css('td')[8].text.gsub(',', '.').to_f
-          if h[:srs] == 0 # no std srs, use srs w/o "flygande segel"
-            h[:srs] = entry.css('td')[9].text.gsub(',', '.').to_f
-          end
-          handicaps << h
-        else
-          first_row = false
-        end
-      end
-      ActiveRecord::Base.transaction do
-        user = User.find_by!(email: 'nobody@24-timmars.nu')
-        Handicap.import('SrsCertificate', source, srs_table_url,
-                        handicaps, user, do_expire, dryrun)
-      end
+      user = User.find_by!(email: 'nobody@24-timmars.nu')
+      HandicapImporter.srs_certificates(user, do_expire: do_expire, dryrun: dryrun)
     end
   end
 
   namespace :srs do
+    # rake scrape:srs:keelboats
+    # rake scrape:srs:keelboats[dryrun]
     task :keelboats => :environment do |task, args|
       dryrun = args.extras.include? 'dryrun'
-      srs_table_url = "https://matbrev.svensksegling.se/home/boatlist?SrsGrid-sort=B%C3%A5ttyp-asc&SrsGrid-group=&SrsGrid-filter="
-      doc = Nokogiri::HTML(URI.open(srs_table_url))
-      entries = doc.xpath('//tr')
-      first_row = true
-      source = "SRS enskrov #{DateTime.now.year.to_s}"
-      handicaps = Array.new
-      srs_index = 6 # default
-      for entry in entries
-        if first_row
-          # try to be adaptive for the column layout...
-          th = entry.css('th')
-          for i in 0..th.length
-            if th[i].text == 'SRS'
-              srs_index = i
-              break
-            end
-          end
-        end
-        unless first_row
-          h = Hash.new
-          h[:name] = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
-          h[:srs] = entry.css('td')[srs_index].text.gsub(',', '.').to_f
-          if h[:srs] == 0 # no std srs, use srs w/o "flygande segel"
-            h[:srs] = entry.css('td')[srs_index+1].text.gsub(',', '.').to_f
-          end
-          handicaps << h
-        else
-          first_row = false
-        end
-      end
-      ActiveRecord::Base.transaction do
-        user = User.find_by!(email: 'nobody@24-timmars.nu')
-        do_expire = true
-        Handicap.import('SrsKeelboat', source, srs_table_url,
-                        handicaps, user, do_expire, dryrun)
-      end
+      user = User.find_by!(email: 'nobody@24-timmars.nu')
+      HandicapImporter.srs_keelboats(user, dryrun: dryrun)
     end
 
+    # rake scrape:srs:multihulls
+    # rake scrape:srs:multihulls[dryrun]
     task :multihulls => :environment do |task, args|
       dryrun = args.extras.include? 'dryrun'
-      srs_table_url = "https://matbrev.svensksegling.se/home/srsflerskrovlist"
-      doc = Nokogiri::HTML(URI.open(srs_table_url))
-      entries = doc.xpath('//tr')
-      first_row = true
-      source = "SRS flerskrov #{DateTime.now.year.to_s}"
-      handicaps = Array.new
-      for entry in entries
-        unless first_row
-          h = Hash.new
-          h[:name] = entry.css('td')[0].text.gsub('Ã¶','ö').gsub('Ã¥','ö').gsub('Ã¤','ä').to_s.strip
-          h[:srs] = entry.css('td')[1].text.gsub(',', '.').to_f
-          handicaps << h
-        else
-          first_row = false
-        end
-      end
-      ActiveRecord::Base.transaction do
-        user = User.find_by!(email: 'nobody@24-timmars.nu')
-        do_expire = true
-        Handicap.import('SrsMultihull', source, srs_table_url,
-                        handicaps, user, do_expire, dryrun)
-      end
+      user = User.find_by!(email: 'nobody@24-timmars.nu')
+      HandicapImporter.srs_multihulls(user, dryrun: dryrun)
     end
   end
 end
 
 namespace :import do
   namespace :srs do
+    # rake import:srs:multihull_certificates
+    # rake import:srs:multihull_certificates[dryrun]
+    # rake import:srs:multihull_certificates[expire]
     task :multihull_certificates => :environment do |task, args|
       dryrun = args.extras.include? 'dryrun'
       do_expire = args.extras.include? 'expire'
-      srs_table_url = "https://matbrev.svensksegling.se/Flerskrov/GetApprovedFlerskrovMatbrevListAll"
-      source = "SRS-mätbrev flerskrov #{DateTime.now.year.to_s}"
-      file = URI.open(srs_table_url)
-      json = JSON.parse file.first
-      handicaps = Array.new
-      for boat in json['Data']
-        h = Hash.new
-        h[:registry_id] = boat['Certno']
-        h[:owner_name] = boat['CustomerFirstName'].strip + ' ' +
-                         boat['CustomerLastName'].strip
-        h[:name] = boat['Boattype'].strip
-        h[:boat_name] = boat['Boatname'].strip unless boat['Boatname'].blank?
-        h[:sail_number] = boat['SailNo']
-        h[:srs] = boat['SRS1'].to_f
-        if h[:srs] == 0 # no std srs, use srs w/o "flygande segel"
-          h[:srs] = boat['SRS2'].to_f
-        end
-        handicaps << h
-      end
-      ActiveRecord::Base.transaction do
-        user = User.find_by!(email: 'nobody@24-timmars.nu')
-        Handicap.import('SrsMultihullCertificate', source, srs_table_url,
-                        handicaps, user, do_expire, dryrun)
-      end
+      user = User.find_by!(email: 'nobody@24-timmars.nu')
+      HandicapImporter.srs_multihull_certificates(user, do_expire: do_expire, dryrun: dryrun)
     end
 
     # NOTE:
@@ -171,64 +76,12 @@ namespace :import do
   end
 
   namespace :sxk do
+    # rake import:sxk:certificates
+    # rake import:sxk:certificates[dryrun]
     task :certificates => :environment do |task, args|
       dryrun = args.extras.include? 'dryrun'
-      #sxk_table_url = 'https://dev.24-timmars.nu/PoD/SXK-tal/apiSXKtal.php'
-      sxk_table_url = 'https://24-timmars.se/SXK-tal/apiSXKtal.php'
-      source = "SXK-mätbrev"
-      doc = Nokogiri::XML(URI.open(sxk_table_url), nil, 'utf-8')
-      certificates = doc.xpath("/SXKbrev/brev")
-      handicaps = Array.new
-      certificates.each do |cert|
-        h = Hash.new
-        registry_id = cert.xpath("Regnr").text.strip
-        expired_at = cert.xpath("Utgatt").text.strip
-        sxk = cert.xpath("SXKtal").text.strip.gsub(',', '.')
-        # sanity check
-        if registry_id.blank?
-          puts "Skipping certificate with empty 'Regnr'"
-          next
-        end
-        if sxk.blank? and expired_at.blank?
-          puts "Skipping certificate #{registry_id} with empty 'SXKtal' and no 'Utgatt'"
-          next
-        end
-        h[:registry_id] = registry_id
-        unless expired_at.blank?
-          h[:expired_at] = expired_at.to_date
-        end
-        unless sxk.blank?
-          h[:sxk] = sxk.to_f
-        end
-        name = cert.xpath("Bat").text.strip
-        unless name.blank?
-          h[:name] = name
-        end
-        boat_name = cert.xpath("Batnamn").text.strip
-        unless boat_name.blank?
-          h[:boat_name] = boat_name
-        end
-        owner_name = cert.xpath("Agare").text.strip
-        unless owner_name.blank?
-          h[:owner_name] = owner_name
-        end
-        sail_number = cert.xpath("Segelnr").text.strip
-        unless sail_number.blank?
-          # 'Segelnr' may contain letters; extract the number.
-          # do not match a single zero
-          m = sail_number.match("([1-9][0-9]*)")
-          unless m.nil?
-            h[:sail_number] = m[1].to_i
-          end
-        end
-        handicaps << h
-      end
-      ActiveRecord::Base.transaction do
-        user = User.find_by!(email: 'nobody@24-timmars.nu')
-        do_expire = true
-        Handicap.import('SxkCertificate', source, sxk_table_url,
-                        handicaps, user, do_expire, dryrun)
-      end
+      user = User.find_by!(email: 'nobody@24-timmars.nu')
+      HandicapImporter.sxk_certificates(user, dryrun: dryrun)
     end
 
   end
