@@ -1,0 +1,24 @@
+%h2 Importera handikapp
+
+%p Klicka på en knapp för att hämta aktuella handikapp från externa system. Importen körs direkt och kan ta några sekunder.
+
+%table.table
+  %thead
+    %tr
+      %th Typ
+      %th Källa
+      %th
+  %tbody
+    - [['SrsKeelboat', 'SRS enskrov', 'matbrev.svensksegling.se'],
+       ['SrsMultihull', 'SRS flerskrov', 'matbrev.svensksegling.se'],
+       ['SrsCertificate', 'SRS-mätbrev (enskrov)', 'matbrev.svensksegling.se'],
+       ['SrsMultihullCertificate', 'SRS-mätbrev (flerskrov)', 'matbrev.svensksegling.se'],
+       ['SxkCertificate', 'SXK-mätbrev', '24-timmars.se']].each do |type, label, source|
+      %tr
+        %td= label
+        %td= source
+        %td
+          = form_tag handicaps_run_import_path, method: :post do
+            = hidden_field_tag :import_type, type
+            = submit_tag "Importera", class: 'btn btn-default btn-sm',
+              data: { confirm: "Importera #{label}? Detta kan påverka aktiva anmälningar." }
