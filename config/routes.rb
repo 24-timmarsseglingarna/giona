@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   resources :points
   resources :organizers
 
+  get  'handicaps/import', to: 'handicaps#import', as: :import_handicaps
+  post 'handicaps/run_import', to: 'handicaps#run_import', as: :handicaps_run_import
   resources :handicaps
   resources :srs_keelboats, controller: 'handicaps', type: 'SrsKeelboats'
   resources :srs_multihulls, controller: 'handicaps', type: 'SrsMultihulls'
