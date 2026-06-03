@@ -80,6 +80,7 @@ class Person < ApplicationRecord
                                .select { |mp| mp.initials == self.initials }
     if candidates.length == 1
       update_column(:marathon_person_id, candidates.first.id)
+      MarathonMailer.single_match_email(self, candidates.first).deliver
     elsif candidates.length > 1
       MarathonMailer.multiple_matches_email(self, candidates).deliver
     else

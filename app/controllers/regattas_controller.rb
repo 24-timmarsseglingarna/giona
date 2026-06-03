@@ -129,7 +129,7 @@ class RegattasController < ApplicationController
 
     created_count = 0
     updated_count = 0
-    unlinked_names = []
+    created_person_names = []
 
     ActiveRecord::Base.transaction do
       @regatta.races.each do |race|
@@ -139,8 +139,13 @@ class RegattasController < ApplicationController
 
           team.people.each do |person|
             unless person.marathon_person_id
-              unlinked_names << person.sname
-              next
+              marathon_person = MarathonPerson.create!(
+                first_name: person.first_name,
+                last_name:  person.last_name,
+                birthday:   person.birthday
+              )
+              person.update_column(:marathon_person_id, marathon_person.id)
+              created_person_names << marathon_person.full_name
             end
 
             ml = MarathonLog.find_or_initialize_by(
@@ -167,8 +172,8 @@ class RegattasController < ApplicationController
     end
 
     notice = "Maratonresultat fastställt: #{created_count} skapade, #{updated_count} uppdaterade."
-    if unlinked_names.any?
-      notice += " Varning: följande besättningsmedlemmar saknar maratonkoppling: #{unlinked_names.uniq.join(', ')}."
+    if created_person_names.any?
+      notice += " #{created_person_names.length} nya maratonposter skapades: #{created_person_names.uniq.join(', ')}."
     end
     redirect_to @regatta, notice: notice
   end

@@ -76,10 +76,13 @@ namespace :marathon do
           puts "Linked #{p.full_name} → #{first_name} #{last_name}"
           linked += 1
         elsif person_candidates.length > 1
-          puts "Multiple matches for #{first_name} #{last_name} (#{birthday}): #{person_candidates.map { |p| "#{p.sname} (id=#{p.id})" }.join(', ')}" #"
+          puts "ERROR: Multiple matches for #{first_name} #{last_name} (#{birthday}): #{person_candidates.map { |p| "#{p.sname} (id=#{p.id})" }.join(', ')}" #"
           multi += 1
         else
           no_match += 1
+          if year > 2017
+            puts "ERROR: Did not find expected #{p.full_name}"
+          end
         end
         next if dryrun
         new_mp

@@ -152,6 +152,8 @@ parameter.
 
 # FIXME - Result
 
+2026: Just print to pdf from the browser.
+
 (wkhtmltopdf http://localhost:3000/regattas/1/result r1.pdf)
 weasyprint http://localhost:3000/regattas/47/result r2.pdf
 weasyprint http://localhost:3000/regattas/34/result r3.pdf
