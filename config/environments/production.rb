@@ -87,6 +87,12 @@ Rails.application.configure do
   # disable SQL debugging
   config.active_record.logger = nil
 
+  # Disable mail delivery when no SendGrid credentials are configured
+  # (e.g. on stage). Mails are still rendered, just not sent out via SMTP.
+  unless ENV["SENDGRID_USERNAME"].present?
+    config.action_mailer.perform_deliveries = false
+  end
+
   # Link in mails to application.
   if ENV["DEFAULT_URL"].present?
     config.action_mailer.default_url_options = { host: ENV["DEFAULT_URL"], protocol: 'https' }
