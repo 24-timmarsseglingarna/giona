@@ -123,6 +123,11 @@ export SENDGRID_USERNAME=`heroku config:get SENDGRID_USERNAME --app giona`
 export SENDGRID_PASSWORD=`heroku config:get SENDGRID_PASSWORD --app giona`
 
 
+Do not send mail in stage:
+
+heroku config:unset SENDGRID_USERNAME --app giona-stage
+heroku config:unset SENDGRID_PASSWORD --app giona-stage
+
 ======
 
 # Database heroku --> dev
