@@ -94,7 +94,7 @@
           = link_to 'Fastställ maratonresultat',
               confirm_marathon_regatta_path(@regatta),
               method: :post,
-              data: { confirm: "Vill du fastställa maratonresultatet för #{@regatta.name}? Befintliga rader uppdateras." },
+              data: { confirm: "Vill du fastställa maratonresultatet för #{@regatta.name}?" },
               class: 'btn btn-warning'
       %p
       .legend Länk för att anmäla sig till regattan:

@@ -1,3 +1,12 @@
+:css
+  .dist-narrow { display: none; }
+  @media (max-width: 1400px) {
+    .dist-wide { display: none; }
+    .dist-narrow { display: inline; }
+  }
+
+  .print-heading { display: none; }
+
 .panel.panel-default
   .panel-heading
     %i.fa.fa-trophy(aria-hidden='true')
@@ -20,6 +29,14 @@
       %i.fas.fa-file-excel(aria-hidden='true')
       = link_to 'Exportera xlsx', marathon_path(year: @year, organizer_id: @organizer_id, format: :xlsx), class: 'btn btn-default btn-sm'
 
+    %h3.print-heading
+      Maratonlistan
+      - if @year
+        = " från #{@year}"
+      - if @organizer_id
+        - org = @organizers.find { |o| o.id.to_s == @organizer_id.to_s }
+        = " – #{org.name}" if org
+
     %br
 
     %table#giona-marathon.table.table-striped.table-bordered.table-hover{width: '100%'}
@@ -30,10 +47,21 @@
           %th Efternamn
           %th Senaste båt
           %th Senaste båttyp
-          %th Seglad distans
-          %th Plakettdistans
+          %th
+            %span.dist-wide Seglad distans
+            %span.dist-narrow
+              Seglad
+              %br
+              distans
+          %th
+            %span.dist-wide Plakettdistans
+            %span.dist-narrow
+              Plakett-
+              %br
+              distans
           %th Senaste år
-          %th Krets
+          - unless @organizer_id
+            %th Krets
           - if has_officer_rights? && @year
             %th Ny plakett i år
       %tbody
@@ -51,7 +79,8 @@
             %td= row[:total_sailed_dist].round()
             %td= row[:total_plaque_dist].round()
             %td= row[:latest_year]
-            %td= row[:latest_organizer]&.name
+            - unless @organizer_id
+              %td= row[:latest_organizer]&.external_id
             - if has_officer_rights? && @year
               %td
                 - row[:new_plaques].each do |p|

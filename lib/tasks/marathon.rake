@@ -28,6 +28,16 @@ namespace :marathon do
       puts "Importing for organizer=#{organizer.name}"
     end
 
+    # The best plaque_dist a person has scored across all their teams (0 if
+    # none). A person only "counts" for the <2018 flag if this is > 0.
+    person_plaque = lambda do |person|
+      person.teams.map do |team|
+        team.get_logbook(team.logs.order(:time, :id))[:plaque_dist].to_f
+      rescue StandardError
+        0.0
+      end.max || 0.0
+    end
+
     created_people = 0
     created_logs   = 0
     flagged        = 0
@@ -74,8 +84,8 @@ namespace :marathon do
       if year >= 2018 && person_candidates.empty?
         puts "FLAGGED (>=2018, no person): #{first_name} #{last_name} (#{birthday})"
         flagged += 1
-      elsif year < 2018 && person_candidates.any?
-        puts "FLAGGED (<2018, unexpected person): #{first_name} #{last_name} (#{birthday}) — #{person_candidates.map { |p| "#{p.sname} (id=#{p.id})" }.join(', ')}"
+      elsif year < 2018 && (flag_persons = person_candidates.map { |p| [p, person_plaque.call(p)] }.select { |_p, pd| pd > 0 }).any?
+        puts "FLAGGED (<2018, unexpected person): #{first_name} #{last_name} (#{birthday}) — #{flag_persons.map { |p, pd| "#{p.sname} (id=#{p.id}, plaque_dist=#{pd.round(1)})" }.join(', ')}"
         flagged += 1
       end
 
@@ -84,8 +94,9 @@ namespace :marathon do
         next
       else
         # Create new MarathonPerson
-        puts "Would create MarathonPerson: #{first_name} #{last_name} (#{birthday})"
-        unless dryrun
+        if dryrun
+          puts "Would create MarathonPerson: #{first_name} #{last_name} (#{birthday})"
+        else
           new_mp = MarathonPerson.create!(first_name: first_name, last_name: last_name, birthday: birthday)
           puts "Created MarathonPerson: #{new_mp.full_name} (#{birthday})"
         end
@@ -137,22 +148,54 @@ namespace :marathon do
 
   desc "Import marathon data from a CSV without birthday, matching MarathonPerson by name " \
        "(exact, then fuzzy). Usage: rake 'marathon:import_by_name[path/to/file.csv,organizer_id,dryrun,col_sep]'"
-  task :import_by_name, [:file, :organizer_id, :col_sep, :dryrun] => :environment do |_t, args|
+  task :import_by_name, [:file, :organizer_id, :col_sep, :dryrun, :exclusions] => :environment do |_t, args|
     require 'csv'
+    require 'set'
     require 'did_you_mean'
 
     file = args[:file]
     organizer_id = args[:organizer_id].present? ? args[:organizer_id].to_i : nil
     col_sep = args[:col_sep].presence || ','
     unless file && File.exist?(file) && organizer_id
-      puts "Usage: rake 'marathon:import_by_name[path/to/file.csv,organizer_id,dryrun,col_sep]'"
+      puts "Usage: rake 'marathon:import_by_name[path/to/file.csv,organizer_id,col_sep,dryrun,exclusions]'"
       puts "CSV columns: first_name, last_name, boat_type, boat_name, year, sailed_dist, plaque_dist (birthday is not used)"
       puts "col_sep defaults to ',' — pass ';' for Swedish semicolon-separated exports."
+      puts "exclusions: optional path to a CSV (same col_sep) with a full name in the first column;"
+      puts "  listed names are matched only exactly (never fuzzily). If the second column is 'X',"
+      puts "  that person is ignored entirely. If the third column is a Person.id, only that person"
+      puts "  is linked for the name. Use it to fix false matches found in a dry run."
       exit 1
     end
 
     dryrun = args[:dryrun].present?
     puts "*** DRY RUN — no data will be written ***" if dryrun
+
+    # Exclusions CSV: full name in the first column. Listed names are matched
+    # only exactly (never fuzzily) — after a dry run, list both sides of any
+    # false "similar" match (e.g. "Owe Karlsson" and "Ola Karlsson") to keep
+    # them separate. If the second column holds 'X', the person is ignored
+    # entirely: rows for that name are skipped instead of imported. If the
+    # third column holds an integer Person.id, only that person is linked for
+    # the name — fixes the "linked 2 persons" warning when two same-named
+    # persons are actually different people.
+    excluded_names = Set.new
+    ignored_names  = Set.new
+    forced_person  = {}  # name => Person.id
+    if args[:exclusions].present?
+      unless File.exist?(args[:exclusions])
+        puts "Exclusions file not found: #{args[:exclusions]}"
+        exit 1
+      end
+      CSV.foreach(args[:exclusions], col_sep: col_sep, encoding: 'UTF-8') do |xrow|
+        name = xrow[0].to_s.strip.downcase
+        next if name.blank?
+        excluded_names << name
+        ignored_names  << name if xrow[1].to_s.strip.casecmp?('X')
+        forced_person[name] = Integer(xrow[2]) if xrow[2].to_s.strip.match?(/\A\d+\z/)
+      end
+      puts "Loaded #{excluded_names.size} excluded name(s) " \
+           "(#{ignored_names.size} ignored, #{forced_person.size} with forced person) from #{args[:exclusions]}"
+    end
 
     # Parse Swedish-formatted numbers: strip thousands separators (incl. NBSP)
     # and turn the decimal comma into a dot, e.g. "13 911,8" -> 13911.8.
@@ -160,6 +203,16 @@ namespace :marathon do
 
     organizer = Organizer.find(organizer_id)
     puts "Importing for organizer=#{organizer.name}"
+
+    # The best plaque_dist a person has scored across all their teams (0 if
+    # none). A person only "counts" for the <2018 flag if this is > 0.
+    person_plaque = lambda do |person|
+      person.teams.map do |team|
+        team.get_logbook(team.logs.order(:time, :id))[:plaque_dist].to_f
+      rescue StandardError
+        0.0
+      end.max || 0.0
+    end
 
     # Max Levenshtein distance (on the normalised "first last" string) accepted as a fuzzy match.
     max_distance = 2
@@ -173,13 +226,26 @@ namespace :marathon do
       target = full_name.call(first, last)
       exact = collection.select { |r| full_name.call(r.first_name, r.last_name) == target }
       next exact if exact.any? or year < 2018
-      collection.select { |r| DidYouMean::Levenshtein.distance(full_name.call(r.first_name, r.last_name), target) <= max_distance }
+      next [] if excluded_names.include?(target)
+      collection.select do |r|
+        cand = full_name.call(r.first_name, r.last_name)
+        next false if excluded_names.include?(cand)
+        DidYouMean::Levenshtein.distance(cand, target) <= max_distance
+      end
     end
 
     # Load all marathon people and all persons once so the fuzzy comparison
     # doesn't hit the DB per row.
     all_marathon_people = MarathonPerson.all.to_a
     all_people          = Person.all.to_a
+
+    # Every row in the file is assumed to be a distinct person. Track the names
+    # seen so far in this run (normalised name + a human label) so we can warn
+    # about likely data errors: the same name twice, or two confusingly similar
+    # names. Matching for MarathonPerson is done only against the DB snapshot
+    # above — people created during this run are NOT added back, so two rows
+    # with the same name are never silently merged.
+    seen_names = []
 
     created_people = 0
     created_logs   = 0
@@ -208,13 +274,37 @@ namespace :marathon do
 
       target = full_name.call(first_name, last_name)
 
+      # Person marked 'X' in the exclusions file — ignore entirely.
+      if ignored_names.include?(target)
+        puts "Ignoring (excluded): #{first_name} #{last_name} (#{year})"
+        next
+      end
+
+      # Rows are assumed to be distinct people. Warn (but still import) when a
+      # name collides with one seen earlier in the same file — an exact repeat,
+      # or a near-duplicate within max_distance. Names listed in the exclusions
+      # file are known-distinct, so skip the fuzzy "similar" warning for them.
+      if (dup = seen_names.find { |t, _| t == target })
+        puts "WARNING: duplicate name in file: #{first_name} #{last_name} (#{year}) — already seen as #{dup[1]}"
+      elsif !excluded_names.include?(target) &&
+            (sim = seen_names
+                     .reject { |t, _| excluded_names.include?(t) }
+                     .map { |t, label| [label, DidYouMean::Levenshtein.distance(t, target)] }
+                     .select { |_label, dist| dist.positive? && dist <= max_distance }
+                     .min_by { |_label, dist| dist })
+        puts "WARNING: similar name in file: #{first_name} #{last_name} (#{year}) ~ #{sim[0]} (distance #{sim[1]})"
+      end
+      seen_names << [target, "#{first_name} #{last_name} (#{year})"]
+
       # 1. Exact (case-insensitive) name match.
       match = all_marathon_people.find { |mp| full_name.call(mp.first_name, mp.last_name) == target }
       match_kind = match ? 'exact' : nil
 
-      # 2. Fuzzy fallback: closest candidate within max_distance.
-      unless match
+      # 2. Fuzzy fallback: closest candidate within max_distance (unless the
+      #    imported name is on the exclusion list, then exact-only).
+      if !match && !excluded_names.include?(target)
         best = all_marathon_people
+                 .reject { |mp| excluded_names.include?(full_name.call(mp.first_name, mp.last_name)) }
                  .map { |mp| [mp, DidYouMean::Levenshtein.distance(full_name.call(mp.first_name, mp.last_name), target)] }
                  .select { |_mp, dist| dist <= max_distance }
                  .min_by { |_mp, dist| dist }
@@ -226,6 +316,18 @@ namespace :marathon do
 
       # Find matching Person(s) by name (exact, then fuzzy).
       person_matches = name_matches.call(all_people, first_name, last_name, year)
+
+      # A forced Person.id from the exclusions file pins the link to exactly
+      # that person, resolving same-name collisions ("linked 2 persons").
+      if (forced_id = forced_person[target])
+        forced = all_people.find { |p| p.id == forced_id }
+        if forced
+          person_matches = [forced]
+        else
+          puts "WARNING: forced person id #{forced_id} for #{first_name} #{last_name} not found"
+        end
+      end
+
       person_match_fuzzy = person_matches.any? &&
                            person_matches.none? { |p| full_name.call(p.first_name, p.last_name) == target }
 
@@ -234,8 +336,8 @@ namespace :marathon do
       if year >= 2018 && person_matches.empty?
         puts "FLAGGED (>=2018, no person): #{first_name} #{last_name} (#{year})"
         flagged += 1
-      elsif year < 2018 && person_matches.any?
-        puts "FLAGGED (<2018, unexpected person): #{first_name} #{last_name} (#{year}) → #{person_matches.map { |p| "#{p.sname} (id=#{p.id})" }.join(', ')}"
+      elsif year < 2018 && (flag_persons = person_matches.map { |p| [p, person_plaque.call(p)] }.select { |_p, pd| pd > 0 }).any?
+        puts "FLAGGED (<2018, unexpected person): #{first_name} #{last_name} (#{year}) → #{flag_persons.map { |p, pd| "#{p.sname} (id=#{p.id}, plaque_dist=#{pd.round(1)})" }.join(', ')}"
         flagged += 1
       end
 
@@ -243,13 +345,13 @@ namespace :marathon do
       mp = match
       if mp
         matched += 1
-        puts "Matched #{first_name} #{last_name} → #{mp.full_name} (id=#{mp.id}, #{match_kind})"
+        puts "MATCHED #{first_name} #{last_name} matches existing marathon person  #{mp.full_name} (id=#{mp.id}, #{match_kind})"
       else
         no_match += 1
-        puts "Would create MarathonPerson: #{first_name} #{last_name}"
-        unless dryrun
+        if dryrun
+          puts "Would create MarathonPerson: #{first_name} #{last_name}"
+        else
           mp = MarathonPerson.create!(first_name: first_name, last_name: last_name, birthday: nil)
-          all_marathon_people << mp
           puts "Created MarathonPerson: #{mp.full_name} (id=#{mp.id})"
         end
         created_people += 1
@@ -327,6 +429,27 @@ namespace :marathon do
     end
 
     puts "\nDone. Linked: #{linked}, multiple matches: #{multi}, no match: #{no_match}, skipped (no birthday): #{skipped}."
+  end
+
+  desc "Undo a marathon import: delete all MarathonLog and MarathonPerson rows " \
+       "and clear marathon_person_id on all Person records. Usage: rake 'marathon:reset[dryrun]'"
+  task :reset, [:dryrun] => :environment do |_task, args|
+    dryrun = args[:dryrun].present?
+    puts "*** DRY RUN — no data will be deleted ***" if dryrun
+
+    logs    = MarathonLog.count
+    people  = MarathonPerson.count
+    linked  = Person.where.not(marathon_person_id: nil).count
+
+    puts "Would delete #{logs} marathon log(s), #{people} marathon person(s), " \
+         "and clear marathon_person_id on #{linked} person(s)."
+
+    unless dryrun
+      Person.where.not(marathon_person_id: nil).update_all(marathon_person_id: nil)
+      MarathonLog.delete_all
+      MarathonPerson.delete_all
+      puts "Done."
+    end
   end
 
   desc "List persons in a race organized by organizer_id 8 (default) with team plaque_dist > 0 that are not linked to a marathon_person"

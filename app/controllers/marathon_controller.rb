@@ -28,7 +28,9 @@ class MarathonController < ApplicationController
       latest            = all_logs.max_by(&:date)
       total_plaque_dist = all_logs.sum(&:plaque_dist)
 
-      if @year
+      # Historical imports have no team_id. If the latest entry is imported,
+      # the plaques were already awarded historically — don't flag them as new.
+      if @year && latest&.team_id
         prev_total = all_logs.select { |l| l.date.year < @year }.sum(&:plaque_dist)
         new_p      = MarathonThresholds.new_plaques(prev_total, total_plaque_dist)
       else
