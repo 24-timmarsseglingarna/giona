@@ -13,6 +13,10 @@ MARATHON_THRESHOLDS = [
   { plaque: 'Järn',   series: 'Emalj hög serie', dist: 10_000 },
 ].freeze
 
+# A sailor is flagged as "near a plaque" when this close (in nautical miles)
+# to the next threshold.
+NEAR_PLAQUE_DIST = 75
+
 module MarathonThresholds
   # Highest threshold crossed at a given total distance
   def self.current_plaque(total_dist)
@@ -22,5 +26,17 @@ module MarathonThresholds
   # Thresholds newly crossed when going from prev_dist to total_dist
   def self.new_plaques(prev_dist, total_dist)
     MARATHON_THRESHOLDS.select { |t| t[:dist] > prev_dist && t[:dist] <= total_dist }
+  end
+
+  # The next threshold above total_dist, or nil if all have been crossed.
+  def self.next_plaque(total_dist)
+    MARATHON_THRESHOLDS.find { |t| t[:dist] > total_dist }
+  end
+
+  # Distance remaining to the next threshold above total_dist, or nil if all
+  # thresholds have already been crossed.
+  def self.dist_to_next_plaque(total_dist)
+    nxt = next_plaque(total_dist)
+    nxt && (nxt[:dist] - total_dist)
   end
 end

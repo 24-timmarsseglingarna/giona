@@ -6,10 +6,10 @@ sheet_header = ['Plats', 'Förnamn', 'Efternamn', 'Timglas', 'Senaste båt', 'Se
 wb.add_worksheet(name: "Maratonlistan") do |sheet|
   sheet.add_row sheet_header
 
-  @rows.each_with_index do |row, idx|
+  @rows.each do |row|
     mp = row[:marathon_person]
     sheet.add_row [
-      idx + 1,
+      row[:place],
       mp.first_name,
       mp.last_name,
       mp.hourglass,

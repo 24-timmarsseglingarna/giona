@@ -173,7 +173,7 @@ class RegattasController < ApplicationController
 
     notice = "Maratonresultat fastställt: #{created_count} skapade, #{updated_count} uppdaterade."
     if created_person_names.any?
-      notice += " #{created_person_names.length} nya maratonposter skapades: #{created_person_names.uniq.join(', ')}."
+      notice += " #{created_person_names.length} nya maratonpersoner skapades: #{created_person_names.uniq.join(', ')}."
     end
     redirect_to @regatta, notice: notice
   end
