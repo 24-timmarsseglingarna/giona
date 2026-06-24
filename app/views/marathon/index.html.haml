@@ -25,9 +25,15 @@
         = select_tag :organizer_id,
             options_for_select([['-', '']] + @organizers.map { |o| [o.name, o.id] }, @organizer_id),
             class: 'form-control', onchange: 'this.form.submit()'
-      &nbsp;
-      %i.fas.fa-file-excel(aria-hidden='true')
-      = link_to 'Exportera xlsx', marathon_path(year: @year, organizer_id: @organizer_id, format: :xlsx), class: 'btn btn-default btn-sm'
+      - if has_officer_rights?
+        &nbsp;
+        .checkbox
+          %label
+            = check_box_tag :new_plaques, '1', @show_new_plaques, onchange: 'this.form.submit()'
+            Visa plaketter från valt år
+      %span.pull-right
+        %i.fas.fa-file-excel(aria-hidden='true')
+        = link_to 'Exportera xlsx', marathon_path(year: @year, organizer_id: @organizer_id, new_plaques: @show_new_plaques ? '1' : nil, format: :xlsx), class: 'btn btn-default btn-sm'
 
     %h3.print-heading
       Maratonlistan
@@ -62,7 +68,7 @@
           %th Senaste år
           - unless @organizer_id
             %th Krets
-          - if has_officer_rights? && @year
+          - if has_officer_rights? && @year && @show_new_plaques
             %th Ny plakett i år
       %tbody
         - @rows.each_with_index do |row, idx|
@@ -81,7 +87,7 @@
             %td= row[:latest_year]
             - unless @organizer_id
               %td= row[:latest_organizer]&.external_id
-            - if has_officer_rights? && @year
+            - if has_officer_rights? && @year && @show_new_plaques
               %td
                 - row[:new_plaques].each do |p|
                   %span.label.label-success= "#{p[:plaque]} #{p[:series]}"

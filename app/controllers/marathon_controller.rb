@@ -2,6 +2,7 @@ class MarathonController < ApplicationController
   def index
     @year = params[:year].present? ? params[:year].to_i : nil
     @organizer_id = params[:organizer_id].present? ? params[:organizer_id].to_i : nil
+    @show_new_plaques = params[:new_plaques].present?
     @organizers = Organizer.marathon_eligible
 
     logs = MarathonLog.all
@@ -28,10 +29,13 @@ class MarathonController < ApplicationController
       latest            = all_logs.max_by(&:date)
       total_plaque_dist = all_logs.sum(&:plaque_dist)
 
-      # Historical imports have no team_id. If the latest entry is imported,
-      # the plaques were already awarded historically — don't flag them as new.
-      if @year && latest&.team_id
-        prev_total = all_logs.select { |l| l.date.year < @year }.sum(&:plaque_dist)
+      # New plaques are those crossed during the selected year range. The
+      # baseline is everything already accounted for before that range:
+      # logs from earlier years, plus historical imports (no team_id) whose
+      # plaques were awarded historically — regardless of the import's date.
+      if @show_new_plaques && @year
+        prev_total = all_logs.select { |l| l.date.year < @year || l.team_id.nil? }
+                             .sum(&:plaque_dist)
         new_p      = MarathonThresholds.new_plaques(prev_total, total_plaque_dist)
       else
         new_p = []
