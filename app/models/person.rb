@@ -79,8 +79,16 @@ class Person < ApplicationRecord
     candidates = MarathonPerson.where(birthday: self.birthday)
                                .select { |mp| mp.initials == self.initials }
     if candidates.length == 1
-      update_column(:marathon_person_id, candidates.first.id)
-      MarathonMailer.single_match_email(self, candidates.first).deliver
+      candidate = candidates.first
+      others = Person.where(marathon_person_id: candidate.id)
+                     .where.not(id: self.id)
+                     .to_a
+      update_column(:marathon_person_id, candidate.id)
+      if others.empty?
+        MarathonMailer.single_match_email(self, candidate).deliver
+      else
+        MarathonMailer.clash_email(self, candidate, others).deliver
+      end
     elsif candidates.length > 1
       MarathonMailer.multiple_matches_email(self, candidates).deliver
     else

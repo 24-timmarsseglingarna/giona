@@ -1,0 +1,17 @@
+Hej,
+
+En ny seglare länkades automatiskt till en maratonpost som redan är länkad
+till en eller flera andra seglare i Giona.
+
+Ny seglare: #{@person.sname} (#{@person.birthday}) [id: #{@person.id}]
+
+Maratonpost: #{@candidate.full_name} (#{@candidate.birthday}) [id: #{@candidate.id}]
+
+Sedan tidigare länkade seglare:
+- @others.each do |p|
+  \- #{p.sname} (#{p.birthday}) [id: #{p.id}]
+
+Åtgärd krävs: Kontrollera om det rör sig om samma person, och ta bort
+felaktiga länkningar via admin-gränssnittet.
+
+-- Giona

@@ -9,6 +9,13 @@ class MarathonMailer < ApplicationMailer
     mail(to: ADMIN_EMAIL, subject: "Maratonmatchning: #{person.sname}")
   end
 
+  def clash_email(person, candidate, others)
+    @person    = person
+    @candidate = candidate
+    @others    = others
+    mail(to: ADMIN_EMAIL, subject: "Maratonkrock: #{person.sname}")
+  end
+
   def multiple_matches_email(person, candidates)
     @person     = person
     @candidates = candidates
