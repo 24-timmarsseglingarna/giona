@@ -31,7 +31,7 @@
       %a{:href => regattas_path(:is_active => true)}
         %i.fa.fa-font.fa-trophy.fa-fw(aria-hidden='true')
         Regattor
-    - if has_officer_rights? || current_user&.person&.marathon_person
+    - if has_officer_rights? || current_user&.person&.marathon_person&.marathon_logs&.exists?
       %li
         %a{:href => marathon_path}
           %i.fa.fa-trophy.fa-fw(aria-hidden='true')
