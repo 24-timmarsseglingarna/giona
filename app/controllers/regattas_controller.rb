@@ -130,6 +130,9 @@ class RegattasController < ApplicationController
     created_count = 0
     updated_count = 0
     created_person_names = []
+    linked_person_names = []
+    clash_person_names = []
+    ambiguous_person_names = []
 
     ActiveRecord::Base.transaction do
       @regatta.races.each do |race|
@@ -139,13 +142,33 @@ class RegattasController < ApplicationController
 
           team.people.each do |person|
             unless person.marathon_person_id
-              marathon_person = MarathonPerson.create!(
-                first_name: person.first_name,
-                last_name:  person.last_name,
-                birthday:   person.birthday
-              )
-              person.update_column(:marathon_person_id, marathon_person.id)
-              created_person_names << marathon_person.full_name
+              candidates = person.marathon_candidates
+              if candidates.length > 1
+                # Ambiguous - don't guess, and don't create yet another
+                # duplicate.  An officer has to link the person manually.
+                MarathonMailer.multiple_matches_email(person, candidates).deliver
+                ambiguous_person_names << person.sname
+                next
+              elsif candidates.length == 1
+                candidate = candidates.first
+                others = person.marathon_person_clashes(candidate)
+                person.update_column(:marathon_person_id, candidate.id)
+                if others.empty?
+                  MarathonMailer.single_match_email(person, candidate).deliver
+                else
+                  MarathonMailer.clash_email(person, candidate, others).deliver
+                  clash_person_names << person.sname
+                end
+                linked_person_names << candidate.full_name
+              else
+                marathon_person = MarathonPerson.create!(
+                  first_name: person.first_name,
+                  last_name:  person.last_name,
+                  birthday:   person.birthday
+                )
+                person.update_column(:marathon_person_id, marathon_person.id)
+                created_person_names << marathon_person.full_name
+              end
             end
 
             ml = MarathonLog.find_or_initialize_by(
@@ -174,6 +197,15 @@ class RegattasController < ApplicationController
     notice = "Maratonresultat fastställt: #{created_count} skapade, #{updated_count} uppdaterade."
     if created_person_names.any?
       notice += " #{created_person_names.length} nya maratonpersoner skapades: #{created_person_names.uniq.join(', ')}."
+    end
+    if linked_person_names.any?
+      notice += " #{linked_person_names.length} seglare länkades till befintliga maratonpersoner: #{linked_person_names.uniq.join(', ')}."
+    end
+    if clash_person_names.any?
+      notice += " OBS! Följande seglare länkades till en maratonperson som redan är länkad till någon annan: #{clash_person_names.uniq.join(', ')}."
+    end
+    if ambiguous_person_names.any?
+      notice += " OBS! Följande seglare matchar flera maratonpersoner och fick inget maratonresultat; länka dem manuellt och fastställ maratonresultatet igen: #{ambiguous_person_names.uniq.join(', ')}."
     end
     redirect_to @regatta, notice: notice
   end

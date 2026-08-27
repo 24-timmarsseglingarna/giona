@@ -72,17 +72,28 @@ class Person < ApplicationRecord
     "#{self.first_name.first.upcase}#{self.last_name.first.upcase}"
   end
 
+  # Possible marathon persons for this person; same birthday and initials.
+  def marathon_candidates
+    return [] if self.birthday.blank?
+    MarathonPerson.where(birthday: self.birthday)
+                  .select { |mp| mp.initials == self.initials }
+  end
+
+  # Other people already linked to the given marathon person.
+  def marathon_person_clashes(marathon_person)
+    Person.where(marathon_person_id: marathon_person.id)
+          .where.not(id: self.id)
+          .to_a
+  end
+
   private
 
   def try_link_marathon_person
     return if self.birthday.blank?
-    candidates = MarathonPerson.where(birthday: self.birthday)
-                               .select { |mp| mp.initials == self.initials }
+    candidates = self.marathon_candidates
     if candidates.length == 1
       candidate = candidates.first
-      others = Person.where(marathon_person_id: candidate.id)
-                     .where.not(id: self.id)
-                     .to_a
+      others = self.marathon_person_clashes(candidate)
       update_column(:marathon_person_id, candidate.id)
       if others.empty?
         MarathonMailer.single_match_email(self, candidate).deliver
