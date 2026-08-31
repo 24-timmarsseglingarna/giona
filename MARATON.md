@@ -10,20 +10,20 @@ varje person.
 ## Tabeller
 
 ```
-marathon_people
-  first_name, last_name, birthday, hourglass, people_id?
+marathon_people  id: :serial
+  first_name, last_name, birthday, hourglass
 ```
 
 `hourglass` sätts till det år personen fått utmärkelsen timglaset.
 
 ```
 marathon_log
-  marathon_people_id, regatta_id,
+  marathon_people_id, team_id
   sailed_dist, plaque_dist,
   boat_type, boat_name, year, organizer_id
 ```
 
-`regatta_id` är `NULL` om det är historisk import.
+`team_id` är `NULL` om det är historisk import.
 
 Notera att import kan ske från olika kretsar.
 
@@ -32,6 +32,11 @@ I tabellen `person`:
 ```
 marathon_people_id: integer
 ```
+
+Med denna design kan vi hantera dubletter, dvs att det finns flera
+`person` för en och samma fysisk seglare.  Båda kan peka på samma
+`maraton_people`.
+
 
 ## Import från starema och andra kretsar
 
@@ -64,12 +69,16 @@ Om personen finns i maratontabellen, uppdatera personens
 ## Uppdatera maratontabellen automatiskt
 
 När en regatta är färdigrättad, måste en funktionär klicka på
-`Fastställ resultatet`.  Detta kan man bara göra en gång.  När man
-klickar där uppdateras motsvarande rad i maratontabellen.  Om ingen
-sådan rad finns så skapas den.
+`Fastställ resultatet` (ny knapp).  När man
+klickar där skapas en rad i `marathon_log` med personens
+`marathon_people_id` och `team_id`.  Om en sådan rad redan finns
+uppdateras den.  Detta gör det möjligt att i efterhand ändra ett
+resultat om det blivit fel.
 
 Man kan tänka sig att denna knapp bara går att klicka på om kretsen har
 importerat existerande maratondata till Giona.
+
+### Gammal ide
 
 En annan ide är att betrakta maratontabellen som bara innehållande
 historiskt data, och istället lägga till två nya fält i `teams`;
@@ -88,8 +97,9 @@ maratontabellen.
 
 ## Titta på maratontabellen
 
-- per krets
-- riks totalt
+- bara de som seglat i år eller alla
+- per krets eller riks
+
 - exportera till excel
 
 Endast funktionärer skall se födelsedag.

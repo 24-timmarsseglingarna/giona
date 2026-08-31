@@ -1,0 +1,141 @@
+:css
+  .dist-narrow { display: none; }
+  @media (max-width: 1400px) {
+    .dist-wide { display: none; }
+    .dist-narrow { display: inline; }
+  }
+
+  .print-heading { display: none; }
+
+.panel.panel-default
+  .panel-heading
+    %i.fa.fa-trophy(aria-hidden='true')
+    Maratonlistan
+
+  .panel-body
+    = form_tag marathon_path, method: :get, class: 'form-inline' do
+      .form-group
+        = label_tag :year, 'Från år:'
+        = select_tag :year,
+            options_for_select([['-', '']] + (2000..Date.today.year).to_a.reverse.map { |y| [y, y] }, @year),
+            class: 'form-control', onchange: 'this.form.submit()'
+      &nbsp;
+      .form-group
+        = label_tag :organizer_id, 'Krets:'
+        = select_tag :organizer_id,
+            options_for_select([['-', '']] + @organizers.map { |o| [o.name, o.id] }, @organizer_id),
+            class: 'form-control', onchange: 'this.form.submit()'
+      - if has_officer_rights?
+        &nbsp;
+        %div{style: 'display: inline-block; vertical-align: middle; text-align: left'}
+          .radio{style: 'display: block; margin: 0'}
+            %label
+              = radio_button_tag :highlight, '', @highlight.nil?, onchange: 'this.form.submit()'
+              Ingen markering
+          .radio{style: 'display: block; margin: 0'}
+            %label
+              = radio_button_tag :highlight, 'new_plaques', @highlight == 'new_plaques', onchange: 'this.form.submit()'
+              Plaketter från valt år
+          .radio{style: 'display: block; margin: 0'}
+            %label
+              = radio_button_tag :highlight, 'near_plaque', @highlight == 'near_plaque', onchange: 'this.form.submit()'
+              Nära till plakett
+        &nbsp;
+        %div{style: 'display: inline-block; vertical-align: middle; text-align: left'}
+          .radio{style: 'display: block; margin: 0'}
+            %label
+              = radio_button_tag :show, 'all', !@show_selected, onchange: 'this.form.submit()'
+              Visa alla
+          .radio{style: 'display: block; margin: 0'}
+            %label
+              = radio_button_tag :show, 'selected', @show_selected, onchange: 'this.form.submit()'
+              Visa valda
+      %span.pull-right
+        %i.fas.fa-file-excel(aria-hidden='true')
+        = link_to 'Exportera xlsx', marathon_path(year: @year, organizer_id: @organizer_id, highlight: @highlight, show: (@show_selected ? 'selected' : nil), format: :xlsx), class: 'btn btn-default btn-sm'
+
+    - if has_officer_rights? && @highlight == 'near_plaque'
+      %p
+        %button.btn.btn-default.btn-sm{type: 'button', onclick: "var e = document.getElementById('near-emails'); e.style.display = (e.style.display === 'none' ? 'block' : 'none');"}
+          = "Visa e-postadresser (#{@near_emails.size})"
+      %textarea#near-emails.form-control{readonly: true, rows: 3, style: 'display: none'}= @near_emails.join(', ')
+
+    %h3.print-heading
+      Maratonlistan
+      - if @year
+        = " från #{@year}"
+      - if @organizer_id
+        - org = @organizers.find { |o| o.id.to_s == @organizer_id.to_s }
+        = " – #{org.name}" if org
+
+    %br
+
+    %table#giona-marathon.table.table-striped.table-bordered.table-hover{width: '100%'}
+      %thead
+        %tr
+          %th Plats
+          %th Förnamn
+          %th Efternamn
+          %th Senaste båt
+          %th Senaste båttyp
+          %th
+            %span.dist-wide Seglad distans
+            %span.dist-narrow
+              Seglad
+              %br
+              distans
+          %th
+            %span.dist-wide Plakettdistans
+            %span.dist-narrow
+              Plakett-
+              %br
+              distans
+          %th Senaste år
+          - unless @organizer_id
+            %th Krets
+          - if has_officer_rights? && @year && @highlight == 'new_plaques'
+            %th Ny plakett i år
+          - if has_officer_rights? && @highlight == 'near_plaque'
+            %th Nästa plakett
+      %tbody
+        - @rows.each do |row|
+          - mp = row[:marathon_person]
+          - row_class = '' unless has_officer_rights?
+          - row_class ||= 'success' if row[:new_plaques].any?
+          - row_class ||= 'warning' if row[:near_plaque]
+          %tr{class: row_class}
+            %td{style: 'white-space: nowrap'}
+              = row[:place]
+              - if mp.hourglass
+                %i.fa.fa-hourglass.pull-right{'aria-hidden' => 'true', title: "Timglas #{mp.hourglass}"}
+            %td= mp.first_name
+            %td= mp.last_name
+            %td= row[:latest_boat_name]
+            %td= row[:latest_boat_type]
+            %td= row[:total_sailed_dist].round()
+            %td= row[:total_plaque_dist].round()
+            %td= row[:latest_year]
+            - unless @organizer_id
+              %td= row[:latest_organizer]&.external_id
+            - if has_officer_rights? && @year && @highlight == 'new_plaques'
+              %td
+                - row[:new_plaques].each do |p|
+                  %span.label.label-success= "#{p[:plaque]} #{p[:series]}"
+            - if has_officer_rights? && @highlight == 'near_plaque'
+              %td
+                - if (p = row[:next_plaque])
+                  %span.label.label-warning= "#{p[:plaque]} #{p[:series]}"
+
+:javascript
+  $(document).ready(function() {
+    $('#giona-marathon').DataTable({
+      paging: false,
+      ordering: false,
+      language: {
+        search: "Sök:",
+        info: "Visar rad _START_ till _END_ av _TOTAL_",
+        zeroRecords: "Det finns inget som passar urvalet.",
+        emptyTable: "Tabellen är tom."
+      }
+    });
+  });

@@ -8,7 +8,7 @@ class RegattasController < ApplicationController
   before_action :authorized?, :except => [:show, :start_list, :result, :index, :email_list]
   before_action :authorized_assistant?, :only => [:email_list]
 
-  before_action :set_regatta, only: [:show, :start_list, :result, :email_list, :edit, :update, :destroy, :archive ]
+  before_action :set_regatta, only: [:show, :start_list, :result, :email_list, :edit, :update, :destroy, :archive, :confirm_marathon]
 
   # GET /regattas
   # GET /regattas.json
@@ -111,6 +111,105 @@ class RegattasController < ApplicationController
     end
   end
 
+  def confirm_marathon
+    unless has_officer_rights?
+      redirect_to @regatta, alert: 'Du har tyvärr inte tillräckliga behörigheter.'
+      return
+    end
+
+    if @regatta.active
+      redirect_to @regatta, alert: 'Regattan måste vara arkiverad innan maratonresultatet kan fastställas.'
+      return
+    end
+
+    unless @regatta.marathon_eligible?
+      redirect_to @regatta, alert: 'Regattan är inte markerad som maratonberättigad.'
+      return
+    end
+
+    created_count = 0
+    updated_count = 0
+    created_person_names = []
+    linked_person_names = []
+    clash_person_names = []
+    ambiguous_person_names = []
+
+    ActiveRecord::Base.transaction do
+      @regatta.races.each do |race|
+        race.teams.is_archived.each do |team|
+          logbook = team.get_logbook(team.logs.order(:time, :id))
+          next if logbook[:plaque_dist] == 0
+
+          team.people.each do |person|
+            unless person.marathon_person_id
+              candidates = person.marathon_candidates
+              if candidates.length > 1
+                # Ambiguous - don't guess, and don't create yet another
+                # duplicate.  An officer has to link the person manually.
+                MarathonMailer.multiple_matches_email(person, candidates).deliver
+                ambiguous_person_names << person.sname
+                next
+              elsif candidates.length == 1
+                candidate = candidates.first
+                others = person.marathon_person_clashes(candidate)
+                person.update_column(:marathon_person_id, candidate.id)
+                if others.empty?
+                  MarathonMailer.single_match_email(person, candidate).deliver
+                else
+                  MarathonMailer.clash_email(person, candidate, others).deliver
+                  clash_person_names << person.sname
+                end
+                linked_person_names << candidate.full_name
+              else
+                marathon_person = MarathonPerson.create!(
+                  first_name: person.first_name,
+                  last_name:  person.last_name,
+                  birthday:   person.birthday
+                )
+                person.update_column(:marathon_person_id, marathon_person.id)
+                created_person_names << marathon_person.full_name
+              end
+            end
+
+            ml = MarathonLog.find_or_initialize_by(
+              marathon_person_id: person.marathon_person_id,
+              team_id: team.id
+            )
+            new_record = ml.new_record?
+            ml.sailed_dist  = logbook[:sailed_dist].to_f
+            ml.plaque_dist  = logbook[:plaque_dist].to_f
+            ml.boat_type    = team.boat_type_name
+            ml.boat_name    = team.boat_name
+            ml.date         = race.start_to&.to_date
+            ml.organizer_id = @regatta.organizer_id
+            ml.save!
+
+            if new_record
+              created_count += 1
+            else
+              updated_count += 1
+            end
+          end
+        end
+      end
+    end
+
+    notice = "Maratonresultat fastställt: #{created_count} skapade, #{updated_count} uppdaterade."
+    if created_person_names.any?
+      notice += " #{created_person_names.length} nya maratonpersoner skapades: #{created_person_names.uniq.join(', ')}."
+    end
+    if linked_person_names.any?
+      notice += " #{linked_person_names.length} seglare länkades till befintliga maratonpersoner: #{linked_person_names.uniq.join(', ')}."
+    end
+    if clash_person_names.any?
+      notice += " OBS! Följande seglare länkades till en maratonperson som redan är länkad till någon annan: #{clash_person_names.uniq.join(', ')}."
+    end
+    if ambiguous_person_names.any?
+      notice += " OBS! Följande seglare matchar flera maratonpersoner och fick inget maratonresultat; länka dem manuellt och fastställ maratonresultatet igen: #{ambiguous_person_names.uniq.join(', ')}."
+    end
+    redirect_to @regatta, notice: notice
+  end
+
   def archive
     if @regatta.active
       # 0: draft, 1: submitted, 2: approved, 3: signed, 4: reviewed, 5: archived, 6: closed
@@ -135,7 +234,7 @@ class RegattasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def regatta_params
-      params.require(:regatta).permit(:name, :description, :terrain_id,  :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :web_page, :external_id, :external_system)
+      params.require(:regatta).permit(:name, :description, :terrain_id, :organizer_id, :email_from, :name_from, :email_to, :confirmation, :active, :web_page, :external_id, :external_system, :marathon_eligible)
     end
 
     def authorized?

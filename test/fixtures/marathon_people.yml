@@ -1,0 +1,9 @@
+anna:
+  first_name: Anna
+  last_name: Andersson
+  birthday: 1980-03-15
+
+bertil:
+  first_name: Bertil
+  last_name: Bengtsson
+  birthday: 1975-06-20
