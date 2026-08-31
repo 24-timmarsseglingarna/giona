@@ -7,5 +7,7 @@
   = f.text_area :confirmation, rows: 10
   - if has_admin_rights?
     = f.text_field :external_id
+  - if has_officer_rights?
+    = f.check_box :marathon_eligible, label: 'Maratonberättigad krets'
 
   = f.submit "Spara", class: "btn"

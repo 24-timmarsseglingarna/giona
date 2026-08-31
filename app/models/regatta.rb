@@ -8,9 +8,12 @@ class Regatta < ApplicationRecord
   scope :is_active, ->(value = true) { where(active: value) }
   scope :has_race, ->(r_id) { joins(:races).where("races.id = ?", r_id) }
   scope :from_organizer, ->(o_id) { joins(:organizer).where("organizers.id = ?", o_id)}
+  scope :marathon_eligible, -> { where(marathon_eligible: true) }
   validates_presence_of :organizer, :name, :terrain, :email_to, :email_from, :name_from
   validates_uniqueness_of :name
   validates :web_page, url: { allow_blank: true }
+
+  before_create :inherit_marathon_eligible
 
 
   def next_start_number
@@ -93,6 +96,10 @@ class Regatta < ApplicationRecord
   end
 
   private
+
+  def inherit_marathon_eligible
+    self.marathon_eligible = organizer&.marathon_eligible || false
+  end
 
   def validate_email_from
     if self.email_from.present?

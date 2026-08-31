@@ -3,6 +3,7 @@ class Organizer < ApplicationRecord
   default_scope { order 'name' }
   scope :is_active, -> (boolean = true) { joins(:regattas).where("regattas.active = ?", boolean) }
   scope :has_regatta, ->(r_id) { joins(:regattas).where("regattas.id = ?", r_id) }
+  scope :marathon_eligible, -> { where(marathon_eligible: true) }
 
   has_many :regattas, dependent: :destroy
   has_many :races, :through => :regattas

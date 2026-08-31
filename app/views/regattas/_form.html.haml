@@ -14,6 +14,7 @@
       %p NOTERA: Regattan har loggböcker som inte är arkiverade och skall därför inte avaktiveras här, utan istället arkiveras.  Om den görs inaktiv här blir inte resultatet fastställt korrekt.
 
   = f.check_box :active
+  = f.check_box :marathon_eligible, label: 'Maratonberättigad'
 
   = f.submit "Spara", class: "btn"
 
