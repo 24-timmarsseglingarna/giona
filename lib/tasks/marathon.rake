@@ -322,6 +322,7 @@ namespace :marathon do
       if (forced_id = forced_person[target])
         forced = all_people.find { |p| p.id == forced_id }
         if forced
+          puts "INFO: forced person id #{forced_id} for #{first_name} #{last_name} used"
           person_matches = [forced]
         else
           puts "WARNING: forced person id #{forced_id} for #{first_name} #{last_name} not found"
