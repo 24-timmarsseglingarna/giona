@@ -50,7 +50,16 @@
     font-style: italic;
 }
 
+/* Screen-only controls, e.g. the print button. */
+.res-noprint {
+    float: right;
+}
+
 @media print {
+    .res-noprint {
+        display: none;
+    }
+
     .res-race-header {
         page-break-inside: avoid;
         page-break-after: avoid;
