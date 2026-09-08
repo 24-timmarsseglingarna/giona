@@ -102,8 +102,9 @@ class Person < ApplicationRecord
       end
     elsif candidates.length > 1
       MarathonMailer.multiple_matches_email(self, candidates).deliver
-    else
-      MarathonMailer.no_match_email(self).deliver
+    ## don't send email in the common scenario
+    # else
+    #   MarathonMailer.no_match_email(self).deliver
     end
   end
 
