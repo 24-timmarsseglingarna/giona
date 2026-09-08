@@ -5,7 +5,35 @@
     .dist-narrow { display: inline; }
   }
 
-  .print-heading { display: none; }
+  .print-heading, .print-subheading { display: none; }
+
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+
+    /* Print the table only - no filters, no search box, no buttons. */
+    .marathon-noprint,
+    .dataTables_filter,
+    .dataTables_info,
+    .dataTables_length,
+    .dataTables_paginate { display: none !important; }
+
+    .print-heading { display: block !important; margin-top: 0; }
+    .print-subheading { display: block !important; }
+
+    .panel { border: none; margin-top: 0; box-shadow: none; }
+    .panel-heading { display: none !important; }
+    .panel-body { padding: 0; }
+
+    #giona-marathon { font-size: 9px; width: 100% !important; }
+    #giona-marathon th,
+    #giona-marathon td { padding: 2px 3px !important; width: auto !important; }
+    /* Repeat the header on every page, and keep rows whole. */
+    #giona-marathon thead { display: table-header-group; }
+    #giona-marathon tr { page-break-inside: avoid; }
+  }
 
 .panel.panel-default
   .panel-heading
@@ -13,7 +41,7 @@
     Maratonlistan
 
   .panel-body
-    = form_tag marathon_path, method: :get, class: 'form-inline' do
+    = form_tag marathon_path, method: :get, class: 'form-inline marathon-noprint' do
       .form-group
         = label_tag :year, 'Från år:'
         = select_tag :year,
@@ -53,13 +81,18 @@
       %span.pull-right
         %i.fas.fa-file-excel(aria-hidden='true')
         = link_to 'Exportera xlsx', marathon_path(year: @year, organizer_id: @organizer_id, highlight: @highlight, show: (@show_selected ? 'selected' : nil), format: :xlsx), class: 'btn btn-default btn-sm'
+        &nbsp;
+        %i.fas.fa-print(aria-hidden='true')
+        %button.btn.btn-default.btn-sm{type: 'button', onclick: 'window.print(); return false;'} Skriv ut / pdf
 
-    - if has_officer_rights? && @highlight == 'near_plaque'
-      %p
-        %button.btn.btn-default.btn-sm{type: 'button', onclick: "var e = document.getElementById('near-emails'); e.style.display = (e.style.display === 'none' ? 'block' : 'none');"}
-          = "Visa e-postadresser (#{@near_emails.size})"
-      %textarea#near-emails.form-control{readonly: true, rows: 3, style: 'display: none'}= @near_emails.join(', ')
+    - if @highlight_emails.present?
+      %p.marathon-noprint
+        %button.btn.btn-default.btn-sm{type: 'button', onclick: "var e = document.getElementById('highlight-emails'); e.style.display = (e.style.display === 'none' ? 'block' : 'none');"}
+          = "Visa e-postadresser (#{@highlight_emails.size})"
+      %textarea#highlight-emails.form-control.marathon-noprint{readonly: true, rows: 3, style: 'display: none'}= @highlight_emails.join(', ')
 
+    -# Only shown when printing; describes the filters the table was
+    -# generated from.
     %h3.print-heading
       Maratonlistan
       - if @year
@@ -67,6 +100,14 @@
       - if @organizer_id
         - org = @organizers.find { |o| o.id.to_s == @organizer_id.to_s }
         = " – #{org.name}" if org
+    %p.print-subheading
+      - if @highlight == 'new_plaques'
+        = @show_selected ? 'Endast plaketter från valt år' : 'Plaketter från valt år markerade'
+        = ' – '
+      - elsif @highlight == 'near_plaque'
+        = @show_selected ? 'Endast nära till plakett' : 'Nära till plakett markerade'
+        = ' – '
+      = I18n.l DateTime.now, format: :day
 
     %br
 
