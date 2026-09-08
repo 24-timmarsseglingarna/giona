@@ -12,27 +12,35 @@ class MarathonController < ApplicationController
     @organizers = Organizer.marathon_eligible
 
     logs = MarathonLog.all
-    logs = logs.where('date >= ?', Date.new(@year, 1, 1)) if @year
     logs = logs.where(organizer_id: @organizer_id) if @organizer_id
 
-    # Person IDs matched by the active filters
-    filtered_person_ids = logs.distinct.pluck(:marathon_person_id)
+    # Places are computed over everyone matching the organizer filter, so
+    # that a person's place is the same whether or not a year is selected.
+    ranked_person_ids = logs.distinct.pluck(:marathon_person_id)
 
-    marathon_people = MarathonPerson.where(id: filtered_person_ids)
+    # The year filter only selects which of the ranked persons are listed.
+    listed_person_ids =
+      if @year
+        logs.where('date >= ?', Date.new(@year, 1, 1))
+            .distinct.pluck(:marathon_person_id).to_set
+      end
+
+    marathon_people = MarathonPerson.where(id: ranked_person_ids)
                                     .includes(:people).index_by(&:id)
 
     # Load ALL logs for those persons — needed to compute pre-period totals for new_plaques
-    all_logs_for_persons = MarathonLog.where(marathon_person_id: filtered_person_ids)
+    all_logs_for_persons = MarathonLog.where(marathon_person_id: ranked_person_ids)
                                       .group_by(&:marathon_person_id)
 
     organizers_by_id = Organizer.all.index_by(&:id)
 
-    @rows = filtered_person_ids.map do |mp_id|
+    @rows = ranked_person_ids.map do |mp_id|
       mp = marathon_people[mp_id]
       next unless mp
 
+      # Totals and 'latest' always cover the person's whole history; the
+      # year filter only decides who is listed, not what is summed.
       all_logs   = all_logs_for_persons[mp_id] || []
-      # Restrict totals and latest to the selected year range
       latest            = all_logs.max_by(&:date)
       total_plaque_dist = all_logs.sum(&:plaque_dist)
 
@@ -75,11 +83,18 @@ class MarathonController < ApplicationController
     @rows.sort_by! { |r| -r[:total_plaque_dist] }
     @rows.each_with_index { |r, i| r[:place] = i + 1 }
 
-    # Email addresses of the sailors near a plaque (officer-only listing).
-    if has_officer_rights? && @highlight == 'near_plaque'
-      @near_emails = @rows.select { |r| r[:near_plaque] }
-                          .flat_map { |r| r[:marathon_person].people.map(&:email) }
-                          .reject(&:blank?).uniq
+    # Keep only the persons matching the year filter, preserving each row's
+    # overall placement.
+    if listed_person_ids
+      @rows.select! { |r| listed_person_ids.include?(r[:marathon_person].id) }
+    end
+
+    # Email addresses of the highlighted sailors (officer-only listing) - the
+    # ones with a new plaque, or near a plaque, depending on the mode.
+    if has_officer_rights? && @highlight
+      @highlight_emails = @rows.select { |r| r[:new_plaques].any? || r[:near_plaque] }
+                               .flat_map { |r| r[:marathon_person].people.map(&:email) }
+                               .reject(&:blank?).uniq
     end
 
     # Keep only highlighted rows, preserving each row's overall placement.

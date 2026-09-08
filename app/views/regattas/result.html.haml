@@ -1,3 +1,7 @@
+%p{:class => "res-noprint"}
+  %i{:class => "fas fa-print", "aria-hidden" => "true"}
+  %button{:type => "button", :class => "btn btn-default btn-sm", :onclick => "window.print(); return false;"} Skriv ut / pdf
+
 %p{:class => "res-title-line-1"}
   = "#{@regatta.name}"
 %p{:class => "res-title-line-2"}
