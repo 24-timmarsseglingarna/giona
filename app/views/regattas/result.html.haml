@@ -2,16 +2,23 @@
   %i{:class => "fas fa-print", "aria-hidden" => "true"}
   %button{:type => "button", :class => "btn btn-default btn-sm", :onclick => "window.print(); return false;"} Skriv ut / pdf
 
+-# If the regatta is still active, the result is preliminary and is dated
+-# with todays date.  Otherwise, use last modification date; this ensures
+-# that the report looks the same.
+- preliminary = @regatta.active || !@regatta.teams.where.not(state: [0,4,5,6]).empty?
+- res_date = preliminary ? DateTime.now : @regatta.updated_at
+
+.res-header
+  = image_tag 'sxk_symbol_gul.jpg', class: 'res-header-logo', alt: ''
+  .res-header-text
+    .res-header-club Svenska Kryssarklubben
+    .res-header-org= @regatta.organizer.short_name
+  .res-header-date= I18n.l res_date, format: :day
+
 %p{:class => "res-title-line-1"}
   = "#{@regatta.name}"
 %p{:class => "res-title-line-2"}
-  - if @regatta.active or not @regatta.teams.where.not(state: [0,4,5,6]).empty?
-    -# If the regatta is still active, print with todays date.
-    Preliminärt resultat - #{I18n.l DateTime.now, format: :day}
-  - else
-    -# Otherwise, use last modification date; this ensures that the
-    -# report looks the same.
-    Resultat - #{I18n.l @regatta.updated_at, format: :day}
+  = "#{preliminary ? 'Preliminärt resultat' : 'Resultat'} ordnade efter seglingsperiod och plakettdistans"
 
 %table{:width => "100%", :class => "res-table"}
   %tbody

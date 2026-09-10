@@ -14,6 +14,10 @@ class MarathonController < ApplicationController
     logs = MarathonLog.all
     logs = logs.where(organizer_id: @organizer_id) if @organizer_id
 
+    # Used in the printed header.
+    @organizer = Organizer.find_by(id: @organizer_id) if @organizer_id
+    @latest_log_date = logs.maximum(:date)
+
     # Places are computed over everyone matching the organizer filter, so
     # that a person's place is the same whether or not a year is selected.
     ranked_person_ids = logs.distinct.pluck(:marathon_person_id)
