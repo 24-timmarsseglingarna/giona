@@ -16,6 +16,13 @@ class Organizer < ApplicationRecord
 
 
 
+  # Display name for headings: "Svenska Kryssarklubbens Stockholmskrets"
+  # becomes "Stockholmskretsen".
+  def short_name
+    n = name.sub(/\ASvenska Kryssarklubbens /, '')
+    n.sub(/krets\z/, 'kretsen')
+  end
+
   def reset_default_start
      self.defualt_start.delete_all
   end
