@@ -5,7 +5,9 @@
     .dist-narrow { display: inline; }
   }
 
-  .print-heading, .print-subheading { display: none; }
+  .print-header, .print-subheading { display: none; }
+
+  .marathon-hourglass { height: 1.1em; width: auto; vertical-align: -0.2em; }
 
   @media print {
     @page {
@@ -20,7 +22,25 @@
     .dataTables_length,
     .dataTables_paginate { display: none !important; }
 
-    .print-heading { display: block !important; margin-top: 0; }
+    /* Logo + heading text, as on the paper lists. */
+    .print-header {
+      display: flex !important;
+      align-items: flex-start;
+      font-family: Helvetica, Arial, sans-serif;
+      margin-bottom: 6mm;
+    }
+    .print-header-logo { width: 20mm; height: auto; margin-right: 5mm; }
+    .print-header-text { flex: 1 1 auto; }
+    .print-header-club { font-size: 17pt; font-weight: bold; line-height: 1.2; }
+    .print-header-org { font-size: 14pt; line-height: 1.3; }
+    .print-header-line { font-size: 11pt; line-height: 1.3; }
+    .print-header-result { font-size: 9pt; line-height: 1.3; }
+    .print-header-date {
+      flex: 0 0 auto;
+      font-size: 11pt;
+      padding-top: 7mm;
+      white-space: nowrap;
+    }
     .print-subheading { display: block !important; }
 
     .panel { border: none; margin-top: 0; box-shadow: none; }
@@ -91,23 +111,22 @@
           = "Visa e-postadresser (#{@highlight_emails.size})"
       %textarea#highlight-emails.form-control.marathon-noprint{readonly: true, rows: 3, style: 'display: none'}= @highlight_emails.join(', ')
 
-    -# Only shown when printing; describes the filters the table was
-    -# generated from.
-    %h3.print-heading
-      Maratonlistan
-      - if @year
-        = " från #{@year}"
-      - if @organizer_id
-        - org = @organizers.find { |o| o.id.to_s == @organizer_id.to_s }
-        = " – #{org.name}" if org
-    %p.print-subheading
-      - if @highlight == 'new_plaques'
-        = @show_selected ? 'Endast plaketter från valt år' : 'Plaketter från valt år markerade'
-        = ' – '
-      - elsif @highlight == 'near_plaque'
-        = @show_selected ? 'Endast nära till plakett' : 'Nära till plakett markerade'
-        = ' – '
-      = I18n.l DateTime.now, format: :day
+    -# Only shown when printing; the logo and heading text describe the
+    -# filters the table was generated from.
+    .print-header
+      = image_tag 'sxk_symbol_gul.jpg', class: 'print-header-logo', alt: ''
+      .print-header-text
+        .print-header-club Svenska Kryssarklubben
+        .print-header-org= @organizer ? @organizer.short_name : '24-timmarsnämnden'
+        .print-header-line= "Maratonlista #{@latest_log_date&.year}"
+        - if @year
+          .print-header-result= "Resultat #{@year} - #{@latest_log_date&.year}"
+      - if @latest_log_date
+        .print-header-date= I18n.l @latest_log_date, format: :day
+    - if @highlight == 'new_plaques'
+      %p.print-subheading= @show_selected ? 'Endast plaketter från valt år' : 'Plaketter från valt år markerade'
+    - elsif @highlight == 'near_plaque'
+      %p.print-subheading= @show_selected ? 'Endast nära till plakett' : 'Nära till plakett markerade'
 
     %br
 
@@ -148,7 +167,7 @@
             %td{style: 'white-space: nowrap'}
               = row[:place]
               - if mp.hourglass
-                %i.fa.fa-hourglass.pull-right{'aria-hidden' => 'true', title: "Timglas #{mp.hourglass}"}
+                = image_tag 'hourglass.png', class: 'marathon-hourglass pull-right', title: "Timglas #{mp.hourglass}", alt: 'Timglas'
             %td= mp.first_name
             %td= mp.last_name
             %td= row[:latest_boat_name]
