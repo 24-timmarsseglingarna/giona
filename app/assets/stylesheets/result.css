@@ -1,3 +1,34 @@
+/* Logo + club/organizer heading, as on the paper lists. */
+.res-header {
+    display: flex;
+    align-items: flex-start;
+    font-family: Helvetica, Arial, sans-serif;
+    margin-bottom: 6mm;
+}
+.res-header-logo {
+    width: 20mm;
+    height: auto;
+    margin-right: 5mm;
+}
+.res-header-text {
+    flex: 1 1 auto;
+}
+.res-header-club {
+    font-size: 17pt;
+    font-weight: bold;
+    line-height: 1.2;
+}
+.res-header-org {
+    font-size: 14pt;
+    line-height: 1.3;
+}
+.res-header-date {
+    flex: 0 0 auto;
+    font-size: 11pt;
+    padding-top: 7mm;
+    white-space: nowrap;
+}
+
 .res-title-line-1 {
     font-size: 22px;
     font-weight: bold;
